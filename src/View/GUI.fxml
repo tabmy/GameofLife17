@@ -19,7 +19,7 @@
                     <MenuItem text="New..."/>
                     <MenuItem text="Open..."/>
                     <MenuItem text="Next"/>
-                    <MenuItem text="Start"/>
+                    <MenuItem text="Start" onAction="#draw"/>
                     <MenuItem text="Close"/>
                 </Menu>
                 <Menu text="View"></Menu>
