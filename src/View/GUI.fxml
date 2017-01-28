@@ -1,0 +1,84 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<?import java.net.URL?>
+<GridPane fx:controller="Controller.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10"
+          vgap="10" maxWidth="800" maxHeight="700">
+
+    <stylesheets><URL value="@StyleOfLife.css"/></stylesheets>
+
+    <HBox GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="1">
+        <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+                <Menu text="File">
+                    <MenuItem text="New..."/>
+                    <MenuItem text="Open..."/>
+                    <MenuItem text="Next"/>
+                    <MenuItem text="Start"/>
+                    <MenuItem text="Close"/>
+                </Menu>
+                <Menu text="View"></Menu>
+                <Menu text="Help"></Menu>
+                <Menu text="Shape">
+                    <MenuItem text="Clear"/>
+                    <MenuItem text="Glider"/>
+                    <MenuItem text="Small Exploder"/>
+                    <MenuItem text="Exploder"/>
+                    <MenuItem text="10 Cell Row"/>
+                    <MenuItem text="Lightweight Spaceship"/>
+                    <MenuItem text="Tumbler"/>
+                    <MenuItem text="Gosper Glider Gun"/>
+                </Menu>
+            </MenuBar>
+    </HBox>
+
+    <HBox GridPane.rowIndex="1" GridPane.columnIndex="0">
+        <Canvas styleClass="canvas" fx:id="playArea" width="700" height="600"/>
+    </HBox>
+
+    <HBox fx:id="instruments" GridPane.rowIndex="2" GridPane.columnIndex="0" spacing="10">
+
+        <VBox fx:id="colorPickers">
+
+            <HBox fx:id="setCellColor" spacing="54">
+
+                <Label text="Cell color"/>
+                <ColorPicker fx:id="cellColorPicker"/>
+
+            </HBox>
+
+            <HBox fx:id="settBackColor" spacing="10">
+
+                <Label text="Background color"/>
+                <ColorPicker fx:id="backColorPicker"/>
+
+            </HBox>
+
+        </VBox>
+
+        <VBox fx:id="sliders">
+
+            <HBox fx:id="setSpeed" spacing="59">
+
+                <Label text="Speed"/>
+                <Slider fx:id="speedSlider" min="1.0"/>
+
+            </HBox>
+
+            <HBox fx:id="setNumCells" spacing="10">
+
+                <Label text="Number of cells"/>
+                <Slider fx:id="numCellsSlider" min="5" max="10000"/>
+
+            </HBox>
+
+        </VBox>
+
+    </HBox>
+
+</GridPane>
