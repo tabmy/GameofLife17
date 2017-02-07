@@ -1,61 +1,67 @@
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
-
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
-<GridPane fx:controller="Controller.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10"
-          vgap="10" maxWidth="800" maxHeight="700">
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-    <stylesheets><URL value="@StyleOfLife.css"/></stylesheets>
+<GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
 
-    <HBox GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="1">
+    <stylesheets><URL value="@StyleOfLife.css" /></stylesheets>
+
+    <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
         <MenuBar fx:id="menuBar" useSystemMenuBar="true">
                 <Menu text="File">
-                    <MenuItem text="New..."/>
-                    <MenuItem text="Open..."/>
-                    <MenuItem text="Next"/>
-                    <MenuItem text="Start" onAction="#draw"/>
-                    <MenuItem text="Close"/>
+                    <MenuItem text="New..." />
+                    <MenuItem text="Open..." />
+                    <MenuItem text="Next" />
+                    <MenuItem onAction="#draw" text="Start" />
+                    <MenuItem text="Close" />
                 </Menu>
-                <Menu text="View"></Menu>
-                <Menu text="Help"></Menu>
+                <Menu text="View" />
+                <Menu text="Help" />
                 <Menu text="Shape">
-                    <MenuItem text="Clear"/>
-                    <MenuItem text="Glider"/>
-                    <MenuItem text="Small Exploder"/>
-                    <MenuItem text="Exploder"/>
-                    <MenuItem text="10 Cell Row"/>
-                    <MenuItem text="Lightweight Spaceship"/>
-                    <MenuItem text="Tumbler"/>
-                    <MenuItem text="Gosper Glider Gun"/>
+                    <MenuItem text="Clear" />
+                    <MenuItem text="Glider" />
+                    <MenuItem text="Small Exploder" />
+                    <MenuItem text="Exploder" />
+                    <MenuItem text="10 Cell Row" />
+                    <MenuItem text="Lightweight Spaceship" />
+                    <MenuItem text="Tumbler" />
+                    <MenuItem text="Gosper Glider Gun" />
                 </Menu>
             </MenuBar>
     </HBox>
 
-    <HBox GridPane.rowIndex="1" GridPane.columnIndex="0">
-        <Canvas styleClass="canvas" fx:id="playArea" width="700" height="600"/>
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <Canvas fx:id="playArea" height="600" styleClass="canvas" width="700" />
     </HBox>
 
-    <HBox fx:id="instruments" GridPane.rowIndex="2" GridPane.columnIndex="0" spacing="10">
+    <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
 
         <VBox fx:id="colorPickers">
 
             <HBox fx:id="setCellColor" spacing="54">
 
-                <Label text="Cell color"/>
-                <ColorPicker fx:id="cellColorPicker"/>
+                <Label text="Cell color" />
+                <ColorPicker fx:id="cellColorPicker" />
 
             </HBox>
 
             <HBox fx:id="settBackColor" spacing="10">
 
-                <Label text="Background color"/>
-                <ColorPicker fx:id="backColorPicker"/>
+                <Label text="Background color" />
+                <ColorPicker fx:id="backColorPicker" />
 
             </HBox>
 
@@ -65,20 +71,34 @@
 
             <HBox fx:id="setSpeed" spacing="59">
 
-                <Label text="Speed"/>
-                <Slider fx:id="speedSlider" min="1.0"/>
+                <Label text="Speed" />
+                <Slider fx:id="speedSlider" min="1.0" />
 
             </HBox>
 
             <HBox fx:id="setNumCells" spacing="10">
 
-                <Label text="Number of cells"/>
-                <Slider fx:id="numCellsSlider" min="5" max="10000"/>
+                <Label text="Number of cells" />
+                <Slider fx:id="numCellsSlider" max="10000" min="5" />
 
             </HBox>
 
         </VBox>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="startButton" onAction="#draw" mnemonicParsing="false" text="Start" />
+            <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear" />
+         </children>
+      </HBox>
 
     </HBox>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 
 </GridPane>
