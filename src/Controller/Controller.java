@@ -18,9 +18,9 @@ public class Controller implements Initializable {
     public Button startButton;
     @FXML
     public Canvas playArea;
-    public GraphicsContext gc;
+    private GraphicsContext gc;
 
-    protected StaticBoard gameBoard;
+    private Board gameBoard;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,7 +47,7 @@ public class Controller implements Initializable {
 
     @FXML
     public void clearBoard(){
-        gc.clearRect(0,0,playArea.getWidth(),playArea.getHeight());
+        gc.clearRect(0,0, playArea.getWidth(), playArea.getHeight());
     }
 
 }

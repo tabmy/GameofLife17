@@ -24,7 +24,9 @@ public class StaticBoard extends Board {
         return HEIGHT;
     }
 
+    @Override
     public int getCellState(int x, int y){
         return gameBoard[x][y];
     }
+
 }
