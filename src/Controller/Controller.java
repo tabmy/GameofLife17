@@ -2,6 +2,11 @@ package Controller;
 
 import Model.Board;
 import Model.StaticBoard;
+import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -11,12 +16,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-
-import javafx.event.ActionEvent;
+import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
+
+    private final Timeline TIMELINE = new Timeline();
 
     @FXML
     public Button startButton;
@@ -26,6 +32,48 @@ public class Controller implements Initializable {
     @FXML
     public Slider numCellsSlider;
     private Board gameBoard;
+
+    private AnimationTimer animationTimer;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        gc = playArea.getGraphicsContext2D();
+        gameBoard = new StaticBoard();
+        initAnimation();
+    }
+
+    private void initAnimation() {
+
+        Duration duration = new Duration(1000);
+        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent)-> {gameBoard.nextGeneration();});
+
+        TIMELINE.setCycleCount(Timeline.INDEFINITE);
+        TIMELINE.getKeyFrames().add(keyFrame);
+
+        animationTimer = new AnimationTimer() {
+
+            @Override
+            public void handle(long now) {
+                draw();
+            }
+        };
+
+    }
+
+    @FXML
+    public void handleAnimation(){
+
+        if(TIMELINE.getStatus() == Animation.Status.RUNNING) {
+            TIMELINE.stop();
+            animationTimer.stop();
+        }
+       else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
+            TIMELINE.setRate(1);
+            TIMELINE.play();
+            animationTimer.start();
+
+        }
+    }
 
     @FXML
     public void changeCellState(MouseEvent e){
@@ -40,12 +88,6 @@ public class Controller implements Initializable {
         draw();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        gc = playArea.getGraphicsContext2D();
-        gameBoard = new StaticBoard();
-        draw();
-    }
 
     @FXML
     public void changeCellSize(){

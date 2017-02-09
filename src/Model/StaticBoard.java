@@ -36,6 +36,15 @@ public class StaticBoard extends Board {
     }
 
     @Override
+    public void nextGeneration(){
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                gameBoard[i][j] = (byte)Math.abs(gameBoard[i][j] -1);
+            }
+        }
+    }
+
+    @Override
     public int getCellState(int x, int y){
         return gameBoard[x][y];
     }

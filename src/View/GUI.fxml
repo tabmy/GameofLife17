@@ -86,7 +86,7 @@
         </VBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Button fx:id="startButton" onAction="#draw" mnemonicParsing="false" text="Start" />
+            <Button fx:id="startButton" onAction="#handleAnimation" mnemonicParsing="false" text="Start" />
             <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear" />
          </children>
       </HBox>

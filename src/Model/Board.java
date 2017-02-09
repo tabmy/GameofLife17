@@ -23,6 +23,8 @@ public abstract class Board {
 
     public abstract int getWIDTH();
 
+    public abstract void nextGeneration();
+
 
 
 }
