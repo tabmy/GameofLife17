@@ -44,7 +44,7 @@
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Canvas fx:id="playArea" height="600" styleClass="canvas" width="700" />
+        <Canvas fx:id="playArea" height="600" styleClass="canvas" width="700" onMouseClicked="#changeCellState"/>
     </HBox>
 
     <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
@@ -79,7 +79,7 @@
             <HBox fx:id="setNumCells" spacing="10">
 
                 <Label text="Number of cells" />
-                <Slider fx:id="numCellsSlider" max="10000" min="5" />
+                <Slider fx:id="numCellsSlider" onMouseDragged="#changeCellSize" min="1" max="200"/>
 
             </HBox>
 
