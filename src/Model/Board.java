@@ -5,13 +5,13 @@ package Model;
  */
 public abstract class Board {
 
-    private int cellSize = 5;
+    private double cellSize = 0;
 
-    public int getCellSize(){
+    public double getCellSize(){
         return cellSize;
     }
 
-    public void setCellSize(int x){
+    public void setCellSize(double x){
         cellSize = x;
     }
 
@@ -24,7 +24,4 @@ public abstract class Board {
     public abstract int getWIDTH();
 
     public abstract void nextGeneration();
-
-
-
 }
