@@ -15,18 +15,19 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
+<GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1"
+          xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
 
     <stylesheets><URL value="@StyleOfLife.css" /></stylesheets>
 
     <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
-        <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+        <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="700">
                 <Menu text="File">
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." />
                     <MenuItem text="Next" />
-                    <MenuItem onAction="#draw" text="Start" />
-                    <MenuItem text="Close" />
+                    <MenuItem text="Start" onAction="#draw"/>
+                    <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
                 <Menu text="View" />
                 <Menu text="Help" />
@@ -61,18 +62,18 @@
             <HBox fx:id="settBackColor" spacing="10">
 
                 <Label text="Background color" />
-                <ColorPicker fx:id="backColorPicker" />
+                <ColorPicker fx:id="backColorPicker" onAction="#colorStuff"/>
 
             </HBox>
 
         </VBox>
 
-        <VBox fx:id="sliders">
+        <VBox fx:id="sliders" spacing="10">
 
-            <HBox fx:id="setSpeed" spacing="59">
+            <HBox fx:id="setSpeed" spacing="33">
 
-                <Label text="Speed" />
-                <Slider fx:id="speedSlider" min="1.0" />
+                <Label fx:id="speedInd" text="Speed: 0"/>
+                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate"/>
 
             </HBox>
 
@@ -85,20 +86,12 @@
 
         </VBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Button fx:id="startButton" onAction="#handleAnimation" mnemonicParsing="false" text="Start" />
-            <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear" />
-         </children>
+         <HBox spacing="15">
+            <Button fx:id="startButton" onAction="#handleAnimation" mnemonicParsing="false" text="Start/Stop"/>
+            <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
+         </HBox>
       </HBox>
 
     </HBox>
-   <columnConstraints>
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-   </rowConstraints>
 
 </GridPane>

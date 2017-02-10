@@ -2,50 +2,54 @@ package Controller;
 
 import Model.Board;
 import Model.StaticBoard;
+
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
+    @FXML public Button startButton;
+    @FXML public Button clearButton;
+    @FXML public Canvas playArea;
+    @FXML public Slider numCellsSlider;
+    @FXML public Slider speedSlider;
+    @FXML public Label speedInd;
+    @FXML public ColorPicker backColorPicker;
+    @FXML public ColorPicker cellColorPicker;
     private final Timeline TIMELINE = new Timeline();
-
-    @FXML
-    public Button startButton;
-    @FXML
-    public Canvas playArea;
-    private GraphicsContext gc;
-    @FXML
-    public Slider numCellsSlider;
     private Board gameBoard;
-
     private AnimationTimer animationTimer;
+    private GraphicsContext gc;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gc = playArea.getGraphicsContext2D();
         gameBoard = new StaticBoard();
         initAnimation();
+        speedInd.setText("Speed: 0.00");
     }
 
     private void initAnimation() {
-
         Duration duration = new Duration(1000);
-        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent)-> {gameBoard.nextGeneration();});
+        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {gameBoard.nextGeneration();draw();});
 
         TIMELINE.setCycleCount(Timeline.INDEFINITE);
         TIMELINE.getKeyFrames().add(keyFrame);
@@ -53,26 +57,28 @@ public class Controller implements Initializable {
         animationTimer = new AnimationTimer() {
 
             @Override
-            public void handle(long now) {
-                draw();
-            }
+            public void handle(long now) { }
         };
-
     }
 
     @FXML
-    public void handleAnimation(){
-
-        if(TIMELINE.getStatus() == Animation.Status.RUNNING) {
+    public void handleAnimation() {
+        if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
             animationTimer.stop();
         }
        else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
-            TIMELINE.setRate(1);
+            setTimelineRate();
             TIMELINE.play();
             animationTimer.start();
-
         }
+    }
+
+    @FXML
+    public void setTimelineRate() {
+        TIMELINE.setRate(speedSlider.getValue());
+        speedInd.setText(String.format("%s: %.2f", "Speed", speedSlider.getValue()));
+
     }
 
     @FXML
@@ -118,4 +124,11 @@ public class Controller implements Initializable {
         gc.clearRect(0,0, playArea.getWidth(), playArea.getHeight());
     }
 
+    @FXML public void colorStuff() {
+        gc.setFill(backColorPicker.getValue());
+    }
+
+    @FXML public void exitApplication() {
+        System.exit(0);
+    }
 }
