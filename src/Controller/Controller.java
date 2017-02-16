@@ -43,6 +43,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gameBoard = new StaticBoard();
+        gc = playArea.getGraphicsContext2D();
         initAnimation();
         speedInd.setText("Speed: 0.00");
         cellSizeSlider.setValue(20);
@@ -106,16 +107,16 @@ public class Controller implements Initializable {
 
     @FXML
     public void drawCells() {
-        getCanvasGraphicsContext().setFill(backColorPicker.getValue());
-        getCanvasGraphicsContext().fillRect(0,0,playArea.getWidth(), playArea.getHeight());
-        getCanvasGraphicsContext().setFill(cellColorPicker.getValue());
+        gc.setFill(backColorPicker.getValue());
+        gc.fillRect(0,0,playArea.getWidth(), playArea.getHeight());
+        gc.setFill(cellColorPicker.getValue());
 
         double cS = gameBoard.getCellSize();
 
         for (int i = 0; i < gameBoard.getHEIGHT(); i++) {
             for (int j = 0; j < gameBoard.getWIDTH(); j++) {
                 if (gameBoard.getCellState(i, j) == 0) {
-                    getCanvasGraphicsContext().fillRect(i * cS, j * cS, cS, cS);
+                    gc.fillRect(i * cS, j * cS, cS, cS);
                 }
             }
         }
@@ -131,16 +132,10 @@ public class Controller implements Initializable {
     }
 
     @FXML public void colorBackground() {
-        getCanvasGraphicsContext().setFill(backColorPicker.getValue());
-        getCanvasGraphicsContext().fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
+        gc.setFill(backColorPicker.getValue());
+        gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
 
         drawCells();
-    }
-
-    private GraphicsContext getCanvasGraphicsContext() {
-        gc = playArea.getGraphicsContext2D();
-
-        return gc;
     }
 
     @FXML public void exitApplication() {
