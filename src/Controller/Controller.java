@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -45,8 +46,16 @@ public class Controller implements Initializable {
         gameBoard = new StaticBoard();
         gc = playArea.getGraphicsContext2D();
         initAnimation();
-        speedInd.setText("Speed: 0.00");
+        guiSetup();
+        draw();
+    }
+
+    private void guiSetup(){
+        speedSlider.setValue(1);
+        setTimelineRate();
         cellSizeSlider.setValue(20);
+        changeCellSize();
+        cellColorPicker.setValue(Color.BLACK);
     }
 
     private void initAnimation() {
@@ -99,14 +108,18 @@ public class Controller implements Initializable {
 
     @FXML
     public void changeCellSize() {
-        if (gameStarted) {
-            gameBoard.setCellSize((int)cellSizeSlider.getValue());
-            drawCells();
-        }
+        gameBoard.setCellSize(cellSizeSlider.getValue());
+        draw();
+
     }
 
     @FXML
-    public void drawCells() {
+    public void draw(){
+        drawBackground();
+        drawCells();
+    }
+
+    private void drawCells() {
         gc.setFill(backColorPicker.getValue());
         gc.fillRect(0,0,playArea.getWidth(), playArea.getHeight());
         gc.setFill(cellColorPicker.getValue());
@@ -120,10 +133,11 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
 
-        gameBoard.setCellSize(cellSizeSlider.getValue());
-
-        gameStarted = true;
+    private void drawBackground(){
+        gc.setFill(backColorPicker.getValue());
+        gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
     @FXML
@@ -131,11 +145,9 @@ public class Controller implements Initializable {
         gc.clearRect(0,0, playArea.getWidth(), playArea.getHeight());
     }
 
-    @FXML public void colorBackground() {
-        gc.setFill(backColorPicker.getValue());
-        gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
 
-        drawCells();
+    @FXML public void colorChange() {
+        draw();
     }
 
     @FXML public void exitApplication() {

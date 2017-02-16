@@ -25,7 +25,7 @@
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." />
                     <MenuItem text="Next" />
-                    <MenuItem text="Start" onAction="#drawCells"/>
+                    <MenuItem text="Start" onAction="#draw"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
                 <Menu text="View" />
@@ -56,14 +56,14 @@
             <HBox fx:id="setCellColor" spacing="54">
 
                 <Label text="Cell color" />
-                <ColorPicker fx:id="cellColorPicker"/>
+                <ColorPicker fx:id="cellColorPicker" onAction="#colorChange"/>
 
             </HBox>
 
             <HBox fx:id="settBackColor" spacing="10">
 
                 <Label text="Background color" />
-                <ColorPicker fx:id="backColorPicker" onAction="#colorBackground"/>
+                <ColorPicker fx:id="backColorPicker" onAction="#colorChange"/>
 
             </HBox>
 
@@ -88,7 +88,7 @@
         </VBox>
       <HBox prefHeight="100.0">
          <HBox spacing="15">
-             <Button fx:id="startButton" onAction="#drawCells" mnemonicParsing="false" text="Start Game"/>
+             <Button fx:id="startButton" onAction="#draw" mnemonicParsing="false" text="Start Game"/>
              <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start/Stop animation"/>
              <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
          </HBox>
