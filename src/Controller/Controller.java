@@ -25,20 +25,28 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    @FXML public Button startButton;
-    @FXML public Button animBtn;
-    @FXML public Button clearButton;
-    @FXML public Canvas playArea;
-    @FXML public Slider cellSizeSlider;
-    @FXML public Slider speedSlider;
-    @FXML public Label speedInd;
-    @FXML public ColorPicker backColorPicker;
-    @FXML public ColorPicker cellColorPicker;
+    @FXML
+    public Button startButton;
+    @FXML
+    public Button animBtn;
+    @FXML
+    public Button clearButton;
+    @FXML
+    public Canvas playArea;
+    @FXML
+    public Slider cellSizeSlider;
+    @FXML
+    public Slider speedSlider;
+    @FXML
+    public Label speedInd;
+    @FXML
+    public ColorPicker backColorPicker;
+    @FXML
+    public ColorPicker cellColorPicker;
     private GraphicsContext gc;
     private final Timeline TIMELINE = new Timeline();
     private Board gameBoard;
     private AnimationTimer animationTimer;
-    private boolean gameStarted;
 
 
     @Override
@@ -50,7 +58,7 @@ public class Controller implements Initializable {
         draw();
     }
 
-    private void guiSetup(){
+    private void guiSetup() {
         speedSlider.setValue(1);
         setTimelineRate();
         cellSizeSlider.setValue(20);
@@ -60,7 +68,10 @@ public class Controller implements Initializable {
 
     private void initAnimation() {
         Duration duration = new Duration(1000);
-        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {gameBoard.nextGeneration(); drawCells();});
+        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
+            gameBoard.nextGeneration();
+            draw();
+        });
 
         TIMELINE.setCycleCount(Timeline.INDEFINITE);
         TIMELINE.getKeyFrames().add(keyFrame);
@@ -68,7 +79,8 @@ public class Controller implements Initializable {
         animationTimer = new AnimationTimer() {
 
             @Override
-            public void handle(long now) { }
+            public void handle(long now) {
+            }
         };
     }
 
@@ -77,8 +89,7 @@ public class Controller implements Initializable {
         if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
             animationTimer.stop();
-        }
-       else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
+        } else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
             setTimelineRate();
             TIMELINE.play();
             animationTimer.start();
@@ -93,16 +104,27 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void changeCellState(MouseEvent e){
-        double x = e.getX() / gameBoard.getCellSize();
-        double y = e.getY() / gameBoard.getCellSize();
+    public void changeCellState(MouseEvent e) {
+        int x = (int) Math.floor(e.getX() / gameBoard.getCellSize());
+        int y = (int) Math.floor(e.getY() / gameBoard.getCellSize());
 
-        if (e.getButton() == MouseButton.PRIMARY) {
-            int cS = gameBoard.getCellState((int)x, (int)y);
-            gameBoard.setCellState((int)x, (int)y, (byte)Math.abs(cS - 1));
+        // TODO Fix this method so it doesn't throw ArrayIndexOutOfBounds-exceptions
+        System.out.println("x: " + x + "\ny: " + y);
+
+        if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
+            int cS = gameBoard.getCellState(x, y);
+            gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
         }
 
         drawCells();
+    }
+
+    private boolean indexCheck(int x, int y) {
+        if (x < 0 || y < 0 || x > gameBoard.getWIDTH() || y > gameBoard.getHEIGHT()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 
@@ -114,14 +136,12 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void draw(){
+    public void draw() {
         drawBackground();
         drawCells();
     }
 
     private void drawCells() {
-        gc.setFill(backColorPicker.getValue());
-        gc.fillRect(0,0,playArea.getWidth(), playArea.getHeight());
         gc.setFill(cellColorPicker.getValue());
 
         double cS = gameBoard.getCellSize();
@@ -135,22 +155,24 @@ public class Controller implements Initializable {
         }
     }
 
-    private void drawBackground(){
+    private void drawBackground() {
         gc.setFill(backColorPicker.getValue());
         gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
     @FXML
     public void clearBoard() {
-        gc.clearRect(0,0, playArea.getWidth(), playArea.getHeight());
+        gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
 
-    @FXML public void colorChange() {
+    @FXML
+    public void colorChange() {
         draw();
     }
 
-    @FXML public void exitApplication() {
+    @FXML
+    public void exitApplication() {
         System.exit(0);
     }
 }

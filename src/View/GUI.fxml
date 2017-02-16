@@ -44,7 +44,8 @@
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#changeCellState"/>
+        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#changeCellState"
+                onMouseDragged="#changeCellState"/>
     </HBox>
 
     <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
@@ -88,7 +89,6 @@
         </VBox>
       <HBox prefHeight="100.0">
          <HBox spacing="15">
-             <Button fx:id="startButton" onAction="#draw" mnemonicParsing="false" text="Start Game"/>
              <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start/Stop animation"/>
              <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
          </HBox>

@@ -7,6 +7,8 @@ public abstract class Board {
 
     private double cellSize = 0;
 
+    private Rule rule;
+
     public double getCellSize(){
         return cellSize;
     }
@@ -24,4 +26,6 @@ public abstract class Board {
     public abstract int getWIDTH();
 
     public abstract void nextGeneration();
+
+    public abstract void countNeighbours();
 }
