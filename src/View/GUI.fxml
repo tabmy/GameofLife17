@@ -9,24 +9,24 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
+<?import javafx.scene.shape.Box?>
+<GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1"
+          xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
 
     <stylesheets><URL value="@StyleOfLife.css" /></stylesheets>
 
     <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
-        <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+        <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
                 <Menu text="File">
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." />
                     <MenuItem text="Next" />
-                    <MenuItem onAction="#draw" text="Start" />
-                    <MenuItem text="Close" />
+                    <MenuItem text="Start" onAction="#drawCells"/>
+                    <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
                 <Menu text="View" />
                 <Menu text="Help" />
@@ -44,61 +44,56 @@
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Canvas fx:id="playArea" height="600" styleClass="canvas" width="700" onMouseClicked="#changeCellState"/>
+        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#changeCellState"/>
     </HBox>
 
     <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
+
+        <Box width="70"/>
 
         <VBox fx:id="colorPickers">
 
             <HBox fx:id="setCellColor" spacing="54">
 
                 <Label text="Cell color" />
-                <ColorPicker fx:id="cellColorPicker" />
+                <ColorPicker fx:id="cellColorPicker"/>
 
             </HBox>
 
             <HBox fx:id="settBackColor" spacing="10">
 
                 <Label text="Background color" />
-                <ColorPicker fx:id="backColorPicker" />
+                <ColorPicker fx:id="backColorPicker" onAction="#colorBackground"/>
 
             </HBox>
 
         </VBox>
 
-        <VBox fx:id="sliders">
+        <VBox fx:id="sliders" spacing="10">
 
-            <HBox fx:id="setSpeed" spacing="59">
+            <HBox fx:id="setSpeed" spacing="18">
 
-                <Label text="Speed" />
-                <Slider fx:id="speedSlider" min="1.0" />
+                <Label fx:id="speedInd"/>
+                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate"/>
 
             </HBox>
 
-            <HBox fx:id="setNumCells" spacing="10">
+            <HBox spacing="35">
 
-                <Label text="Number of cells" />
-                <Slider fx:id="numCellsSlider" onMouseDragged="#changeCellSize" min="1" max="200"/>
+                <Label text="Cell size" />
+                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" min="1" max="200"/>
 
             </HBox>
 
         </VBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Button fx:id="startButton" onAction="#handleAnimation" mnemonicParsing="false" text="Start" />
-            <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear" />
-         </children>
+      <HBox prefHeight="100.0">
+         <HBox spacing="15">
+             <Button fx:id="startButton" onAction="#drawCells" mnemonicParsing="false" text="Start Game"/>
+             <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start/Stop animation"/>
+             <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
+         </HBox>
       </HBox>
 
     </HBox>
-   <columnConstraints>
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-   </rowConstraints>
 
 </GridPane>

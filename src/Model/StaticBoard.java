@@ -18,13 +18,6 @@ public class StaticBoard extends Board {
         gameBoard = testBoard;
     }
 
-    /*public StaticBoard(){
-        WIDTH = 200;
-        HEIGHT = 200;
-
-        gameBoard = new byte[WIDTH][HEIGHT];
-    }*/
-
     @Override
     public int getWIDTH(){
         return WIDTH;
@@ -53,5 +46,4 @@ public class StaticBoard extends Board {
     public void setCellState(int x, int y, byte b) {
         gameBoard[x][y] = b;
     }
-
 }
