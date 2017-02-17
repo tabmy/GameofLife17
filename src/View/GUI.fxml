@@ -25,7 +25,7 @@
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." />
                     <MenuItem text="Next" />
-                    <MenuItem text="Start" onAction="#draw"/>
+                    <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
                 <Menu text="View" />

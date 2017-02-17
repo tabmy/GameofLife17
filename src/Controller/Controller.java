@@ -26,8 +26,6 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     @FXML
-    public Button startButton;
-    @FXML
     public Button animBtn;
     @FXML
     public Button clearButton;
