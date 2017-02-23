@@ -28,4 +28,6 @@ public abstract class Board {
     public abstract void nextGeneration();
 
     public abstract void countNeighbours();
+
+    public abstract void clear();
 }

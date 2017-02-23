@@ -49,7 +49,8 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard();
+       // gameBoard = new StaticBoard();
+        gameBoard = new StaticBoard(1000,1000);
         gc = playArea.getGraphicsContext2D();
         initAnimation();
         guiSetup();
@@ -100,7 +101,6 @@ public class Controller implements Initializable {
     public void setTimelineRate() {
         TIMELINE.setRate(speedSlider.getValue());
         speedInd.setText(String.format("%s: %.2f", "Speed", speedSlider.getValue()));
-
     }
 
     @FXML
@@ -112,7 +112,6 @@ public class Controller implements Initializable {
             int cS = gameBoard.getCellState(x, y);
             gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
         }
-
         draw();
     }
 
@@ -124,16 +123,13 @@ public class Controller implements Initializable {
         }
     }
 
-
     @FXML
     public void changeCellSize() {
         gameBoard.setCellSize(cellSizeSlider.getValue());
         draw();
-
     }
 
-    @FXML
-    public void draw() {
+    private void draw() {
         drawBackground();
         drawCells();
     }
@@ -145,7 +141,7 @@ public class Controller implements Initializable {
 
         for (int i = 0; i < gameBoard.getHEIGHT(); i++) {
             for (int j = 0; j < gameBoard.getWIDTH(); j++) {
-                if (gameBoard.getCellState(i, j) == 0) {
+                if (gameBoard.getCellState(i, j) == 1) {
                     gc.fillRect(i * cS, j * cS, cS, cS);
                 }
             }
@@ -159,7 +155,9 @@ public class Controller implements Initializable {
 
     @FXML
     public void clearBoard() {
-        gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
+        gameBoard.clear();
+        draw();
+        //gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
 

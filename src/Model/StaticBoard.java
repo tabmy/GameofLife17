@@ -5,19 +5,19 @@ package Model;
  */
 public class StaticBoard extends Board {
 
-    private byte [][] gameBoard;
+    private byte[][] gameBoard;
+    private byte[][] neighBoard;
     private ConwayRule rule;
     private final int WIDTH;
     private final int HEIGHT;
 
 
     private byte[][] testBoard = {
-            {1,0,0,1},
-            {0,1,1,0},
-            {0,1,1,0},
-            {1,0,0,1}
+            {1, 0, 0, 1},
+            {0, 1, 1, 0},
+            {0, 1, 1, 0},
+            {1, 0, 0, 1}
     };
-
 
     public StaticBoard() {
         WIDTH = HEIGHT = 4;
@@ -27,13 +27,21 @@ public class StaticBoard extends Board {
         rule = new ConwayRule();
     }
 
+    public StaticBoard(int w, int h){
+        WIDTH = w;
+        HEIGHT = h;
+
+        gameBoard = new byte[w][h];
+        rule = new ConwayRule();
+    }
+
     @Override
-    public int getWIDTH(){
+    public int getWIDTH() {
         return WIDTH;
     }
 
     @Override
-    public int getHEIGHT(){
+    public int getHEIGHT() {
         return HEIGHT;
     }
 
@@ -45,12 +53,13 @@ public class StaticBoard extends Board {
             }
         }
     }*/
-   public void nextGeneration() {
-       countNeighbours();
+    public void nextGeneration() {
+        countNeighbours();
+        gameBoard = rule.nextGeneration(gameBoard, neighBoard);
     }
 
     @Override
-    public int getCellState(int x, int y){
+    public int getCellState(int x, int y) {
         return gameBoard[x][y];
     }
 
@@ -61,22 +70,80 @@ public class StaticBoard extends Board {
 
     @Override
     public void countNeighbours() {
-        byte [][] neighBoard = new byte[WIDTH][HEIGHT];
+        neighBoard = new byte[WIDTH][HEIGHT];
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                if(gameBoard[i][j] == 1){
-                    if (i > 0){neighBoard[i-1][j]++;}
-                    if (j > 0){neighBoard[i][j-1]++;}
-                    if (i > 0 && j > 0){neighBoard[i-1][j-1]++;}
-                    if (i < WIDTH - 1){neighBoard[i+1][j]++;}
-                    if (j < HEIGHT - 1){neighBoard[i][j+1]++;}
-                    if (i < WIDTH - 1 && j < HEIGHT - 1){neighBoard[i+1][j+1]++;}
-                    if (i > 0 && j < HEIGHT - 1){neighBoard[i-1][j+1]++;}
-                    if (i < WIDTH - 1 && j > 0){neighBoard[i+1][j-1]++;}
+                if (gameBoard[i][j] == 1) {
+                    if (i > 0) {
+                        neighBoard[i - 1][j]++;
+                    }
+                    if (j > 0) {
+                        neighBoard[i][j - 1]++;
+                    }
+                    if (i > 0 && j > 0) {
+                        neighBoard[i - 1][j - 1]++;
+                    }
+                    if (i < WIDTH - 1) {
+                        neighBoard[i + 1][j]++;
+                    }
+                    if (j < HEIGHT - 1) {
+                        neighBoard[i][j + 1]++;
+                    }
+                    if (i < WIDTH - 1 && j < HEIGHT - 1) {
+                        neighBoard[i + 1][j + 1]++;
+                    }
+                    if (i > 0 && j < HEIGHT - 1) {
+                        neighBoard[i - 1][j + 1]++;
+                    }
+                    if (i < WIDTH - 1 && j > 0) {
+                        neighBoard[i + 1][j - 1]++;
+                    }
                 }
             }
         }
-       gameBoard = rule.nextGeneration(gameBoard, neighBoard);
+        gameBoard = rule.nextGeneration(gameBoard, neighBoard);
     }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                stringBuilder.append(gameBoard[i][j]).toString();
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public void clear(){
+        gameBoard = new byte[WIDTH][HEIGHT];
+    }
+
+    // For testing purposes:
+
+    public void setBoard(byte[][] board){
+        this.gameBoard = board;
+    }
+
+    public byte[][] getGameBoard(){
+        return gameBoard;
+    }
+    public byte[][] getNeighBoard(){
+        return neighBoard;
+    }
+
+    public String neighBoardString(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                stringBuilder.append(neighBoard[i][j]).toString();
+            }
+        }
+        return stringBuilder.toString();
+    }
+
 }
