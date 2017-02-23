@@ -1,12 +1,12 @@
 package Model;
 
 /**
- * Created by Tommy on 07.02.2017.
+ * Created by Toma on 07.02.2017.
  */
 public class StaticBoard extends Board {
 
     private byte [][] gameBoard;
-    private Rule rule;
+    private ConwayRule rule;
     private final int WIDTH;
     private final int HEIGHT;
 
@@ -38,12 +38,15 @@ public class StaticBoard extends Board {
     }
 
     @Override
-    public void nextGeneration(){
+   /* public void nextGeneration(){
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 gameBoard[i][j] = (byte)Math.abs(gameBoard[i][j] -1);
             }
         }
+    }*/
+   public void nextGeneration() {
+       countNeighbours();
     }
 
     @Override
@@ -56,24 +59,24 @@ public class StaticBoard extends Board {
         gameBoard[x][y] = b;
     }
 
-
     @Override
-    public void countNeighbours(){
+    public void countNeighbours() {
         byte [][] neighBoard = new byte[WIDTH][HEIGHT];
 
         for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT ; j++) {
+            for (int j = 0; j < HEIGHT; j++) {
                 if(gameBoard[i][j] == 1){
-                    if (i > 0){neighBoard[i-1][j] += 1;}
-                    if (j > 0){neighBoard[i][j-1] += 1;}
-                    if (i > 0 && j > 0){neighBoard[i-1][j-1] += 1;}
-                    if (i < WIDTH - 1){neighBoard[i+1][j] += 1;}
-                    if (j < HEIGHT - 1){neighBoard[i][j+1] += 1;}
-                    if (i < WIDTH - 1 && j < HEIGHT - 1){neighBoard[i+1][j+1] += 1;}
-                    if (i > 0 && j < HEIGHT - 1){neighBoard[i-1][j+1] += 1;}
-                    if (i < WIDTH - 1 && j > 0){neighBoard[i+1][j-1] += 1;}
+                    if (i > 0){neighBoard[i-1][j]++;}
+                    if (j > 0){neighBoard[i][j-1]++;}
+                    if (i > 0 && j > 0){neighBoard[i-1][j-1]++;}
+                    if (i < WIDTH - 1){neighBoard[i+1][j]++;}
+                    if (j < HEIGHT - 1){neighBoard[i][j+1]++;}
+                    if (i < WIDTH - 1 && j < HEIGHT - 1){neighBoard[i+1][j+1]++;}
+                    if (i > 0 && j < HEIGHT - 1){neighBoard[i-1][j+1]++;}
+                    if (i < WIDTH - 1 && j > 0){neighBoard[i+1][j-1]++;}
                 }
             }
         }
+       gameBoard = rule.nextGeneration(gameBoard, neighBoard);
     }
 }
