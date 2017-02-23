@@ -89,10 +89,12 @@ public class Controller implements Initializable {
         if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
             animationTimer.stop();
+            animBtn.setText("Start");
         } else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
             setTimelineRate();
             TIMELINE.play();
             animationTimer.start();
+            animBtn.setText("Stop");
         }
     }
 
@@ -105,22 +107,19 @@ public class Controller implements Initializable {
 
     @FXML
     public void changeCellState(MouseEvent e) {
-        int x = (int) Math.floor(e.getX() / gameBoard.getCellSize());
-        int y = (int) Math.floor(e.getY() / gameBoard.getCellSize());
-
-        // TODO Fix this method so it doesn't throw ArrayIndexOutOfBounds-exceptions
-        System.out.println("x: " + x + "\ny: " + y);
+        int x = (int) Math.ceil((e.getX() / gameBoard.getCellSize())) -1;
+        int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) -1;
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
             int cS = gameBoard.getCellState(x, y);
             gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
         }
 
-        drawCells();
+        draw();
     }
 
     private boolean indexCheck(int x, int y) {
-        if (x < 0 || y < 0 || x > gameBoard.getWIDTH() || y > gameBoard.getHEIGHT()) {
+        if (x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT()) {
             return false;
         } else {
             return true;

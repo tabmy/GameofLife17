@@ -15,7 +15,7 @@
 
 <?import javafx.scene.shape.Box?>
 <GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1"
-          xmlns="http://javafx.com/javafx/8.0.112" fx:controller="Controller.Controller">
+          xmlns="http://javafx.com/javafx/8.0.60" fx:controller="Controller.Controller">
 
     <stylesheets><URL value="@StyleOfLife.css" /></stylesheets>
 
@@ -89,7 +89,7 @@
         </VBox>
       <HBox prefHeight="100.0">
          <HBox spacing="15">
-             <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start/Stop animation"/>
+             <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
              <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
          </HBox>
       </HBox>
