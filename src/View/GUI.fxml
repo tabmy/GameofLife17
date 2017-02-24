@@ -38,14 +38,14 @@
                     <MenuItem text="10 Cell Row" />
                     <MenuItem text="Lightweight Spaceship" />
                     <MenuItem text="Tumbler" />
-                    <MenuItem text="Gosper Glider Gun" />
+                    <MenuItem text="Gosper Glider Gun" onAction="#gliderGun" />
                 </Menu>
             </MenuBar>
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#changeCellState"
-                onMouseDragged="#changeCellState"/>
+        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#cellClick"
+                onMouseDragged="#cellDrag"/>
     </HBox>
 
     <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">

@@ -21,9 +21,7 @@ public class StaticBoard extends Board {
 
     public StaticBoard() {
         WIDTH = HEIGHT = 4;
-
         gameBoard = testBoard;
-
         rule = new ConwayRule();
     }
 
@@ -46,16 +44,10 @@ public class StaticBoard extends Board {
     }
 
     @Override
-   /* public void nextGeneration(){
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                gameBoard[i][j] = (byte)Math.abs(gameBoard[i][j] -1);
-            }
-        }
-    }*/
     public void nextGeneration() {
         countNeighbours();
-        gameBoard = rule.nextGeneration(gameBoard, neighBoard);
+        rule.nextGeneration(gameBoard,neighBoard);
+        //gameBoard = rule.nextGeneration(gameBoard, neighBoard);
     }
 
     @Override
@@ -102,7 +94,6 @@ public class StaticBoard extends Board {
                 }
             }
         }
-        gameBoard = rule.nextGeneration(gameBoard, neighBoard);
     }
 
     @Override
@@ -114,7 +105,6 @@ public class StaticBoard extends Board {
                 stringBuilder.append(gameBoard[i][j]).toString();
             }
         }
-
         return stringBuilder.toString();
     }
 

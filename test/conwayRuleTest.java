@@ -22,12 +22,8 @@ public class conwayRuleTest {
         });
         board.countNeighbours();
 
-        byte[][] nextGen = rule.nextGeneration(board.getGameBoard(), board.getNeighBoard());
-
-        board.setBoard(nextGen);
-
+        rule.nextGeneration(board.getGameBoard(), board.getNeighBoard());
         Assertions.assertEquals(board.toString(), "0000000000000000");
-
 
         board.setBoard(new byte[][]{
                 {0, 0, 0, 0},
@@ -36,8 +32,8 @@ public class conwayRuleTest {
                 {0, 0, 0, 0}
         });
         board.countNeighbours();
-        nextGen = rule.nextGeneration(board.getGameBoard(),board.getNeighBoard());
-        board.setBoard(nextGen);
+        rule.nextGeneration(board.getGameBoard(),board.getNeighBoard());
+
 
         Assertions.assertEquals(board.toString(), "0000011001100000");
     }

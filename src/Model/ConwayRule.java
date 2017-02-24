@@ -5,7 +5,24 @@ package Model;
  */
 public class ConwayRule extends Rule {
 
-    public byte[][] nextGeneration(byte[][] gameBoard, byte[][] neighBoard) {
+    public void nextGeneration(byte[][] gameBoard, byte[][] neighBoard) {
+
+        for (int i = 0; i < gameBoard.length - 1; i++) {
+            for (int j = 0; j < gameBoard[0].length - 1; j++) {
+
+                if (neighBoard[i][j] == 3) {
+                    gameBoard[i][j] = 1;
+                } else if (gameBoard[i][j] == 1 && neighBoard[i][j] == 2) {
+                    gameBoard[i][j] = 1;
+                } else gameBoard[i][j] = 0;
+            }
+        }
+    }
+}
+
+
+/*          Older version
+ public byte[][] nextGeneration(byte[][] gameBoard, byte[][] neighBoard) {
         byte[][] nextGen = new byte[gameBoard.length][gameBoard[0].length];
         for (int i = 0; i < gameBoard.length - 1; i++) {
             for (int j = 0; j < gameBoard[0].length - 1; j++) {
@@ -24,4 +41,4 @@ public class ConwayRule extends Rule {
 
         return nextGen;
     }
-}
+ */

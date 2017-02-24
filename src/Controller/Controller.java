@@ -1,8 +1,7 @@
 package Controller;
 
-import Model.Board;
+import Model.Shapes;
 import Model.StaticBoard;
-
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -43,7 +42,7 @@ public class Controller implements Initializable {
     public ColorPicker cellColorPicker;
     private GraphicsContext gc;
     private final Timeline TIMELINE = new Timeline();
-    private Board gameBoard;
+    private StaticBoard gameBoard;
     private AnimationTimer animationTimer;
 
 
@@ -103,16 +102,31 @@ public class Controller implements Initializable {
         speedInd.setText(String.format("%s: %.2f", "Speed", speedSlider.getValue()));
     }
 
-    @FXML
-    public void changeCellState(MouseEvent e) {
+
+    private void changeCellState(MouseEvent e, boolean mouseDrag) {
         int x = (int) Math.ceil((e.getX() / gameBoard.getCellSize())) -1;
         int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) -1;
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
-            int cS = gameBoard.getCellState(x, y);
-            gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
+            int cS =  gameBoard.getCellState(x, y);
+            if (mouseDrag){
+                gameBoard.setCellState(x, y, (byte) 1);
+            }
+            else{
+                gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
+            }
         }
         draw();
+    }
+
+    @FXML
+    public void cellDrag(MouseEvent e){
+        changeCellState(e, true);
+    }
+
+    @FXML
+    public void cellClick(MouseEvent e){
+        changeCellState(e, false);
     }
 
     private boolean indexCheck(int x, int y) {
@@ -164,6 +178,11 @@ public class Controller implements Initializable {
     @FXML
     public void colorChange() {
         draw();
+    }
+
+    @FXML
+    public void gliderGun(){
+        gameBoard.setBoard(Shapes.gosperGliderGun());
     }
 
     @FXML
