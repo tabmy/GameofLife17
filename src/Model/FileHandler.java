@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Tommy on 09.03.2017.
@@ -17,11 +19,25 @@ public class FileHandler {
         char chars[] = new char[(int) length];
         reader.read(chars);
         String wholeFile = new String(chars);
-        String[] file = wholeFile.split("\\n");
 
         switch (ext){
-            case "rle" : return readRle(file);
-            case "cells" : return readCells(file);
+            case "rle" : {
+
+                String[] file = wholeFile.split("\\n");
+                return readRle(file);
+            }
+            case "cells" : {
+                Pattern pattern = Pattern.compile("[.O]{2,}");
+                Matcher matcher = pattern.matcher(wholeFile);
+
+                if (matcher.find())
+                wholeFile = matcher.group();
+
+                System.out.println(wholeFile);
+
+                String[] file = wholeFile.split("\\n");
+                return readCells(file);
+            }
 
             default: throw new UnsupportedOperationException("Not coded yet");
         }
@@ -42,8 +58,18 @@ public class FileHandler {
 
     private static byte[][] readCells(String[] str) {
 
-        for (String s: str) {System.out.println(s);
+        int height = 0;
+        int width = 0;
+
+        for (String s: str) {
+            if (s.charAt(0) != '!') {
+                height++;
+            }
+            width = width > s.length() ? s.length() : width;
         }
+
+        byte[][]board = new byte[height][width];
+
 
         return def;
     }
