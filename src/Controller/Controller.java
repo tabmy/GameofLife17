@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.FileHandler;
 import Model.Shapes;
 import Model.StaticBoard;
 import javafx.animation.Animation;
@@ -14,8 +15,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -111,6 +115,8 @@ public class Controller implements Initializable {
      * The timer that handles the game's animation.
      * */
     private AnimationTimer animationTimer;
+
+    private byte [][] loadBoard;
 
 
     /**
@@ -399,6 +405,43 @@ public class Controller implements Initializable {
         gameBoard.setBoard(Shapes.gosperGliderGun());
         shapeLabel.setText("Shape: Gosper Glider Gun");
     }
+
+    // IO-methods
+
+    @FXML
+    private void loadFileDisk(){
+        try{
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle")
+        );
+
+        TIMELINE.stop();
+        animationTimer.stop();
+        animBtn.setText("Start");
+
+
+            File slctFile = fileChooser.showOpenDialog(null);
+
+            if (slctFile != null){
+                loadBoard = FileHandler.readFromDisk(slctFile);
+                gameBoard.setBoard(loadBoard);
+            }
+        }
+        catch (IOException ex){
+
+        }
+
+
+    }
+
+    @FXML
+    private void loadFileNet(){
+
+    }
+
+
+
 
     /**
      * Quits the application safely.

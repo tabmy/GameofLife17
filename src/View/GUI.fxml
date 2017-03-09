@@ -21,7 +21,7 @@
         <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
                 <Menu text="File">
                     <MenuItem text="New..." />
-                    <MenuItem text="Open..." />
+                    <MenuItem text="Open..." onAction="#loadFileDisk" />
                     <MenuItem text="Next" />
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
