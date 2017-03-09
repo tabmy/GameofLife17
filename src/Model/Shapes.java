@@ -3,12 +3,25 @@ package Model;
 /**
  * Created by Tommy on 24.02.2017.
  */
+
+/**
+ * This class provides {@code byte} arrays for the different starting shapes available for Game Of Life. The users can
+ * draw their own shapes, but these are the best known ones.
+ * */
 public class Shapes {
 
+    /**
+     * Implements the {@code byte} array that contains the shape "Gosper Glider Gun". The array dimensions are fixed.
+     *
+     * @return
+     *          Jagged {@code byte} array that contains the "Gosper Glider Gun" shape
+     * */
     public static byte[][] gosperGliderGun(){
 
+        // set fixed values to new array
         byte[][] g = new byte[1000][1000];
 
+        // set values to the array so that the shape becomes the "GGG"
         g[10][26] = 1;
         g[11][24] = g[11][26] = 1;
         g[12][14] = g[12][15] = g[12][22] = g[12][23] = g[12][36] = g[12][37] = 1;

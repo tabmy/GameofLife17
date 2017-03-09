@@ -17,8 +17,6 @@
 <GridPane alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10" xmlns:fx="http://javafx.com/fxml/1"
           xmlns="http://javafx.com/javafx/8.0.60" fx:controller="Controller.Controller">
 
-    <stylesheets><URL value="@StyleOfLife.css" /></stylesheets>
-
     <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
         <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
                 <Menu text="File">
@@ -31,14 +29,14 @@
                 <Menu text="View" />
                 <Menu text="Help" />
                 <Menu text="Shape">
-                    <MenuItem text="Clear" />
-                    <MenuItem text="Glider" />
-                    <MenuItem text="Small Exploder" />
-                    <MenuItem text="Exploder" />
-                    <MenuItem text="10 Cell Row" />
-                    <MenuItem text="Lightweight Spaceship" />
-                    <MenuItem text="Tumbler" />
-                    <MenuItem text="Gosper Glider Gun" onAction="#gliderGun" />
+                    <MenuItem text="Clear" onAction="#clearBoard"/>
+                    <MenuItem text="Glider" onAction="#glider"/>
+                    <MenuItem text="Small Exploder" onAction="#smallExploder"/>
+                    <MenuItem text="Exploder" onAction="#exploder"/>
+                    <MenuItem text="10 Cell Row" onAction="#tenCellRow"/>
+                    <MenuItem text="Lightweight Spaceship" onAction="#lghtwghtSpaceship"/>
+                    <MenuItem text="Tumbler" onAction="#tumbler"/>
+                    <MenuItem text="Gosper Glider Gun" onAction="#gliderGun"/>
                 </Menu>
             </MenuBar>
     </HBox>
@@ -82,7 +80,7 @@
             <HBox spacing="35">
 
                 <Label text="Cell size" />
-                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" min="1" max="200"/>
+                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" min="1" max="100"/>
 
             </HBox>
 
@@ -91,6 +89,7 @@
          <HBox spacing="15">
              <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
              <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
+             <Label fx:id="shapeLabel" text="No start shape selected."/>
          </HBox>
       </HBox>
 
