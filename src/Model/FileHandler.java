@@ -30,12 +30,16 @@ public class FileHandler {
                 Pattern pattern = Pattern.compile("[.O]{2,}");
                 Matcher matcher = pattern.matcher(wholeFile);
 
-                if (matcher.find())
-                wholeFile = matcher.group();
+                //System.out.println(wholeFile);
 
-                System.out.println(wholeFile);
+                StringBuilder sb = new StringBuilder();
 
-                String[] file = wholeFile.split("\\n");
+                while (matcher.find())
+                sb.append(matcher.group() + "\n");
+
+
+
+                String[] file = sb.toString().split("\\n");
                 return readCells(file);
             }
 
@@ -58,19 +62,26 @@ public class FileHandler {
 
     private static byte[][] readCells(String[] str) {
 
-        int height = 0;
+        int height = str.length;
         int width = 0;
 
         for (String s: str) {
-            if (s.charAt(0) != '!') {
-                height++;
-            }
-            width = width > s.length() ? s.length() : width;
+            System.out.println(s);
+            width = width < s.length() ? s.length() : width;
         }
 
-        byte[][]board = new byte[height][width];
+        System.out.println("Height: " + height + "\nWidth: " + width);
 
+        byte[][] board = new byte[1000][1000];
 
-        return def;
+        for (int i = 0; i < height ; i++) {
+            for (int j = 0; j < str[i].length() ; j++) {
+                if(str[i].charAt(j) == 'O'){
+                    board[i + 20][j + 20] = 1;
+                }
+            }
+        }
+
+        return board;
     }
 }
