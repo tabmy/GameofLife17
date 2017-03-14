@@ -150,7 +150,7 @@ public class Controller implements Initializable {
     private void guiSetup() {
         speedSlider.setValue(1);
         setTimelineRate();
-        cellSizeSlider.setValue(20);
+        cellSizeSlider.setValue(15);
         changeCellSize();
         cellColorPicker.setValue(Color.BLACK);
     }
@@ -356,6 +356,8 @@ public class Controller implements Initializable {
 
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
+
+        shapeLabel.setText("No start shape selected.");
         draw();
     }
 
