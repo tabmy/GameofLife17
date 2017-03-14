@@ -14,7 +14,7 @@ public class FileHandler {
 
     private static byte[][] def = new byte[1000][1000];
 
-    public static byte[][] readFile(Reader reader, long length, String ext) throws IOException, UnsupportedPatternException {
+    public static byte[][] readFile(Reader reader, long length, String ext) throws IOException, PatternFormatException {
 
         char chars[] = new char[(int) length];
         reader.read(chars);
@@ -33,11 +33,18 @@ public class FileHandler {
             }
 
             default:
-                throw new UnsupportedPatternException("Unsupported pattern!");
+                throw new PatternFormatException("Unsupported pattern!");
         }
     }
 
-    public static byte[][] readFromDisk(File file) throws IOException, UnsupportedPatternException {
+    public static byte[][] readFromURL(String URL){
+
+
+
+        return def;
+    }
+
+    public static byte[][] readFromDisk(File file) throws IOException, PatternFormatException {
         String ext = file.toString();
         String[] token = ext.split("\\.");
         ext = (token[token.length - 1]).toLowerCase();

@@ -73,14 +73,15 @@
             <HBox fx:id="setSpeed" spacing="18">
 
                 <Label fx:id="speedInd"/>
-                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate"/>
+                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate" onMouseClicked="#setTimelineRate"/>
 
             </HBox>
 
             <HBox spacing="35">
 
-                <Label text="Cell size" />
-                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" min="1" max="100"/>
+                <Label fx:id="sizeInd" text="Cell size" />
+                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize" min="1"
+                        max="100"/>
 
             </HBox>
 
