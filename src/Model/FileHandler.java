@@ -14,7 +14,7 @@ public class FileHandler {
 
     private static byte[][] def = new byte[1000][1000];
 
-    public static byte[][] readFile(Reader reader, long length, String ext) throws IOException {
+    public static byte[][] readFile(Reader reader, long length, String ext) throws IOException, UnsupportedPatternException {
 
         char chars[] = new char[(int) length];
         reader.read(chars);
@@ -28,28 +28,16 @@ public class FileHandler {
                 return readRle(file);
             }
             case "cells": {
-                /*
-                Pattern pattern = Pattern.compile("[.O]{2,}");
-                Matcher matcher = pattern.matcher(wholeFile);
-
-                StringBuilder sb = new StringBuilder();
-
-                while (matcher.find())
-                sb.append(matcher.group() + "\n");
-
-                String tmp = sb.toString();
-                */
-                String[] file = wholeFile.split("\\n");
-
-                return readCells(file);
+               String[] file = wholeFile.split("\\n");
+               return readCells(file);
             }
 
             default:
-                throw new UnsupportedOperationException("Not coded yet");
+                throw new UnsupportedPatternException("Unsupported pattern!");
         }
     }
 
-    public static byte[][] readFromDisk(File file) throws IOException {
+    public static byte[][] readFromDisk(File file) throws IOException, UnsupportedPatternException {
         String ext = file.toString();
         String[] token = ext.split("\\.");
         ext = (token[token.length - 1]).toLowerCase();

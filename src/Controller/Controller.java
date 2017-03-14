@@ -3,6 +3,7 @@ package Controller;
 import Model.FileHandler;
 import Model.Shapes;
 import Model.StaticBoard;
+import Model.UnsupportedPatternException;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -355,6 +356,7 @@ public class Controller implements Initializable {
 
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
+        draw();
     }
 
     /**
@@ -430,6 +432,11 @@ public class Controller implements Initializable {
         }
         catch (IOException ex){
 
+        }
+        catch (UnsupportedPatternException ex){
+            /** TODO
+             * Fix alert window that shows up when this exception is caught!
+             */
         }
 
 
