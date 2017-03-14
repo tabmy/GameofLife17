@@ -20,37 +20,39 @@ public class FileHandler {
         reader.read(chars);
         String wholeFile = new String(chars);
 
-        switch (ext){
-            case "rle" : {
+
+        switch (ext) {
+            case "rle": {
 
                 String[] file = wholeFile.split("\\n");
                 return readRle(file);
             }
-            case "cells" : {
+            case "cells": {
+                /*
                 Pattern pattern = Pattern.compile("[.O]{2,}");
                 Matcher matcher = pattern.matcher(wholeFile);
-
-                //System.out.println(wholeFile);
 
                 StringBuilder sb = new StringBuilder();
 
                 while (matcher.find())
                 sb.append(matcher.group() + "\n");
 
+                String tmp = sb.toString();
+                */
+                String[] file = wholeFile.split("\\n");
 
-
-                String[] file = sb.toString().split("\\n");
                 return readCells(file);
             }
 
-            default: throw new UnsupportedOperationException("Not coded yet");
+            default:
+                throw new UnsupportedOperationException("Not coded yet");
         }
     }
 
     public static byte[][] readFromDisk(File file) throws IOException {
         String ext = file.toString();
         String[] token = ext.split("\\.");
-        ext = (token[token.length-1]).toLowerCase();
+        ext = (token[token.length - 1]).toLowerCase();
 
         return readFile(new FileReader(file), file.length(), ext);
     }
@@ -62,22 +64,28 @@ public class FileHandler {
 
     private static byte[][] readCells(String[] str) {
 
-        int height = str.length;
+        int comments = 0;
+        int height = 0;
         int width = 0;
 
-        for (String s: str) {
-            System.out.println(s);
-            width = width < s.length() ? s.length() : width;
+        for (String s : str) {
+            if (s.charAt(0) != '!') {
+                height++;
+                width = width < s.length() - 1 ? s.length() - 1 : width;
+            } else {
+                comments++;
+            }
+
         }
 
-        System.out.println("Height: " + height + "\nWidth: " + width);
+        System.out.printf("Height: %d \nWidth: %d", height,width);
 
         byte[][] board = new byte[1000][1000];
 
-        for (int i = 0; i < height ; i++) {
-            for (int j = 0; j < str[i].length() ; j++) {
-                if(str[i].charAt(j) == 'O'){
-                    board[i + 20][j + 20] = 1;
+        for (int i = comments; i < str.length; i++) {
+            for (int j = 0; j < str[i].length(); j++) {
+                if (str[i].charAt(j) == 'O') {
+                    board[j][(i - comments)] = 1;
                 }
             }
         }
