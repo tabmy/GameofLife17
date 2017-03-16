@@ -1,9 +1,9 @@
 package Model;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,22 +14,38 @@ public class FileHandler {
 
     private static byte[][] def = new byte[1000][1000];
 
-    public static byte[][] readFile(Reader reader, long length, String ext) throws IOException, PatternFormatException {
+    public static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
 
-        char chars[] = new char[(int) length];
-        reader.read(chars);
-        String wholeFile = new String(chars);
+        ArrayList<Integer> list = new ArrayList<>();
 
+        int nextNum = reader.read();
+        list.add(nextNum);
+        while (nextNum > -1){
+            nextNum = reader.read();
+            list.add(nextNum);
+        }
+        list.remove(list.size()-1);
+
+        char[] file = new char[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            file[i] = (char) ( + list.get(i));
+        }
+
+        String wholeFile = new String(file);
+
+        char ext = wholeFile.charAt(0);
+
+        System.out.println(wholeFile);
 
         switch (ext) {
-            case "rle": {
+            case '#': {
 
-                String[] file = wholeFile.split("\\n");
-                return readRle(file);
+                String[] file1 = wholeFile.split("\\n");
+                return readRle(file1);
             }
-            case "cells": {
-               String[] file = wholeFile.split("\\n");
-               return readCells(file);
+            case '!': {
+               String[] file1 = wholeFile.split("\\n");
+               return readCells(file1);
             }
 
             default:
@@ -37,19 +53,17 @@ public class FileHandler {
         }
     }
 
-    public static byte[][] readFromURL(String URL){
+    public static byte[][] readFromURL(String url) throws IOException, PatternFormatException{
 
+        URL destination = new URL(url);
+        URLConnection conn = destination.openConnection();
 
+        return readFile(new InputStreamReader(conn.getInputStream()));
 
-        return def;
     }
 
     public static byte[][] readFromDisk(File file) throws IOException, PatternFormatException {
-        String ext = file.toString();
-        String[] token = ext.split("\\.");
-        ext = (token[token.length - 1]).toLowerCase();
-
-        return readFile(new FileReader(file), file.length(), ext);
+          return readFile(new FileReader(file));
     }
 
 
