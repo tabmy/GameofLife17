@@ -1,9 +1,9 @@
 package Controller;
 
 import Model.FileHandler;
+import Model.PatternFormatException;
 import Model.Shapes;
 import Model.StaticBoard;
-import Model.UnsupportedPatternException;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -64,6 +64,9 @@ public class Controller implements Initializable {
      * */
     @FXML
     public Slider cellSizeSlider;
+
+    @FXML
+    public Label sizeInd;
 
     /**
      * Slider for altering the speed of the animation.
@@ -299,6 +302,7 @@ public class Controller implements Initializable {
     @FXML
     public void changeCellSize() {
         gameBoard.setCellSize(cellSizeSlider.getValue());
+        sizeInd.setText(String.format("%s : %d", "Cell Size", (int)cellSizeSlider.getValue()));
         draw();
     }
 
@@ -328,7 +332,7 @@ public class Controller implements Initializable {
             for (int j = 0; j < gameBoard.getWIDTH(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j) == 1) {
-                    gc.fillRect(i * cS, j * cS, cS, cS);
+                    gc.fillRect((i * cS) + 10, (j * cS) + 10, cS, cS);
                 }
             }
         }
@@ -435,7 +439,7 @@ public class Controller implements Initializable {
         catch (IOException ex){
 
         }
-        catch (UnsupportedPatternException ex){
+        catch (PatternFormatException ex){
             /** TODO
              * Fix alert window that shows up when this exception is caught!
              */
@@ -448,8 +452,6 @@ public class Controller implements Initializable {
     private void loadFileNet(){
 
     }
-
-
 
 
     /**
