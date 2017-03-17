@@ -1,9 +1,6 @@
 package Model;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +16,6 @@ public class FileHandler {
         char chars[] = new char[(int) length];
         reader.read(chars);
         String wholeFile = new String(chars);
-
 
         switch (ext) {
             case "rle": {
@@ -37,8 +33,7 @@ public class FileHandler {
         }
     }
 
-    public static byte[][] readFromURL(String URL){
-
+    public static byte[][] readFromURL(InputStreamReader reader) {
 
 
         return def;

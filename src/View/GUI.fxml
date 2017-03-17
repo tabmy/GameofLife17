@@ -22,6 +22,7 @@
                 <Menu text="File">
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." onAction="#loadFileDisk" />
+                    <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
                     <MenuItem text="Next" />
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
@@ -42,52 +43,61 @@
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
-        <Canvas fx:id="playArea" height="615" width="750" onMouseClicked="#cellClick"
-                onMouseDragged="#cellDrag"/>
+        <Canvas fx:id="playArea" height="615" width="850" onMouseClicked="#cellClick" onMouseDragged="#cellDrag"/>
 
         <VBox fx:id="instruments" spacing="10" prefHeight="613">
 
             <VBox fx:id="colorPickers" spacing="10">
 
-                <HBox fx:id="setCellColor" spacing="54">
-                    <Label text="Cell color" />
+                <VBox fx:id="setCellColor" spacing="5">
+                    <Label text="Cell color:"/>
                     <ColorPicker fx:id="cellColorPicker" onAction="#colorChange"/>
-                </HBox>
+                </VBox>
 
-                <HBox fx:id="settBackColor" spacing="10">
-                    <Label text="Background color" />
+                <VBox fx:id="settBackColor" spacing="5">
+                    <Label text="Background color:"/>
                     <ColorPicker fx:id="backColorPicker" onAction="#colorChange"/>
-                </HBox>
+                </VBox>
 
             </VBox>
+
+            <Box height="20"/>
 
             <VBox fx:id="sliders" spacing="10">
 
-            <HBox fx:id="setSpeed" spacing="18">
+                <VBox fx:id="setSpeed" spacing="5">
 
-                <Label fx:id="speedInd"/>
-                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate" onMouseClicked="#setTimelineRate"/>
+                    <Label fx:id="speedInd"/>
+                    <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate" maxWidth="130"
+                            onMouseClicked="#setTimelineRate"/>
 
-            </HBox>
+                </VBox>
 
-            <HBox spacing="35">
+                <VBox spacing="5">
 
-                <Label fx:id="sizeInd" text="Cell size" />
-                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize" min="1"
-                        max="100"/>
+                    <Label fx:id="sizeInd" text="Cell size" />
+                    <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize"
+                            min="1" maxWidth="130"/>
 
-            </HBox>
+                </VBox>
 
             </VBox>
+
+            <Box height="20"/>
 
             <HBox>
                 <HBox spacing="15">
                     <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
-                    <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
+                    <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear cells"/>
                 </HBox>
             </HBox>
 
-            <Label fx:id="shapeLabel" text="No start shape selected."/>
+            <Box height="20"/>
+
+            <VBox spacing="5">
+                <Label text="Shape:"/>
+                <Label fx:id="shapeLabel" text="No start shape selected."/>
+            </VBox>
 
         </VBox>
     </HBox>

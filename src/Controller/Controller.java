@@ -19,9 +19,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -380,53 +385,52 @@ public class Controller implements Initializable {
      * */
     @FXML
     public void glider() {
-        shapeLabel.setText("Shape: Glider");
+        shapeLabel.setText("Glider");
     }
 
     @FXML
     public void smallExploder() {
-        shapeLabel.setText("Shape: Small Exploder");
+        shapeLabel.setText("Small Exploder");
     }
 
     @FXML
     public void exploder() {
-        shapeLabel.setText("Shape: Exploder");
+        shapeLabel.setText("Exploder");
     }
 
     @FXML
     public void tenCellRow() {
-        shapeLabel.setText("Shape: 10 Cell Row");
+        shapeLabel.setText("10 Cell Row");
     }
 
     @FXML
     public void lghtwghtSpaceship() {
-        shapeLabel.setText("Shape: Lightweight Spaceship");
+        shapeLabel.setText("Lightweight Spaceship");
     }
 
     @FXML
     public void tumbler() {
-        shapeLabel.setText("Shape: Tumbler");
+        shapeLabel.setText("Tumbler");
     }
 
     @FXML
     public void gliderGun(){
         gameBoard.setBoard(Shapes.gosperGliderGun());
-        shapeLabel.setText("Shape: Gosper Glider Gun");
+        shapeLabel.setText("Gosper Glider Gun");
     }
 
     // IO-methods
 
     @FXML
-    private void loadFileDisk(){
-        try{
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle")
-        );
+    private void loadFileDisk() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
 
-        TIMELINE.stop();
-        animationTimer.stop();
-        animBtn.setText("Start");
+            TIMELINE.stop();
+            animationTimer.stop();
+            animBtn.setText("Start");
 
 
             File slctFile = fileChooser.showOpenDialog(null);
@@ -444,15 +448,33 @@ public class Controller implements Initializable {
              * Fix alert window that shows up when this exception is caught!
              */
         }
-
-
     }
 
     @FXML
-    private void loadFileNet(){
+    private void loadFileNet() throws IOException {
+        TextInputDialog textInputDialog = new TextInputDialog();
 
+        textInputDialog.setTitle("Load file from URL");
+        textInputDialog.setHeaderText("Enter URL to GoL file");
+        textInputDialog.showAndWait();
+
+        Optional<String> url = textInputDialog.showAndWait();
+
+        try {
+            URL destination = new URL(url.toString());
+            URLConnection connection = destination.openConnection();
+            FileHandler.readFromURL(new InputStreamReader(connection.getInputStream()));
+        }
+        catch (MalformedURLException mue) {
+            final Button cancel = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+            //cancel.addEventFilter(ActionEvent., event -> textInputDialog.close());
+
+            while (!url.isPresent()) {
+                textInputDialog.setContentText("Invalid URL!");
+                textInputDialog.showAndWait();
+            }
+        }
     }
-
 
     /**
      * Quits the application safely.
