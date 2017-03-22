@@ -8,6 +8,9 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -23,9 +26,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -432,7 +433,6 @@ public class Controller implements Initializable {
             animationTimer.stop();
             animBtn.setText("Start");
 
-
             File slctFile = fileChooser.showOpenDialog(null);
 
             if (slctFile != null){
@@ -451,29 +451,39 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void loadFileNet() throws IOException {
+    private void loadFileNet() {
         TextInputDialog textInputDialog = new TextInputDialog();
-
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
 
-        Optional<String> url = textInputDialog.showAndWait();
+        String input = textInputDialog.getResult();
 
-        try {
-            URL destination = new URL(url.toString());
-            URLConnection connection = destination.openConnection();
-            FileHandler.readFromURL(new InputStreamReader(connection.getInputStream()));
-        }
-        catch (MalformedURLException mue) {
-            final Button cancel = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-            //cancel.addEventFilter(ActionEvent., event -> textInputDialog.close());
+        final Button cancelButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        final Button okButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.OK);
 
-            while (!url.isPresent()) {
-                textInputDialog.setContentText("Invalid URL!");
-                textInputDialog.showAndWait();
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                textInputDialog.close();
             }
-        }
+        });
+
+        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                try {
+                    loadBoard = FileHandler.readFromURL(input);
+                    gameBoard.setBoard(loadBoard);
+                }
+                catch (IOException ioe) {
+                    textInputDialog.setContentText("Error opening file.");
+                }
+                catch (PatternFormatException pfe) {
+                    // what he said!
+                }
+            }
+        });
     }
 
     /**

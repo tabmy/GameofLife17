@@ -1,6 +1,12 @@
 package Model;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,10 +39,29 @@ public class FileHandler {
         }
     }
 
-    public static byte[][] readFromURL(InputStreamReader reader) {
+    public static byte[][] readFromURL(String input) throws IOException, PatternFormatException {
+        URL url = new URL(input);
+        URLConnection urlConnection = url.openConnection();
 
+        String[] token = url.toString().split("\\.");
+        String extension = token[token.length - 1];
 
-        return def;
+        Path saveLocation = File.createTempFile("golPattern", extension).toPath();
+
+        BufferedWriter writer;
+        BufferedReader reader;
+
+        reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+        writer = Files.newBufferedWriter(saveLocation);
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            writer.write(line);
+            writer.newLine();
+        }
+        writer.close();
+
+        return readFile(new FileReader(saveLocation.toFile()), saveLocation.toFile().length(), extension);
     }
 
     public static byte[][] readFromDisk(File file) throws IOException, PatternFormatException {
