@@ -18,42 +18,36 @@ public class FileHandler {
 
         ArrayList<Integer> list = new ArrayList<>();
 
-        int nextNum = reader.read();
-        list.add(nextNum);
-        while (nextNum > -1){
-            nextNum = reader.read();
+        int nextNum = 0;
+        while (nextNum > -1) {
             list.add(nextNum);
+            nextNum = reader.read();
         }
-        list.remove(list.size()-1);
+        list.remove(0);
 
         char[] file = new char[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            file[i] = (char) ( + list.get(i));
+            file[i] = (char) (+list.get(i));
         }
 
         String wholeFile = new String(file);
 
         char ext = wholeFile.charAt(0);
-
-        System.out.println(wholeFile);
-
         switch (ext) {
             case '#': {
-
                 String[] file1 = wholeFile.split("\\n");
                 return readRle(file1);
             }
             case '!': {
-               String[] file1 = wholeFile.split("\\n");
-               return readCells(file1);
+                String[] file1 = wholeFile.split("\\n");
+                return readCells(file1);
             }
-
             default:
                 throw new PatternFormatException("Unsupported pattern!");
         }
     }
 
-    public static byte[][] readFromURL(String url) throws IOException, PatternFormatException{
+    public static byte[][] readFromURL(String url) throws IOException, PatternFormatException {
 
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
@@ -63,15 +57,50 @@ public class FileHandler {
     }
 
     public static byte[][] readFromDisk(File file) throws IOException, PatternFormatException {
-          return readFile(new FileReader(file));
+        return readFile(new FileReader(file));
     }
 
+    private static byte[][] readRle(String[] str) throws PatternFormatException {
 
-    private static byte[][] readRle(String[] str) {
+        int height = 0;
+        int width = 0;
+        int comments = 0;
+
+        // Finding the height and width of the pattern using regex
+        for(String s : str){
+            if (s.charAt(0) == '#') comments++;
+            if (s.charAt(0) == 'x'){
+                Pattern pattern = Pattern.compile("(x.+ \\d)");
+                Matcher xyMatcher = pattern.matcher(s);
+                if (xyMatcher.find()) {
+                    String xyString;
+                    xyString = xyMatcher.group();
+                    String[] xyString2 = xyString.split(",");
+                    xyString2[0] = xyString2[0].replaceAll("[^\\d+]", "");
+                    xyString2[1] = xyString2[1].replaceAll("[^\\d+]", "");
+                    height = Integer.parseInt(xyString2[0]);
+                    width = Integer.parseInt(xyString2[1]);
+                }
+                comments++;
+            }
+        }
+        if (height == 0 || width == 0) throw new PatternFormatException("Cannot find x or y");
+
+
+        StringBuilder strBuild = new StringBuilder();
+        for (int i = comments; i < str.length ; i++) {
+            str[i] = str[i].replaceAll("[^bo\\d+$]", "");
+            strBuild.append(str[i]);
+        }
+        String rle = strBuild.toString();
+
+
+        System.out.printf("Height: %d\nWidth: %d", height,width);
+
         return def;
     }
 
-    private static byte[][] readCells(String[] str) {
+    private static byte[][] readCells(String[] str) throws PatternFormatException {
 
         int comments = 0;
         int height = 0;
@@ -84,10 +113,10 @@ public class FileHandler {
             } else {
                 comments++;
             }
-
         }
+        if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
 
-        System.out.printf("Height: %d \nWidth: %d", height,width);
+        System.out.printf("Height: %d \nWidth: %d", height, width);
 
         byte[][] board = new byte[1000][1000];
 
