@@ -75,18 +75,18 @@ public class FileHandler {
                 if (xyMatcher.find()) {
                     String xyString;
                     xyString = xyMatcher.group();
-                    String[] xyString2 = xyString.split(",");
-                    xyString2[0] = xyString2[0].replaceAll("[^\\d+]", "");
-                    xyString2[1] = xyString2[1].replaceAll("[^\\d+]", "");
-                    height = Integer.parseInt(xyString2[0]);
-                    width = Integer.parseInt(xyString2[1]);
+                    String[] xyStringArr = xyString.split(",");
+                    xyStringArr[0] = xyStringArr[0].replaceAll("[^\\d+]", "");
+                    xyStringArr[1] = xyStringArr[1].replaceAll("[^\\d+]", "");
+                    height = Integer.parseInt(xyStringArr[0]);
+                    width = Integer.parseInt(xyStringArr[1]);
                 }
                 comments++;
             }
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find x or y");
 
-
+        //Todo include the foreach loop in this loop, so that it only reads the file once
         StringBuilder strBuild = new StringBuilder();
         for (int i = comments; i < str.length ; i++) {
             str[i] = str[i].replaceAll("[^bo\\d+$]", "");
@@ -94,10 +94,38 @@ public class FileHandler {
         }
         String rle = strBuild.toString();
 
+        String[] rlePattern = rle.split("[$]");
 
-        System.out.printf("Height: %d\nWidth: %d", height,width);
+        /*for(String s : rlePattern){
+            System.out.println(s);
+        }*/
 
-        return def;
+        System.out.printf("Height: %d\nWidth: %d\n", height,width);
+        //System.out.println(rle);
+
+        //byte[][] board = new byte[/*width*/ 100][/*height*/ 100];
+        byte[][] board = new byte[height][width];
+
+        Pattern pattern = Pattern.compile("(\\d+)");
+        for (int i = 0; i < rlePattern.length; i++) {
+            System.out.println();
+            Matcher matcher = pattern.matcher(rlePattern[i]);
+            //Parse strengverdien til tallets lengde og legge på indeksering, så jeg vet hvor i strengen jeg er.
+            int index = 0;
+            int number = 0;
+            int strindex = 0;
+            while (matcher.find()) {
+                strindex = matcher.start();
+                String s = matcher.group();
+                number = Integer.parseInt(s);
+                byte cell = rlePattern[i].charAt(strindex + s.length()) == 'b' ? (byte)0 : 1;
+                for (int j = strindex; j < strindex + number ; j++) {
+                    board[j][i] = cell;
+                }
+            }
+        }
+
+        return board;
     }
 
     private static byte[][] readCells(String[] str) throws PatternFormatException {
