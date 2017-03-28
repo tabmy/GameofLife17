@@ -138,7 +138,7 @@ public class Controller implements Initializable {
      * */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(1000,1000);
+        gameBoard = new StaticBoard(10,20);//(1000,1000);
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -334,11 +334,11 @@ public class Controller implements Initializable {
         double cS = gameBoard.getCellSize();
 
         // iterate through the height and width of the board
-        for (int i = 0; i < gameBoard.getHEIGHT(); i++) {
-            for (int j = 0; j < gameBoard.getWIDTH(); j++) {
+        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j) == 1) {
-                    gc.fillRect((i * cS) + 10, (j * cS) + 10, cS, cS);
+                    gc.fillRect((i * cS), (j * cS), cS, cS);
                 }
             }
         }
@@ -437,7 +437,9 @@ public class Controller implements Initializable {
 
             if (slctFile != null){
                 loadBoard = FileHandler.readFromDisk(slctFile);
-                gameBoard.setBoard(loadBoard);
+                //gameBoard.setBoard(loadBoard);
+                gameBoard = new StaticBoard(loadBoard);
+                System.out.println(gameBoard.toStringBoard());
             }
         }
         catch (IOException ex){
