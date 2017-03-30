@@ -1,11 +1,16 @@
 package Controller;
 
+import Model.FileHandler;
+import Model.PatternFormatException;
 import Model.Shapes;
 import Model.StaticBoard;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -14,9 +19,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.net.URL;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -59,6 +70,9 @@ public class Controller implements Initializable {
      * */
     @FXML
     public Slider cellSizeSlider;
+
+    @FXML
+    public Label sizeInd;
 
     /**
      * Slider for altering the speed of the animation.
@@ -112,6 +126,8 @@ public class Controller implements Initializable {
      * */
     private AnimationTimer animationTimer;
 
+    private byte [][] loadBoard;
+
 
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
@@ -122,7 +138,7 @@ public class Controller implements Initializable {
      * */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(1000,1000);
+        gameBoard = new StaticBoard(10,20);//(1000,1000);
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -143,7 +159,7 @@ public class Controller implements Initializable {
     private void guiSetup() {
         speedSlider.setValue(1);
         setTimelineRate();
-        cellSizeSlider.setValue(20);
+        cellSizeSlider.setValue(15);
         changeCellSize();
         cellColorPicker.setValue(Color.BLACK);
     }
@@ -292,6 +308,7 @@ public class Controller implements Initializable {
     @FXML
     public void changeCellSize() {
         gameBoard.setCellSize(cellSizeSlider.getValue());
+        sizeInd.setText(String.format("%s : %d", "Cell Size", (int)cellSizeSlider.getValue()));
         draw();
     }
 
@@ -317,11 +334,11 @@ public class Controller implements Initializable {
         double cS = gameBoard.getCellSize();
 
         // iterate through the height and width of the board
-        for (int i = 0; i < gameBoard.getHEIGHT(); i++) {
-            for (int j = 0; j < gameBoard.getWIDTH(); j++) {
+        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j) == 1) {
-                    gc.fillRect(i * cS, j * cS, cS, cS);
+                    gc.fillRect((i * cS), (j * cS), cS, cS);
                 }
             }
         }
@@ -349,6 +366,9 @@ public class Controller implements Initializable {
 
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
+
+        shapeLabel.setText("No start shape selected.");
+        draw();
     }
 
     /**
@@ -366,38 +386,106 @@ public class Controller implements Initializable {
      * */
     @FXML
     public void glider() {
-        shapeLabel.setText("Shape: Glider");
+        shapeLabel.setText("Glider");
     }
 
     @FXML
     public void smallExploder() {
-        shapeLabel.setText("Shape: Small Exploder");
+        shapeLabel.setText("Small Exploder");
     }
 
     @FXML
     public void exploder() {
-        shapeLabel.setText("Shape: Exploder");
+        shapeLabel.setText("Exploder");
     }
 
     @FXML
     public void tenCellRow() {
-        shapeLabel.setText("Shape: 10 Cell Row");
+        shapeLabel.setText("10 Cell Row");
     }
 
     @FXML
     public void lghtwghtSpaceship() {
-        shapeLabel.setText("Shape: Lightweight Spaceship");
+        shapeLabel.setText("Lightweight Spaceship");
     }
 
     @FXML
     public void tumbler() {
-        shapeLabel.setText("Shape: Tumbler");
+        shapeLabel.setText("Tumbler");
     }
 
     @FXML
     public void gliderGun(){
         gameBoard.setBoard(Shapes.gosperGliderGun());
-        shapeLabel.setText("Shape: Gosper Glider Gun");
+        shapeLabel.setText("Gosper Glider Gun");
+    }
+
+    // IO-methods
+
+    @FXML
+    private void loadFileDisk() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
+
+            TIMELINE.stop();
+            animationTimer.stop();
+            animBtn.setText("Start");
+
+            File slctFile = fileChooser.showOpenDialog(null);
+
+            if (slctFile != null){
+                loadBoard = FileHandler.readFromDisk(slctFile);
+                //gameBoard.setBoard(loadBoard);
+                gameBoard = new StaticBoard(loadBoard);
+                System.out.println(gameBoard.toStringBoard());
+            }
+        }
+        catch (IOException ex){
+
+        }
+        catch (PatternFormatException ex){
+            /** TODO
+             * Fix alert window that shows up when this exception is caught!
+             */
+        }
+    }
+
+    @FXML
+    private void loadFileNet() {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setTitle("Load file from URL");
+        textInputDialog.setHeaderText("Enter URL to GoL file");
+        textInputDialog.showAndWait();
+
+        String input = textInputDialog.getResult();
+
+        final Button cancelButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        final Button okButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.OK);
+
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                textInputDialog.close();
+            }
+        });
+
+        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                try {
+                    loadBoard = FileHandler.readFromURL(input);
+                    gameBoard.setBoard(loadBoard);
+                }
+                catch (IOException ioe) {
+                    textInputDialog.setContentText("Error opening file.");
+                }
+                catch (PatternFormatException pfe) {
+                    // what he said!
+                }
+            }
+        });
     }
 
     /**

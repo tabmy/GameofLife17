@@ -21,7 +21,8 @@
         <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
                 <Menu text="File">
                     <MenuItem text="New..." />
-                    <MenuItem text="Open..." />
+                    <MenuItem text="Open..." onAction="#loadFileDisk" />
+                    <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
                     <MenuItem text="Next" />
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
@@ -41,58 +42,64 @@
             </MenuBar>
     </HBox>
 
-    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <Canvas fx:id="playArea" height="550" width="1000" onMouseClicked="#cellClick"
-                onMouseDragged="#cellDrag"/>
-    </HBox>
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
+        <Canvas fx:id="playArea" height="615" width="850" onMouseClicked="#cellClick" onMouseDragged="#cellDrag"/>
 
-    <HBox fx:id="instruments" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <VBox fx:id="instruments" spacing="10" prefHeight="613">
 
-        <Box width="70"/>
+            <VBox fx:id="colorPickers" spacing="10">
 
-        <VBox fx:id="colorPickers">
+                <VBox fx:id="setCellColor" spacing="5">
+                    <Label text="Cell color:"/>
+                    <ColorPicker fx:id="cellColorPicker" onAction="#colorChange"/>
+                </VBox>
 
-            <HBox fx:id="setCellColor" spacing="54">
+                <VBox fx:id="settBackColor" spacing="5">
+                    <Label text="Background color:"/>
+                    <ColorPicker fx:id="backColorPicker" onAction="#colorChange"/>
+                </VBox>
 
-                <Label text="Cell color" />
-                <ColorPicker fx:id="cellColorPicker" onAction="#colorChange"/>
+            </VBox>
 
+            <Box height="20"/>
+
+            <VBox fx:id="sliders" spacing="10">
+
+                <VBox fx:id="setSpeed" spacing="5">
+
+                    <Label fx:id="speedInd"/>
+                    <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate" maxWidth="130"
+                            onMouseClicked="#setTimelineRate"/>
+
+                </VBox>
+
+                <VBox spacing="5">
+
+                    <Label fx:id="sizeInd" text="Cell size" />
+                    <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize"
+                            min="1" maxWidth="130"/>
+
+                </VBox>
+
+            </VBox>
+
+            <Box height="20"/>
+
+            <HBox>
+                <HBox spacing="15">
+                    <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
+                    <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear cells"/>
+                </HBox>
             </HBox>
 
-            <HBox fx:id="settBackColor" spacing="10">
+            <Box height="20"/>
 
-                <Label text="Background color" />
-                <ColorPicker fx:id="backColorPicker" onAction="#colorChange"/>
-
-            </HBox>
+            <VBox spacing="5">
+                <Label text="Shape:"/>
+                <Label fx:id="shapeLabel" text="No start shape selected."/>
+            </VBox>
 
         </VBox>
-
-        <VBox fx:id="sliders" spacing="10">
-
-            <HBox fx:id="setSpeed" spacing="18">
-
-                <Label fx:id="speedInd"/>
-                <Slider fx:id="speedSlider" max="25" onMouseDragged="#setTimelineRate"/>
-
-            </HBox>
-
-            <HBox spacing="35">
-
-                <Label text="Cell size" />
-                <Slider fx:id="cellSizeSlider" onMouseDragged="#changeCellSize" min="1" max="100"/>
-
-            </HBox>
-
-        </VBox>
-      <HBox prefHeight="100.0">
-         <HBox spacing="15">
-             <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
-             <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear board"/>
-             <Label fx:id="shapeLabel" text="No start shape selected."/>
-         </HBox>
-      </HBox>
-
     </HBox>
 
 </GridPane>
