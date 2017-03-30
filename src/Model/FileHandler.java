@@ -96,29 +96,26 @@ public class FileHandler {
 
         String[] rlePattern = rle.split("[$]");
 
-        /*for(String s : rlePattern){
-            System.out.println(s);
-        }*/
-
-        System.out.printf("Height: %d\nWidth: %d\n", height,width);
+        //System.out.printf("Height: %d\nWidth: %d\n", height,width);
         //System.out.println(rle);
 
         //byte[][] board = new byte[/*width*/ 100][/*height*/ 100];
         byte[][] board = new byte[height][width];
 
-        Pattern pattern = Pattern.compile("(\\d+)");
+        Pattern numpattern = Pattern.compile("(\\d+)");
+        Pattern liveCell = Pattern.compile("o");
         for (int i = 0; i < rlePattern.length; i++) {
-            System.out.println();
-            Matcher matcher = pattern.matcher(rlePattern[i]);
+            Matcher numMatcher = numpattern.matcher(rlePattern[i]);
+            Matcher cellMatcher = liveCell.matcher(rlePattern[i]);
             //Parse strengverdien til tallets lengde og legge på indeksering, så jeg vet hvor i strengen jeg er.
             int index = 0;
             int number = 0;
             int strindex = 0;
-            while (matcher.find()) {
-                strindex = matcher.start();
-                String s = matcher.group();
+            while (numMatcher.find()) {
+                strindex = numMatcher.start();
+                String s = numMatcher.group();
                 number = Integer.parseInt(s);
-                byte cell = rlePattern[i].charAt(strindex + s.length()) == 'b' ? (byte)0 : 1;
+                byte cell = rlePattern[i].charAt(strindex + s.length()) == 'o' ? (byte)1 : 0;
                 for (int j = strindex; j < strindex + number ; j++) {
                     board[j][i] = cell;
                 }
