@@ -103,7 +103,7 @@ public class FileHandler {
         byte[][] board = new byte[height][width];
 
         Pattern numpattern = Pattern.compile("(\\d+)");
-        Pattern liveCell = Pattern.compile("o");
+        Pattern liveCell = Pattern.compile("[bo]");
         for (int i = 0; i < rlePattern.length; i++) {
             Matcher numMatcher = numpattern.matcher(rlePattern[i]);
             Matcher cellMatcher = liveCell.matcher(rlePattern[i]);
@@ -111,13 +111,26 @@ public class FileHandler {
             int index = 0;
             int number = 0;
             int strindex = 0;
-            while (numMatcher.find()) {
-                strindex = numMatcher.start();
-                String s = numMatcher.group();
-                number = Integer.parseInt(s);
-                byte cell = rlePattern[i].charAt(strindex + s.length()) == 'o' ? (byte)1 : 0;
-                for (int j = strindex; j < strindex + number ; j++) {
-                    board[j][i] = cell;
+            boolean cellFound = cellMatcher.find();
+            boolean numFound = numMatcher.find();
+            while (cellFound || numFound) {
+                if (numFound) {
+                    strindex = numMatcher.start();
+                    String s = numMatcher.group();
+                    number = Integer.parseInt(s);
+                    byte cell = rlePattern[i].charAt(strindex + s.length()) == 'o' ? (byte) 1 : 0;
+                    for (int j = strindex; j < strindex + number; j++) {
+                        board[j][i] = cell;
+                        index++;
+                    }
+                    numFound = numMatcher.find();
+                }
+                if (cellFound){
+                    strindex = cellMatcher.start();
+                    byte cell = cellMatcher.group().equals("o") ? (byte) 1 : 0;
+                    board[index][i] = cell;
+                    cellFound = cellMatcher.find();
+                    index++;
                 }
             }
         }

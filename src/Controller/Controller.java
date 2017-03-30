@@ -446,9 +446,7 @@ public class Controller implements Initializable {
 
         }
         catch (PatternFormatException ex){
-            /** TODO
-             * Fix alert window that shows up when this exception is caught!
-             */
+            // TODO: Fix alert window that shows up when this exception is caught!
         }
     }
 

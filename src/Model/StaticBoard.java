@@ -230,7 +230,7 @@ public class StaticBoard extends Board {
         // iterate through board and append to StringBuilder
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH ; j++) {
-                stringBuilder.append(gameBoard[j][i]);
+                stringBuilder.append(gameBoard[j][i] == 1 ? 1 : " ");
             }
             stringBuilder.append("\n");
         }
