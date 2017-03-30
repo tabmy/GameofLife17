@@ -138,7 +138,7 @@ public class Controller implements Initializable {
      * */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(10,20);//(1000,1000);
+        gameBoard = new StaticBoard(1000,1000);//(1000,1000);
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -480,6 +480,7 @@ public class Controller implements Initializable {
                 }
                 catch (IOException ioe) {
                     textInputDialog.setContentText("Error opening file.");
+                    textInputDialog.showAndWait();
                 }
                 catch (PatternFormatException pfe) {
                     // what he said!
