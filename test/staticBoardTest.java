@@ -27,6 +27,7 @@ public class staticBoardTest {
                 {0, 1, 0, 1}
         });
         string = board.toString();
+        System.out.println(board.toStringBoard());
         Assertions.assertEquals(string, "1100001110100101");
     }
 

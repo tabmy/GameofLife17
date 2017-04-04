@@ -99,39 +99,61 @@ public class FileHandler {
         //System.out.printf("Height: %d\nWidth: %d\n", height,width);
         //System.out.println(rle);
 
-        //byte[][] board = new byte[/*width*/ 100][/*height*/ 100];
         byte[][] board = new byte[height][width];
 
-        Pattern numpattern = Pattern.compile("(\\d+)");
-        Pattern liveCell = Pattern.compile("[bo]");
+        Pattern numPattern = Pattern.compile("(\\d+)");
+        Pattern cellPattern = Pattern.compile("[bo]");
         for (int i = 0; i < rlePattern.length; i++) {
-            Matcher numMatcher = numpattern.matcher(rlePattern[i]);
-            Matcher cellMatcher = liveCell.matcher(rlePattern[i]);
+            Matcher numMatcher = numPattern.matcher(rlePattern[i]);
+            Matcher cellMatcher = cellPattern.matcher(rlePattern[i]);
             //Parse strengverdien til tallets lengde og legge på indeksering, så jeg vet hvor i strengen jeg er.
             int index = 0;
             int number = 0;
-            int strindex = 0;
+            int strIndex = 0;
+            int cellIndex = 0;
+            int numIndex = 0;
             boolean cellFound = cellMatcher.find();
             boolean numFound = numMatcher.find();
+
+            // Løkken her skal gå igjennom strengen med bokstav og tallsymboliseringen av mønstrene i RLE-format
+            // Meningen er at den skal finne et tall (om det er der), så en bokstav: o eller b, som symboliserer en
+            // levende eller død celle. Tallet skal representere antall av den neste bokstaven (levende eller døde
+            // celler etter hverandre)
+            // Problemet nå er at det ikke er noen oversikt over hvor i strengen man er, så det hender at to tall
+            // blir parset etter hverandre uten å gå igjennom enkeltbokstavene.
+
+            // Hjelpevariabler som trenges:
+            // En teller til å holde indeks til selve tabellen, så vi setter inn riktig verdi på riktig plass
+            // En teller til å sjekke tallet som parses til int fra streng
+            // En streng til å kunne bli parset til int, samt for å vite lengden til strengen(antall siffer i tallet)
+            // En (to?) teller til å holde styr på hvor i rle-pattern-strengen vi er, så man kan sjekke om det neste
+            // vi
+            // skal legge inn i arrayet er en enkeltverdi eller en tall-løkke-verdi (flere enn en om gangen)
+
+
             while (cellFound || numFound) {
-                if (numFound) {
-                    strindex = numMatcher.start();
-                    String s = numMatcher.group();
-                    number = Integer.parseInt(s);
-                    byte cell = rlePattern[i].charAt(strindex + s.length()) == 'o' ? (byte) 1 : 0;
-                    for (int j = strindex; j < strindex + number; j++) {
-                        board[j][i] = cell;
-                        index++;
-                    }
-                    numFound = numMatcher.find();
-                }
-                if (cellFound){
-                    strindex = cellMatcher.start();
+                if (cellFound && cellIndex <= numIndex){
                     byte cell = cellMatcher.group().equals("o") ? (byte) 1 : 0;
                     board[index][i] = cell;
                     cellFound = cellMatcher.find();
+                    if (cellFound)cellIndex = cellMatcher.start();
+                    else cellIndex++;
                     index++;
                 }
+                if (numFound) {
+                    strIndex = numMatcher.start();
+                    String s = numMatcher.group();
+                    number = Integer.parseInt(s) -1;
+                    byte cell = rlePattern[i].charAt(strIndex + s.length()) == 'o' ? (byte) 1 : 0;
+                    for (int j = strIndex; j < strIndex + number; j++) {
+                        board[j][i] = cell;
+                    }
+                    index += number;
+
+                    numFound = numMatcher.find();
+                    if (numFound)numIndex = numMatcher.start();
+                }
+                else break;
             }
         }
 

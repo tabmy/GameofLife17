@@ -440,6 +440,7 @@ public class Controller implements Initializable {
                 //gameBoard.setBoard(loadBoard);
                 gameBoard = new StaticBoard(loadBoard);
                 System.out.println(gameBoard.toStringBoard());
+                draw();
             }
         }
         catch (IOException ex){
