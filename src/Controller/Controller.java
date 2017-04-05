@@ -175,18 +175,22 @@ public class Controller implements Initializable {
         int c = keyEvent.getKeyCode();
 
         switch (c) {
-            case 37:
+            case 37: {
                 System.out.println("Left arrow key pressed!");
                 break;
-            case 38:
+            }
+            case 38: {
                 System.out.println("Up arrow key pressed!");
                 break;
-            case 39:
+            }
+            case 39: {
                 System.out.println("Right arrow key pressed!");
                 break;
-            case 40:
+            }
+            case 40: {
                 System.out.println("Down arrow key pressed!");
                 break;
+            }
         }
     }
 
@@ -475,8 +479,14 @@ public class Controller implements Initializable {
 
         }
         catch (PatternFormatException ex){
-            // TODO: Fix alert window that shows up when this exception is caught!
             System.out.println(ex.getMessage());
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("PatternFormatException");
+            alert.setHeaderText("Error opening file");
+            alert.setContentText("Wrong pattern format!");
+
+            alert.showAndWait();
         }
         draw();
     }
