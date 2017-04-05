@@ -67,7 +67,7 @@ public class FileHandler {
         int comments = 0;
 
         // Finding the height and width of the pattern using regex
-        for(String s : str){
+        for (String s : str){
             if (s.charAt(0) == '#') comments++;
             if (s.charAt(0) == 'x'){
                 Pattern pattern = Pattern.compile("(x.+ \\d)");
