@@ -467,19 +467,24 @@ public class Controller implements Initializable {
         final Button cancelButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
         final Button okButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.OK);
 
+
+        /*
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
+                System.out.println("closing window");
                 textInputDialog.close();
             }
         });
 
-        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                try {
+        //okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+          //  @Override
+            //public void handle(javafx.event.ActionEvent event) {
+              */  try {
+                    System.out.println("sending url");
                     loadBoard = FileHandler.readFromURL(input);
-                    gameBoard.setBoard(loadBoard);
+                    gameBoard = new StaticBoard(loadBoard);
+                    gameBoard.setCellSize(cellSizeSlider.getValue());
                 }
                 catch (IOException ioe) {
                     textInputDialog.setContentText("Error opening file.");
@@ -488,8 +493,8 @@ public class Controller implements Initializable {
                 catch (PatternFormatException pfe) {
                     // what he said!
                 }
-            }
-        });
+            draw();
+        ;//}});
     }
 
     /**
