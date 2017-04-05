@@ -16,13 +16,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import java.awt.event.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -138,7 +145,7 @@ public class Controller implements Initializable {
      * */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(1000,1000);//(1000,1000);
+        gameBoard = new StaticBoard(1000,1000);
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -162,6 +169,29 @@ public class Controller implements Initializable {
         cellSizeSlider.setValue(15);
         changeCellSize();
         cellColorPicker.setValue(Color.BLACK);
+    }
+
+    private void placeGameBoard(KeyEvent keyEvent) {
+        int c = keyEvent.getKeyCode();
+
+        switch (c) {
+            case 37: {
+                System.out.println("Left arrow key pressed!");
+                break;
+            }
+            case 38: {
+                System.out.println("Up arrow key pressed!");
+                break;
+            }
+            case 39: {
+                System.out.println("Right arrow key pressed!");
+                break;
+            }
+            case 40: {
+                System.out.println("Down arrow key pressed!");
+                break;
+            }
+        }
     }
 
     /**
@@ -246,7 +276,7 @@ public class Controller implements Initializable {
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
             // get the state of the clicked cell
-            int cS =  gameBoard.getCellState(x, y);
+            int cS = gameBoard.getCellState(x, y);
 
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag){
@@ -449,8 +479,14 @@ public class Controller implements Initializable {
 
         }
         catch (PatternFormatException ex){
-            // TODO: Fix alert window that shows up when this exception is caught!
             System.out.println(ex.getMessage());
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("PatternFormatException");
+            alert.setHeaderText("Error opening file");
+            alert.setContentText("Wrong pattern format!");
+
+            alert.showAndWait();
         }
         draw();
     }
