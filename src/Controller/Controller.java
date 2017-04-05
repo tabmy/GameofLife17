@@ -437,9 +437,7 @@ public class Controller implements Initializable {
 
             if (slctFile != null){
                 loadBoard = FileHandler.readFromDisk(slctFile);
-                //gameBoard.setBoard(loadBoard);
                 gameBoard = new StaticBoard(loadBoard);
-                System.out.println(gameBoard.toStringBoard());
                 draw();
             }
         }

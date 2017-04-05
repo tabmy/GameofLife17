@@ -99,61 +99,31 @@ public class FileHandler {
         //System.out.printf("Height: %d\nWidth: %d\n", height,width);
         //System.out.println(rle);
 
-        byte[][] board = new byte[height][width];
+        byte[][] board = new byte[height + 100][width + 100];
 
-        Pattern numPattern = Pattern.compile("(\\d+)");
-        Pattern cellPattern = Pattern.compile("[bo]");
+        Pattern pattern = Pattern.compile("[\\dbo]");
         for (int i = 0; i < rlePattern.length; i++) {
-            Matcher numMatcher = numPattern.matcher(rlePattern[i]);
-            Matcher cellMatcher = cellPattern.matcher(rlePattern[i]);
-            //Parse strengverdien til tallets lengde og legge på indeksering, så jeg vet hvor i strengen jeg er.
+            Matcher matcher = pattern.matcher(rlePattern[i]);
+            boolean found = matcher.find();
+            StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
-            int number = 0;
-            int strIndex = 0;
-            int cellIndex = 0;
-            int numIndex = 0;
-            boolean cellFound = cellMatcher.find();
-            boolean numFound = numMatcher.find();
-
-            // Løkken her skal gå igjennom strengen med bokstav og tallsymboliseringen av mønstrene i RLE-format
-            // Meningen er at den skal finne et tall (om det er der), så en bokstav: o eller b, som symboliserer en
-            // levende eller død celle. Tallet skal representere antall av den neste bokstaven (levende eller døde
-            // celler etter hverandre)
-            // Problemet nå er at det ikke er noen oversikt over hvor i strengen man er, så det hender at to tall
-            // blir parset etter hverandre uten å gå igjennom enkeltbokstavene.
-
-            // Hjelpevariabler som trenges:
-            // En teller til å holde indeks til selve tabellen, så vi setter inn riktig verdi på riktig plass
-            // En teller til å sjekke tallet som parses til int fra streng
-            // En streng til å kunne bli parset til int, samt for å vite lengden til strengen(antall siffer i tallet)
-            // En (to?) teller til å holde styr på hvor i rle-pattern-strengen vi er, så man kan sjekke om det neste
-            // vi
-            // skal legge inn i arrayet er en enkeltverdi eller en tall-løkke-verdi (flere enn en om gangen)
-
-
-            while (cellFound || numFound) {
-                if (cellFound && cellIndex <= numIndex){
-                    byte cell = cellMatcher.group().equals("o") ? (byte) 1 : 0;
-                    board[index][i] = cell;
-                    cellFound = cellMatcher.find();
-                    if (cellFound)cellIndex = cellMatcher.start();
-                    else cellIndex++;
-                    index++;
-                }
-                if (numFound) {
-                    strIndex = numMatcher.start();
-                    String s = numMatcher.group();
-                    number = Integer.parseInt(s) -1;
-                    byte cell = rlePattern[i].charAt(strIndex + s.length()) == 'o' ? (byte) 1 : 0;
-                    for (int j = strIndex; j < strIndex + number; j++) {
-                        board[j][i] = cell;
+            while (found){
+                String s1 = matcher.group();
+                if (s1.equals("o") || s1.equals("b")){
+                    int number = 1;
+                    if (! stringBuilder.toString().equals("")) {
+                      number = Integer.parseInt(stringBuilder.toString());
+                    }
+                    for (int j = index; j < index + (number ) ; j++) {
+                        board[j][i] = s1.equals("o") ? (byte)1 : 0;
                     }
                     index += number;
-
-                    numFound = numMatcher.find();
-                    if (numFound)numIndex = numMatcher.start();
+                    stringBuilder = new StringBuilder();
                 }
-                else break;
+                else{
+                    stringBuilder.append(s1);
+                }
+                found = matcher.find();
             }
         }
 
@@ -176,7 +146,7 @@ public class FileHandler {
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
 
-        System.out.printf("Height: %d \nWidth: %d", height, width);
+       // System.out.printf("Height: %d \nWidth: %d", height, width);
 
         byte[][] board = new byte[1000][1000];
 
