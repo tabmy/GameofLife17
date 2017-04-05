@@ -14,7 +14,7 @@ public abstract class Board {
     /**
      * The size of the cells is initially set to 0.
      * */
-    private double cellSize = 0;
+    private double cellSize = 1;
 
     /**
      * The set of rules used for the game.

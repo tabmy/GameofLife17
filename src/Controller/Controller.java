@@ -463,19 +463,22 @@ public class Controller implements Initializable {
 
             if (slctFile != null){
                 loadBoard = FileHandler.readFromDisk(slctFile);
-                //gameBoard.setBoard(loadBoard);
+
+                //Todo Fix shit, så vi ikke lager nytt objekt, men setter mønsteret inn i det nåværende brettet
+                // @Branislav
                 gameBoard = new StaticBoard(loadBoard);
-                System.out.println(gameBoard.toStringBoard());
+                gameBoard.setCellSize(cellSizeSlider.getValue());
+
             }
         }
         catch (IOException ex){
 
         }
         catch (PatternFormatException ex){
-            /** TODO
-             * Fix alert window that shows up when this exception is caught!
-             */
+            // TODO: Fix alert window that shows up when this exception is caught!
+            System.out.println(ex.getMessage());
         }
+        draw();
     }
 
     @FXML
