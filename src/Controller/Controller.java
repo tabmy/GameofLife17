@@ -126,7 +126,7 @@ public class Controller implements Initializable {
      * */
     private AnimationTimer animationTimer;
 
-    private byte [][] loadBoard;
+    private byte[][] loadBoard;
 
 
     /**
@@ -438,11 +438,13 @@ public class Controller implements Initializable {
             if (slctFile != null){
                 loadBoard = FileHandler.readFromDisk(slctFile);
 
-                //Todo Fix shit, så vi ikke lager nytt objekt, men setter mønsteret inn i det nåværende brettet
-                // @Branislav
-                gameBoard = new StaticBoard(loadBoard);
-                gameBoard.setCellSize(cellSizeSlider.getValue());
+                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                        gameBoard.setCellState(i, j, loadBoard[i][j]);
+                    }
+                }
 
+                gameBoard.setCellSize(cellSizeSlider.getValue());
             }
         }
         catch (IOException ex){
@@ -483,7 +485,13 @@ public class Controller implements Initializable {
               */  try {
                     System.out.println("sending url");
                     loadBoard = FileHandler.readFromURL(input);
-                    gameBoard = new StaticBoard(loadBoard);
+
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            gameBoard.setCellState(i, j, loadBoard[i][j]);
+                        }
+                    }
+
                     gameBoard.setCellSize(cellSizeSlider.getValue());
                 }
                 catch (IOException ioe) {
