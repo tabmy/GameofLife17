@@ -8,6 +8,7 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -16,18 +17,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.*;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -138,7 +138,10 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(1000, 1000);//(1000,1000);
+        gameBoard = new StaticBoard(
+                (int)(playArea.getHeight()/cellSizeSlider.getMin()),(int)(playArea.getWidth()
+                /cellSizeSlider.getMin())
+        );
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -355,11 +358,11 @@ public class Controller implements Initializable {
         int width = gameBoard.getWIDTH();
         int height = gameBoard.getHEIGHT();
         double cS = cellSizeSlider.getValue();
-        for (int i = 0; i < width; i+=cS) {
-            gc.strokeLine(i + 0.25, 0.25, i+0.25, height+0.25);
+        for (int i = 0; i < width; i++) {
+            gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height*cS +0.25);
         }
-        for (int i = 0; i < height; i+=cS) {
-            gc.strokeLine(0.25, i+0.25, width+0.25, i+0.25);
+        for (int i = 0; i < height; i++) {
+            gc.strokeLine(0.25, i * cS + 0.25, width * cS +0.25, i * cS +0.25);
         }
     }
 
@@ -458,7 +461,8 @@ public class Controller implements Initializable {
 
         } catch (PatternFormatException ex) {
             System.out.println(ex.getMessage());
-            alert.setHeaderText(ex.getMessage());
+            alert.setHeaderText("Pattern error!");
+            alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
         draw();
@@ -488,7 +492,8 @@ public class Controller implements Initializable {
             gameBoard.setCellSize(cellSizeSlider.getValue());
 
         } catch (PatternFormatException pfe) {
-            alert.setHeaderText(pfe.getMessage());
+            alert.setHeaderText("Pattern error!");
+            alert.setContentText(pfe.getMessage());
             alert.showAndWait();
 
         } catch (IOException ioe) {
@@ -510,5 +515,20 @@ public class Controller implements Initializable {
     @FXML
     public void exitApplication() {
         System.exit(0);
+    }
+
+    @FXML
+    private void randomize(KeyEvent e){
+        // Easter egg
+       if (e.getCode().toString().toLowerCase().equals("r")){
+           backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+           cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+           draw();
+       }
+       else if (e.getCode().toString().toLowerCase().equals("d")){
+           backColorPicker.setValue(Color.WHITE);
+           cellColorPicker.setValue(Color.BLACK);
+           draw();
+       }
     }
 }

@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
  */
 public class FileHandler {
 
-    private static byte[][] def = new byte[1000][1000];
-
     public static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
 
         ArrayList<Integer> list = new ArrayList<>();
@@ -36,22 +34,16 @@ public class FileHandler {
                 String[] file1 = wholeFile.split("\\n");
                 return readRle(file1);
             }
-            case 'x': {
-                String[] file1 = wholeFile.split("\\n");
-                return readRle(file1);
-            }
             case '!': {
                 String[] file1 = wholeFile.split("\\n");
                 return readCells(file1);
             }
             default:
-                throw new PatternFormatException("Unsupported pattern!");
+                throw new PatternFormatException("Unsupported pattern format!");
         }
     }
 
     public static byte[][] readFromURL(String url) throws IOException, PatternFormatException {
-
-        System.out.println(url);
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
         return readFile(new BufferedReader(new InputStreamReader(conn.getInputStream())));
@@ -80,13 +72,11 @@ public class FileHandler {
                     String[] xyStringArr = xyString.split(",");
                     xyStringArr[0] = xyStringArr[0].replaceAll("[^\\d+]", "");
                     xyStringArr[1] = xyStringArr[1].replaceAll("[^\\d+]", "");
-                    height = Integer.parseInt(xyStringArr[0]);
-                    width = Integer.parseInt(xyStringArr[1]);
+                    width = Integer.parseInt(xyStringArr[0]);
+                    height = Integer.parseInt(xyStringArr[1]);
                 }
                 comments++;
-            }
-            else {
-                str[i] = str[i].replaceAll("[^bo\\d$]", "");
+            } else {
                 strBuild.append(str[i]);
             }
         }
@@ -94,11 +84,13 @@ public class FileHandler {
 
         String rle = strBuild.toString();
         String[] rlePattern = rle.split("[$]");
-        byte[][] board = new byte[height + 100][width + 100];
+        byte[][] board = new byte[width + 100][height + 100];
+
+        System.out.printf("Height: %d\nWidth: %d", height, width);
 
         // Reading pattern from RLE-string, setting values to correct location in board[][] according to RLE
         // pattern file.
-        Pattern pattern = Pattern.compile("[\\dbo]");
+        Pattern pattern = Pattern.compile("[\\dbo!]");
         for (int i = 0; i < rlePattern.length; i++) {
             Matcher matcher = pattern.matcher(rlePattern[i]);
             boolean found = matcher.find();
@@ -116,13 +108,17 @@ public class FileHandler {
                     }
                     index += number;
                     stringBuilder = new StringBuilder();
+                } else if (s1.equals("!")) {
+                    return board;
                 } else {
                     stringBuilder.append(s1);
                 }
                 found = matcher.find();
             }
+            if (index != width)
+                throw new PatternFormatException("Incorrect number of cells in row " + (i + 1));
         }
-        return board;
+        throw new PatternFormatException("Cannot find end symbol \"!\" ");
     }
 
     private static byte[][] readCells(String[] str) throws PatternFormatException {
@@ -141,7 +137,7 @@ public class FileHandler {
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
 
-        byte[][] board = new byte[1000][1000];
+        byte[][] board = new byte[width + 100][height + 100];
 
         for (int i = comments; i < str.length; i++) {
             for (int j = 0; j < str[i].length(); j++) {
