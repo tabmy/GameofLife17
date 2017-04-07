@@ -23,7 +23,7 @@
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." onAction="#loadFileDisk" />
                     <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
-                    <MenuItem text="Next" />
+                    <MenuItem text="Next" onAction="#nextGen"/>
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
@@ -97,6 +97,7 @@
             <VBox spacing="5">
                 <Label text="Shape:"/>
                 <Label fx:id="shapeLabel" text="No start shape selected."/>
+                <Label fx:id="genLabel"/>
             </VBox>
 
         </VBox>
