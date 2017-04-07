@@ -16,20 +16,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import java.awt.event.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,7 +31,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
- *
  * {@code Controller} is a class that handles the functionality of all the components in the graphical user interface
  * of Game Of Life. It implements the {@code Initializable} interface and overrides the method {@code Initialize()}
  * from it.
@@ -48,33 +40,33 @@ import java.util.ResourceBundle;
  * @author Branislav Petrovic
  * @author Tommy Abelsen
  * @version 1.0
- * @since 20.01.2017
  * @see javafx.fxml.Initializable
+ * @since 20.01.2017
  */
 
 public class Controller implements Initializable {
 
     /**
      * Start/stop button for the animation.
-     * */
+     */
     @FXML
     public Button animBtn;
 
     /**
      * Button that clears the canvas.
-     * */
+     */
     @FXML
     public Button clearButton;
 
     /**
      * Main canvas that provides the space for the board.
-     * */
+     */
     @FXML
     public Canvas playArea;
 
     /**
      * Slider for altering the size of the cells.
-     * */
+     */
     @FXML
     public Slider cellSizeSlider;
 
@@ -83,58 +75,59 @@ public class Controller implements Initializable {
 
     /**
      * Slider for altering the speed of the animation.
-     * */
+     */
     @FXML
     public Slider speedSlider;
 
     /**
      * Label that indicates the speed of the animation.
-     * */
+     */
     @FXML
     public Label speedInd;
 
     /**
      * Label that indicates the current selected shape.
-     * */
+     */
     @FXML
     public Label shapeLabel;
 
     /**
      * Color picker for selecting the canvas background color.
-     * */
+     */
     @FXML
     public ColorPicker backColorPicker;
 
     /**
      * Color picker for selecting the color of the cells.
-     * */
+     */
     @FXML
     public ColorPicker cellColorPicker;
 
     /**
      * The graphics context of {@code playArea}.
-     * */
+     */
     private GraphicsContext gc;
 
     /**
      * {@code Timeline} used to specify the animation.
-     * */
+     */
     private final Timeline TIMELINE = new Timeline();
 
     /**
      * The board used to draw the cells.
      *
      * @see Model.StaticBoard
-     * */
+     */
     private StaticBoard gameBoard;
 
     /**
      * The timer that handles the game's animation.
-     * */
+     */
     private AnimationTimer animationTimer;
 
-    private byte [][] loadBoard;
+    private byte[][] loadBoard;
 
+    private TextInputDialog textInputDialog = new TextInputDialog();
 
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
@@ -142,10 +135,10 @@ public class Controller implements Initializable {
      *
      * @see Model.StaticBoard
      * @see javafx.scene.canvas.Canvas
-     * */
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(1000,1000);
+        gameBoard = new StaticBoard(1000, 1000);//(1000,1000);
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -162,36 +155,13 @@ public class Controller implements Initializable {
      *
      * @see javafx.scene.control.Slider
      * @see javafx.scene.control.ColorPicker
-     * */
+     */
     private void guiSetup() {
         speedSlider.setValue(1);
         setTimelineRate();
         cellSizeSlider.setValue(15);
         changeCellSize();
         cellColorPicker.setValue(Color.BLACK);
-    }
-
-    private void placeGameBoard(KeyEvent keyEvent) {
-        int c = keyEvent.getKeyCode();
-
-        switch (c) {
-            case 37: {
-                System.out.println("Left arrow key pressed!");
-                break;
-            }
-            case 38: {
-                System.out.println("Up arrow key pressed!");
-                break;
-            }
-            case 39: {
-                System.out.println("Right arrow key pressed!");
-                break;
-            }
-            case 40: {
-                System.out.println("Down arrow key pressed!");
-                break;
-            }
-        }
     }
 
     /**
@@ -202,7 +172,7 @@ public class Controller implements Initializable {
      * @see javafx.util.Duration
      * @see javafx.animation.KeyFrame
      * @see javafx.animation.Timeline
-     * */
+     */
     private void initAnimation() {
         Duration duration = new Duration(1000);
 
@@ -227,7 +197,7 @@ public class Controller implements Initializable {
     /**
      * Controls the animation of the game. This method is linked to the Start/Stop button in the GUI. If the animation
      * is running, the animation should stop, otherwise it should start playing.
-     * */
+     */
     @FXML
     public void handleAnimation() {
         // stop animation of running
@@ -249,7 +219,7 @@ public class Controller implements Initializable {
      * Sets the value for the timeline of the animation. The value is determined by the value of the slider dedicated
      * for the animation speed, which is defined by the user. The method also indicates the current animation speed
      * at a given time.
-     * */
+     */
     @FXML
     public void setTimelineRate() {
         TIMELINE.setRate(speedSlider.getValue());
@@ -262,27 +232,23 @@ public class Controller implements Initializable {
      * cell is in a legal position on the {@code gameBoard} is determined by the {@code indexCheck()} method. In the
      * end, the cells are drawn normally by the {@code draw()} method.
      *
-     * @param e
-     *          The mouse event that triggers the method
-     * @param mouseDrag
-     *          Used to determine whether the mouse was clicked or dragged
-     *
+     * @param e         The mouse event that triggers the method
+     * @param mouseDrag Used to determine whether the mouse was clicked or dragged
      * @see javafx.scene.input.MouseEvent
-     * */
+     */
     private void changeCellState(MouseEvent e, boolean mouseDrag) {
         // determine x- and y-coordinates of the mouse event on screen
-        int x = (int) Math.ceil((e.getX() / gameBoard.getCellSize())) -1;
-        int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) -1;
+        int x = (int) Math.ceil((e.getX() / gameBoard.getCellSize())) - 1;
+        int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) - 1;
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
             // get the state of the clicked cell
             int cS = gameBoard.getCellState(x, y);
 
             // if the mouse was dragged, draw cells along the mouse click
-            if (mouseDrag){
+            if (mouseDrag) {
                 gameBoard.setCellState(x, y, (byte) 1);
-            }
-            else{
+            } else {
                 gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
             }
         }
@@ -296,16 +262,15 @@ public class Controller implements Initializable {
      * give the correct mousedrag parameters to method {@code changeCellState}, depending on if the user clicked or
      * dragged on the screen.
      *
-     * @param e
-     *          Mouse events captured when user clicks on screen
-     * */
+     * @param e Mouse events captured when user clicks on screen
+     */
     @FXML
-    public void cellDrag(MouseEvent e){
+    public void cellDrag(MouseEvent e) {
         changeCellState(e, true);
     }
 
     @FXML
-    public void cellClick(MouseEvent e){
+    public void cellClick(MouseEvent e) {
         changeCellState(e, false);
     }
 
@@ -313,14 +278,11 @@ public class Controller implements Initializable {
      * Checks whether a cell upon which the method is called is in a legal position on the board. The indices used to
      * check the position of the cell are provided by the x and y parameters.
      *
-     * @param x
-     *          x-position of the cell on the board
-     * @param y
-     *          y-position of the cell on the board
-     * @return
-     *          true if the cell is in a legal position
-     *          false otherwise
-     * */
+     * @param x x-position of the cell on the board
+     * @param y y-position of the cell on the board
+     * @return true if the cell is in a legal position
+     * false otherwise
+     */
     private boolean indexCheck(int x, int y) {
         // checks whether the cell is within the width and height of the board
         if (x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT()) {
@@ -334,28 +296,29 @@ public class Controller implements Initializable {
      * Changes the size of the cells. The user is allowed to change the size of the cells by altering the value of the
      * slider that determines the cell size. In order for the cells to appear after their size has been changed,
      * method {@code draw()} must be called.
-     * */
+     */
     @FXML
     public void changeCellSize() {
         gameBoard.setCellSize(cellSizeSlider.getValue());
-        sizeInd.setText(String.format("%s : %d", "Cell Size", (int)cellSizeSlider.getValue()));
+        sizeInd.setText(String.format("%s : %d", "Cell Size", (int) cellSizeSlider.getValue()));
         draw();
     }
 
     /**
      * Method {@code draw()} is the main graphical method in the application. It calls methods {@code drawBackground()}
      * and {@code drawCells()}, which set the color of the canvas and the cells, respectively.
-     * */
+     */
     private void draw() {
         drawBackground();
         drawCells();
+        drawGrid();
     }
 
     /**
      * For drawing the cells onto the board, method {@code drawCells()} gets the color value that the user has
      * specified for the cells, then iterates through the game board to check which of the cells are alive or dead. It
      * then colors the ones that are alive.
-     * */
+     */
     private void drawCells() {
         // get the value of the cell color picker
         gc.setFill(cellColorPicker.getValue());
@@ -368,7 +331,7 @@ public class Controller implements Initializable {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j) == 1) {
-                    gc.fillRect((i * cS), (j * cS), cS, cS);
+                    gc.fillRect((i * cS) + 0.25, (j * cS) + .25, cS -.5, cS -.5);
                 }
             }
         }
@@ -377,7 +340,7 @@ public class Controller implements Initializable {
     /**
      * Colors the underlying canvas of the game. The color is registered from the value of the color picker that
      * specifies the canvas color.
-     * */
+     */
     private void drawBackground() {
         // get the value of the background color picker
         gc.setFill(backColorPicker.getValue());
@@ -386,9 +349,23 @@ public class Controller implements Initializable {
         gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
+    private void drawGrid(){
+        gc.setStroke(cellColorPicker.getValue());
+        gc.setLineWidth(0.1);
+        int width = gameBoard.getWIDTH();
+        int height = gameBoard.getHEIGHT();
+        double cS = cellSizeSlider.getValue();
+        for (int i = 0; i < width; i+=cS) {
+            gc.strokeLine(i + 0.25, 0.25, i+0.25, height+0.25);
+        }
+        for (int i = 0; i < height; i+=cS) {
+            gc.strokeLine(0.25, i+0.25, width+0.25, i+0.25);
+        }
+    }
+
     /**
      * Clears the cells and the canvas from the screen.
-     * */
+     */
     @FXML
     public void clearBoard() {
         // assign a blank board to gameBoard
@@ -404,7 +381,7 @@ public class Controller implements Initializable {
     /**
      * Triggers when the user has selected a new color for the cells or for the background, then assign the color
      * using method {@code draw()}.
-     * */
+     */
     @FXML
     public void colorChange() {
         draw();
@@ -413,7 +390,7 @@ public class Controller implements Initializable {
     /**
      * The following 7 methods implement the available starting patterns for the game. For each pattern/shape, the
      * indicator label tells the user which pattern is selected at a given time.
-     * */
+     */
     @FXML
     public void glider() {
         shapeLabel.setText("Glider");
@@ -445,7 +422,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void gliderGun(){
+    public void gliderGun() {
         gameBoard.setBoard(Shapes.gosperGliderGun());
         shapeLabel.setText("Gosper Glider Gun");
     }
@@ -454,38 +431,34 @@ public class Controller implements Initializable {
 
     @FXML
     private void loadFileDisk() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
+                    new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
+            File slctFile = fileChooser.showOpenDialog(null);
 
             TIMELINE.stop();
             animationTimer.stop();
             animBtn.setText("Start");
 
-            File slctFile = fileChooser.showOpenDialog(null);
-
-            if (slctFile != null){
+            if (slctFile != null) {
                 loadBoard = FileHandler.readFromDisk(slctFile);
 
-                //Todo Fix shit, så vi ikke lager nytt objekt, men setter mønsteret inn i det nåværende brettet
-                // @Branislav
-                gameBoard = new StaticBoard(loadBoard);
-                gameBoard.setCellSize(cellSizeSlider.getValue());
+                for (int i = 0; i < loadBoard.length; i++) {
+                    for (int j = 0; j < loadBoard[0].length; j++) {
+                        gameBoard.setCellState(i, j, loadBoard[i][j]);
+                    }
+                }
 
+                gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
             }
-        }
-        catch (IOException ex){
+        } catch (IOException ex) {
 
-        }
-        catch (PatternFormatException ex){
+        } catch (PatternFormatException ex) {
             System.out.println(ex.getMessage());
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("PatternFormatException");
-            alert.setHeaderText("Error opening file");
-            alert.setContentText("Wrong pattern format!");
-
+            alert.setHeaderText(ex.getMessage());
             alert.showAndWait();
         }
         draw();
@@ -493,54 +466,47 @@ public class Controller implements Initializable {
 
     @FXML
     private void loadFileNet() {
-        TextInputDialog textInputDialog = new TextInputDialog();
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
 
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
         String input = textInputDialog.getResult();
 
-        final Button cancelButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-        final Button okButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.OK);
+        if  (!(input == null))
+        try {
+            System.out.println("sending url");
+            loadBoard = FileHandler.readFromURL(input);
 
-
-        /*
-        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                System.out.println("closing window");
-                textInputDialog.close();
+            for (int i = 0; i < loadBoard.length; i++) {
+                for (int j = 0; j < loadBoard[0].length; j++) {
+                    gameBoard.setCellState(i, j, loadBoard[i][j]);
+                }
             }
-        });
 
-        //okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-          //  @Override
-            //public void handle(javafx.event.ActionEvent event) {
-              */  try {
-                    System.out.println("sending url");
-                    loadBoard = FileHandler.readFromURL(input);
-                    gameBoard = new StaticBoard(loadBoard);
-                    gameBoard.setCellSize(cellSizeSlider.getValue());
-                }
-                catch (MalformedURLException mal){
-                    System.out.println("Error reading URL");
-                }
-                catch (IOException ioe) {
-                    textInputDialog.setContentText("Error opening file.");
-                    textInputDialog.showAndWait();
-                }
-                catch (PatternFormatException pfe) {
-                    // what he said!
-                }
+            gameBoard.setCellSize(cellSizeSlider.getValue());
 
+        } catch (PatternFormatException pfe) {
+            alert.setHeaderText(pfe.getMessage());
+            alert.showAndWait();
 
-            draw();
-        ;//}});
+        } catch (IOException ioe) {
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText("Please try again with a correct URL!");
+            alert.showAndWait();
+        }
+
+        draw();
+    }
+
+    public void moveGameBoard() {
+
     }
 
     /**
      * Quits the application safely.
-     * */
+     */
     @FXML
     public void exitApplication() {
         System.exit(0);

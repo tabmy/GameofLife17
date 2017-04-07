@@ -17,7 +17,6 @@ public class FileHandler {
     public static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
 
         ArrayList<Integer> list = new ArrayList<>();
-
         int nextNum = 0;
         while (nextNum > -1) {
             list.add(nextNum);
@@ -31,10 +30,13 @@ public class FileHandler {
         }
 
         String wholeFile = new String(file);
-
         char ext = wholeFile.charAt(0);
         switch (ext) {
             case '#': {
+                String[] file1 = wholeFile.split("\\n");
+                return readRle(file1);
+            }
+            case 'x': {
                 String[] file1 = wholeFile.split("\\n");
                 return readRle(file1);
             }
@@ -49,9 +51,10 @@ public class FileHandler {
 
     public static byte[][] readFromURL(String url) throws IOException, PatternFormatException {
 
-            URL destination = new URL(url);
-            URLConnection conn = destination.openConnection();
-            return readFile(new BufferedReader(new InputStreamReader(conn.getInputStream())));
+        System.out.println(url);
+        URL destination = new URL(url);
+        URLConnection conn = destination.openConnection();
+        return readFile(new BufferedReader(new InputStreamReader(conn.getInputStream())));
     }
 
     public static byte[][] readFromDisk(File file) throws IOException, PatternFormatException {
@@ -65,11 +68,12 @@ public class FileHandler {
         int comments = 0;
 
         // Finding the height and width of the pattern using regex
-        for(String s : str){
-            if (s.charAt(0) == '#') comments++;
-            if (s.charAt(0) == 'x'){
+        StringBuilder strBuild = new StringBuilder();
+        for (int i = comments; i < str.length; i++) {
+            if (str[i].charAt(0) == '#') comments++;
+            else if (str[i].charAt(0) == 'x') {
                 Pattern pattern = Pattern.compile("(x.+ \\d)");
-                Matcher xyMatcher = pattern.matcher(s);
+                Matcher xyMatcher = pattern.matcher(str[i]);
                 if (xyMatcher.find()) {
                     String xyString;
                     xyString = xyMatcher.group();
@@ -81,48 +85,43 @@ public class FileHandler {
                 }
                 comments++;
             }
+            else {
+                str[i] = str[i].replaceAll("[^bo\\d$]", "");
+                strBuild.append(str[i]);
+            }
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find x or y");
 
-        //Todo include the foreach loop in this loop, so that it only reads the file once
-        StringBuilder strBuild = new StringBuilder();
-        for (int i = comments; i < str.length ; i++) {
-            str[i] = str[i].replaceAll("[^bo\\d+$]", "");
-            strBuild.append(str[i]);
-        }
         String rle = strBuild.toString();
-
         String[] rlePattern = rle.split("[$]");
+        byte[][] board = new byte[height + 100][width + 100];
 
-        /*for(String s : rlePattern){
-            System.out.println(s);
-        }*/
-
-        System.out.printf("Height: %d\nWidth: %d\n", height,width);
-        //System.out.println(rle);
-
-        //byte[][] board = new byte[/*width*/ 100][/*height*/ 100];
-        byte[][] board = new byte[height][width];
-
-        Pattern pattern = Pattern.compile("(\\d+)");
+        // Reading pattern from RLE-string, setting values to correct location in board[][] according to RLE
+        // pattern file.
+        Pattern pattern = Pattern.compile("[\\dbo]");
         for (int i = 0; i < rlePattern.length; i++) {
-            System.out.println();
             Matcher matcher = pattern.matcher(rlePattern[i]);
-            //Parse strengverdien til tallets lengde og legge på indeksering, så jeg vet hvor i strengen jeg er.
+            boolean found = matcher.find();
+            StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
-            int number = 0;
-            int strindex = 0;
-            while (matcher.find()) {
-                strindex = matcher.start();
-                String s = matcher.group();
-                number = Integer.parseInt(s);
-                byte cell = rlePattern[i].charAt(strindex + s.length()) == 'b' ? (byte)0 : 1;
-                for (int j = strindex; j < strindex + number ; j++) {
-                    board[j][i] = cell;
+            while (found) {
+                String s1 = matcher.group();
+                if (s1.equals("o") || s1.equals("b")) {
+                    int number = 1;
+                    if (!stringBuilder.toString().equals("")) {
+                        number = Integer.parseInt(stringBuilder.toString());
+                    }
+                    for (int j = index; j < index + (number); j++) {
+                        board[j][i] = s1.equals("o") ? (byte) 1 : 0;
+                    }
+                    index += number;
+                    stringBuilder = new StringBuilder();
+                } else {
+                    stringBuilder.append(s1);
                 }
+                found = matcher.find();
             }
         }
-
         return board;
     }
 
@@ -142,8 +141,6 @@ public class FileHandler {
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
 
-        System.out.printf("Height: %d \nWidth: %d", height, width);
-
         byte[][] board = new byte[1000][1000];
 
         for (int i = comments; i < str.length; i++) {
@@ -153,7 +150,6 @@ public class FileHandler {
                 }
             }
         }
-
         return board;
     }
 }
