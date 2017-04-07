@@ -127,6 +127,7 @@ public class Controller implements Initializable {
 
     private byte[][] loadBoard;
 
+    private TextInputDialog textInputDialog = new TextInputDialog();
 
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
@@ -430,22 +431,23 @@ public class Controller implements Initializable {
 
     @FXML
     private void loadFileDisk() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
+            File slctFile = fileChooser.showOpenDialog(null);
 
             TIMELINE.stop();
             animationTimer.stop();
             animBtn.setText("Start");
 
-            File slctFile = fileChooser.showOpenDialog(null);
-
             if (slctFile != null) {
                 loadBoard = FileHandler.readFromDisk(slctFile);
 
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                for (int i = 0; i < loadBoard.length; i++) {
+                    for (int j = 0; j < loadBoard[0].length; j++) {
                         gameBoard.setCellState(i, j, loadBoard[i][j]);
                     }
                 }
@@ -455,26 +457,22 @@ public class Controller implements Initializable {
         } catch (IOException ex) {
 
         } catch (PatternFormatException ex) {
-            // TODO: Fix alert window that shows up when this exception is caught!
             System.out.println(ex.getMessage());
+            alert.setHeaderText(ex.getMessage());
+            alert.showAndWait();
         }
         draw();
     }
 
     @FXML
     private void loadFileNet() {
-        TextInputDialog textInputDialog = new TextInputDialog();
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
-
         String input = textInputDialog.getResult();
-
-        final Button cancelButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-        final Button okButton = (Button) textInputDialog.getDialogPane().lookupButton(ButtonType.OK);
 
         if  (!(input == null))
         try {
@@ -488,6 +486,7 @@ public class Controller implements Initializable {
             }
 
             gameBoard.setCellSize(cellSizeSlider.getValue());
+
         } catch (PatternFormatException pfe) {
             alert.setHeaderText(pfe.getMessage());
             alert.showAndWait();
@@ -496,9 +495,7 @@ public class Controller implements Initializable {
             alert.setHeaderText("Something went wrong");
             alert.setContentText("Please try again with a correct URL!");
             alert.showAndWait();
-            // what he said!
         }
-
 
         draw();
     }
