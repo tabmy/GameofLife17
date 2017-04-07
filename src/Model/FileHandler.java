@@ -49,7 +49,6 @@ public class FileHandler {
 
     public static byte[][] readFromURL(String url) throws IOException, PatternFormatException {
 
-        System.out.println(url);
             URL destination = new URL(url);
             URLConnection conn = destination.openConnection();
             return readFile(new BufferedReader(new InputStreamReader(conn.getInputStream())));

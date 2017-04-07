@@ -522,6 +522,9 @@ public class Controller implements Initializable {
                     gameBoard = new StaticBoard(loadBoard);
                     gameBoard.setCellSize(cellSizeSlider.getValue());
                 }
+                catch (MalformedURLException mal){
+                    System.out.println("Error reading URL");
+                }
                 catch (IOException ioe) {
                     textInputDialog.setContentText("Error opening file.");
                     textInputDialog.showAndWait();
@@ -529,6 +532,8 @@ public class Controller implements Initializable {
                 catch (PatternFormatException pfe) {
                     // what he said!
                 }
+
+
             draw();
         ;//}});
     }
