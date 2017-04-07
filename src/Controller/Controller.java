@@ -8,10 +8,6 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -20,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -440,14 +435,16 @@ public class Controller implements Initializable {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
-            File slctFile = fileChooser.showOpenDialog(null);
+            File selectedFile = fileChooser.showOpenDialog(null);
 
             TIMELINE.stop();
             animationTimer.stop();
             animBtn.setText("Start");
 
-            if (slctFile != null) {
-                loadBoard = FileHandler.readFromDisk(slctFile);
+            if (selectedFile != null) {
+                loadBoard = FileHandler.readFromDisk(selectedFile);
+                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                    throw new PatternFormatException("Pattern size too large for board!");
 
                 for (int i = 0; i < loadBoard.length; i++) {
                     for (int j = 0; j < loadBoard[0].length; j++) {
@@ -482,7 +479,8 @@ public class Controller implements Initializable {
         try {
             System.out.println("sending url");
             loadBoard = FileHandler.readFromURL(input);
-
+            if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                throw new PatternFormatException("Pattern size too large for board!");
             for (int i = 0; i < loadBoard.length; i++) {
                 for (int j = 0; j < loadBoard[0].length; j++) {
                     gameBoard.setCellState(i, j, loadBoard[i][j]);
@@ -501,7 +499,6 @@ public class Controller implements Initializable {
             alert.setContentText("Please try again with a correct URL!");
             alert.showAndWait();
         }
-
         draw();
     }
 

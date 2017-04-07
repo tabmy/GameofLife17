@@ -34,6 +34,10 @@ public class FileHandler {
                 String[] file1 = wholeFile.split("\\n");
                 return readRle(file1);
             }
+            case 'x' : {
+                String[] file1 = wholeFile.split("\\n");
+                return readRle(file1);
+            }
             case '!': {
                 String[] file1 = wholeFile.split("\\n");
                 return readCells(file1);
@@ -64,14 +68,14 @@ public class FileHandler {
         for (int i = comments; i < str.length; i++) {
             if (str[i].charAt(0) == '#') comments++;
             else if (str[i].charAt(0) == 'x') {
-                Pattern pattern = Pattern.compile("(x.+ \\d)");
+                Pattern pattern = Pattern.compile("(x.+ \\d+)");
                 Matcher xyMatcher = pattern.matcher(str[i]);
                 if (xyMatcher.find()) {
                     String xyString;
                     xyString = xyMatcher.group();
                     String[] xyStringArr = xyString.split(",");
-                    xyStringArr[0] = xyStringArr[0].replaceAll("[^\\d+]", "");
-                    xyStringArr[1] = xyStringArr[1].replaceAll("[^\\d+]", "");
+                    xyStringArr[0] = xyStringArr[0].replaceAll("[^\\d]", "");
+                    xyStringArr[1] = xyStringArr[1].replaceAll("[^\\d]", "");
                     width = Integer.parseInt(xyStringArr[0]);
                     height = Integer.parseInt(xyStringArr[1]);
                 }
@@ -86,8 +90,6 @@ public class FileHandler {
         String[] rlePattern = rle.split("[$]");
         byte[][] board = new byte[width + 100][height + 100];
 
-        System.out.printf("Height: %d\nWidth: %d", height, width);
-
         // Reading pattern from RLE-string, setting values to correct location in board[][] according to RLE
         // pattern file.
         Pattern pattern = Pattern.compile("[\\dbo!]");
@@ -97,21 +99,21 @@ public class FileHandler {
             StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
             while (found) {
-                String s1 = matcher.group();
-                if (s1.equals("o") || s1.equals("b")) {
+                String match = matcher.group();
+                if (match.equals("o") || match.equals("b")) {
                     int number = 1;
                     if (!stringBuilder.toString().equals("")) {
                         number = Integer.parseInt(stringBuilder.toString());
                     }
                     for (int j = index; j < index + (number); j++) {
-                        board[j][i] = s1.equals("o") ? (byte) 1 : 0;
+                        board[j][i] = match.equals("o") ? (byte) 1 : 0;
                     }
                     index += number;
                     stringBuilder = new StringBuilder();
-                } else if (s1.equals("!")) {
+                } else if (match.equals("!")) {
                     return board;
                 } else {
-                    stringBuilder.append(s1);
+                    stringBuilder.append(match);
                 }
                 found = matcher.find();
             }
