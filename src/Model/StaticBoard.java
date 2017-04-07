@@ -1,10 +1,6 @@
 package Model;
 
 /**
- * Created by Toma on 07.02.2017.
- */
-
-/**
  * This class defines a default static board for the game. It implements the specifications provided byt the Board
  * superclass by giving values and functionality to the variables and methods specified. It also implements a set of
  * rules that is going to be used during the game.
@@ -40,23 +36,6 @@ public class StaticBoard extends Board {
      * Height of the game board.
      * */
     private final int HEIGHT;
-
-    private byte[][] testBoard = {
-            {1, 0, 0, 1},
-            {0, 1, 1, 0},
-            {0, 1, 1, 0},
-            {1, 0, 0, 1}
-    };
-
-    /**
-     * First constructor of {@code StaticBoard}. The width and height of the board are fixed; the {@code gameBoard} is
-     * set to be the {@code testBoard}. Conway's rules are implemented.
-     * */
-    public StaticBoard() {
-        WIDTH = HEIGHT = 4;
-        gameBoard = testBoard;
-        rule = new ConwayRule();
-    }
 
 
     /**

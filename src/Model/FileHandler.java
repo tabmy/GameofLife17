@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Tommy on 09.03.2017.
- */
+
 public class FileHandler {
 
-    public static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
+    private static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
 
         ArrayList<Integer> list = new ArrayList<>();
         int nextNum = 0;

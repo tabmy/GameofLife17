@@ -283,11 +283,7 @@ public class Controller implements Initializable {
      */
     private boolean indexCheck(int x, int y) {
         // checks whether the cell is within the width and height of the board
-        if (x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT());
     }
 
     /**
@@ -455,6 +451,9 @@ public class Controller implements Initializable {
                 gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
             }
         } catch (IOException ex) {
+            alert.setHeaderText("Something went wrong!");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
 
         } catch (PatternFormatException ex) {
             System.out.println(ex.getMessage());
@@ -502,9 +501,13 @@ public class Controller implements Initializable {
         draw();
     }
 
+    /*
     public void moveGameBoard() {
-
+        throw new UnsupportedOperationException();
     }
+    */
+
+
 
     /**
      * Quits the application safely.
