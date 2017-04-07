@@ -216,6 +216,12 @@ public class StaticBoard extends Board {
      * Clears the {@code gameBoard} by assigning a new blank array with the same dimensions to it.
      * */
     public void clear(){
+
+        for (int i = 0; i < WIDTH ; i ++) {
+            for (int j = 0; j < HEIGHT ; j++) {
+                gameBoard[i][j] = 0;
+            }
+        }
         gameBoard = new byte[WIDTH][HEIGHT];
         genCount = 0;
     }

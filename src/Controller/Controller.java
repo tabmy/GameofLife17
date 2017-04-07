@@ -16,8 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -92,9 +90,6 @@ public class Controller implements Initializable {
      */
     @FXML
     public Label shapeLabel;
-
-    @FXML
-    public Label genLabel;
 
     /**
      * Color picker for selecting the canvas background color.
@@ -184,7 +179,6 @@ public class Controller implements Initializable {
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
             gameBoard.nextGeneration();
-            genLabel.setText(String.format("%s: %d", "Generation", gameBoard.getGenCount()));
             draw();
         });
 
@@ -219,13 +213,6 @@ public class Controller implements Initializable {
             animationTimer.start();
             animBtn.setText("Stop");
         }
-    }
-
-    @FXML
-    public void nextGen() {
-        gameBoard.nextGeneration();
-        draw();
-        genLabel.setText(String.format("%s: %d", "Generation", gameBoard.getGenCount()));
     }
 
     /**
@@ -388,8 +375,6 @@ public class Controller implements Initializable {
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
 
         shapeLabel.setText("No start shape selected.");
-        genLabel.setText(String.format("%s: %d", "Generation", gameBoard.getGenCount()));
-
         draw();
     }
 
@@ -453,7 +438,6 @@ public class Controller implements Initializable {
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
             File slctFile = fileChooser.showOpenDialog(null);
-            boolean filePlaced = false;
 
             TIMELINE.stop();
             animationTimer.stop();
@@ -462,17 +446,13 @@ public class Controller implements Initializable {
             if (slctFile != null) {
                 loadBoard = FileHandler.readFromDisk(slctFile);
 
-                if (filePlaced) {
-                    for (int i = 0; i < loadBoard.length; i++) {
-                        for (int j = 0; j < loadBoard[0].length; j++) {
-                            gameBoard.setCellState(i, j, loadBoard[i][j]);
-                        }
+                for (int i = 0; i < loadBoard.length; i++) {
+                    for (int j = 0; j < loadBoard[0].length; j++) {
+                        gameBoard.setCellState(i, j, loadBoard[i][j]);
                     }
                 }
 
                 gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
-
-                placeGameBoard(loadBoard);
             }
         } catch (IOException ex) {
 
@@ -520,29 +500,8 @@ public class Controller implements Initializable {
         draw();
     }
 
-    public void placeGameBoard(byte[][] board) {
-        playArea.setOnKeyPressed(event -> {
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board[0].length; j++) {
-                    if (indexCheck(i, j)) {
-                        switch (event.getCode()) {
-                            case LEFT:
-                                board[i][j] = board[i - 1][j];
-                                break;
-                            case UP:
-                                board[i][j] = board[i][j -1];
-                                break;
-                            case RIGHT:
-                                board[i][j] = board[i + 1][j];
-                                break;
-                            case DOWN:
-                                board[i][j] = board[i][j + 1];
-                                break;
-                        }
-                    }
-                }
-            }
-        });
+    public void moveGameBoard() {
+
     }
 
     /**
