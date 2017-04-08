@@ -1,8 +1,5 @@
 package Model;
 
-/**
- * Created by Tommy on 07.02.2017.
- */
 
 /**
  * Class {@code Rule} represents an abstraction of the various rules that can be implemented in Game Of Life. It

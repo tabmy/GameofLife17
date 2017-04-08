@@ -1,8 +1,5 @@
 package Model;
 
-/**
- * Created by Tommy on 07.02.2017.
- */
 
 /**
  * This class defines Conway's rules for Game Of Life. It is one of several rules that can be implemented in the

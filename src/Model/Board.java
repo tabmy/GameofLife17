@@ -1,8 +1,5 @@
 package Model;
 
-/**
- * Created by Tommy on 07.02.2017.
- */
 
 /**
  * Provides general variables and methods that are to be implemented in all kinds of boards to be used in Game Of Life.
