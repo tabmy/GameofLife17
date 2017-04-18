@@ -196,6 +196,11 @@ public class Controller implements Initializable {
         };
     }
 
+    @FXML
+    private void nextGen(){
+        gameBoard.nextGeneration();
+    }
+
     /**
      * Controls the animation of the game. This method is linked to the Start/Stop button in the GUI. If the animation
      * is running, the animation should stop, otherwise it should start playing.

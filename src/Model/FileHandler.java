@@ -83,7 +83,19 @@ public class FileHandler {
                 break;
             }
             case '#' : {
-                Pattern name = Pattern.compile("");
+                Pattern name = Pattern.compile("(#[nN])");
+                Pattern author = Pattern.compile("(#[oO])");
+                for (String s : meta){
+                    Matcher nameMatcher = name.matcher(s);
+                    Matcher authorMatcher = author.matcher(s);
+                    if (nameMatcher.find()){
+                        metaArr[0] = s.replaceAll("(#[nN]\\W)", "");
+                    }
+                    else if (authorMatcher.find()){
+                        metaArr[1] = s.replaceAll("(#[oO]\\W)", "");
+                    }
+                }
+                break;
             }
 
             default: meta.clear();
