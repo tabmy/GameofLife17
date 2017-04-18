@@ -62,8 +62,7 @@
 
             </VBox>
 
-            <Box height="20"/>
-
+           <!-- <Box height="20"/> -->
             <VBox fx:id="sliders" spacing="10">
 
                 <VBox fx:id="setSpeed" spacing="5">
@@ -84,7 +83,7 @@
 
             </VBox>
 
-            <Box height="20"/>
+         <!--   <Box height="20"/>  -->
 
             <HBox>
                 <HBox spacing="15">
@@ -93,11 +92,13 @@
                 </HBox>
             </HBox>
 
-            <Box height="20"/>
+           <!-- <Box height="20"/> -->
 
             <VBox spacing="5">
                 <Label text="Shape:"/>
-                <Label fx:id="shapeLabel" text="No start shape selected."/>
+                <Label fx:id="shapeLabel"/>
+                <Label text="Author"/>
+                <Label fx:id="authorLabel" />
             </VBox>
 
         </VBox>

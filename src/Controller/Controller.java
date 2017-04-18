@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -85,6 +86,8 @@ public class Controller implements Initializable {
      */
     @FXML
     public Label shapeLabel;
+    @FXML
+    private Label authorLabel;
 
     /**
      * Color picker for selecting the canvas background color.
@@ -122,7 +125,7 @@ public class Controller implements Initializable {
 
     private byte[][] loadBoard;
 
-    private TextInputDialog textInputDialog = new TextInputDialog();
+    private TextInputDialog textInputDialog = new TextInputDialog("");
 
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
@@ -143,6 +146,7 @@ public class Controller implements Initializable {
         initAnimation();
         guiSetup();
         draw();
+        clearMetaLabels();
     }
 
     /**
@@ -449,6 +453,8 @@ public class Controller implements Initializable {
                 }
 
                 gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
+
+                readMeta();
             }
         } catch (IOException ex) {
             alert.setHeaderText("Something went wrong!");
@@ -473,10 +479,10 @@ public class Controller implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
         String input = textInputDialog.getResult();
+        textInputDialog.getEditor().setText("");
 
         if  (!(input == null))
         try {
-            System.out.println("sending url");
             loadBoard = FileHandler.readFromURL(input);
             if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
                 throw new PatternFormatException("Pattern size too large for board!");
@@ -487,6 +493,7 @@ public class Controller implements Initializable {
             }
 
             gameBoard.setCellSize(cellSizeSlider.getValue());
+            readMeta();
 
         } catch (PatternFormatException pfe) {
             alert.setHeaderText("Pattern error!");
@@ -497,6 +504,7 @@ public class Controller implements Initializable {
             alert.setHeaderText("Something went wrong");
             alert.setContentText("Please try again with a correct URL!");
             alert.showAndWait();
+
         }
         draw();
     }
@@ -507,7 +515,18 @@ public class Controller implements Initializable {
     }
     */
 
+    private void readMeta(){
+        ArrayList<String> meta = FileHandler.getMeta();
+        shapeLabel.setText(meta.get(0) != null ? meta.get(0) : "No info..." );
+        authorLabel.setText(meta.get(1) != null ? meta.get(1) : "No info...");
+    }
 
+    private void clearMetaLabels(){
+        String s = "No info...";
+
+        shapeLabel.setText(s);
+        authorLabel.setText(s);
+    }
 
     /**
      * Quits the application safely.
