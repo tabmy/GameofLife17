@@ -24,7 +24,7 @@
                     <MenuItem text="New..." />
                     <MenuItem text="Open..." onAction="#loadFileDisk" />
                     <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
-                    <MenuItem text="Next" />
+                    <MenuItem text="Next" onAction="#nextGen"/>
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
@@ -62,7 +62,8 @@
 
             </VBox>
 
-           <!-- <Box height="20"/> -->
+            <Box height="20"/>
+
             <VBox fx:id="sliders" spacing="10">
 
                 <VBox fx:id="setSpeed" spacing="5">
@@ -83,7 +84,7 @@
 
             </VBox>
 
-         <!--   <Box height="20"/>  -->
+            <Box height="20"/>
 
             <HBox>
                 <HBox spacing="15">
@@ -92,7 +93,7 @@
                 </HBox>
             </HBox>
 
-           <!-- <Box height="20"/> -->
+            <Box height="20"/>
 
             <VBox spacing="5">
                 <Label text="Shape:"/>
