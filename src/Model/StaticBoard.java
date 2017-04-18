@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.WeakHashMap;
+
 /**
  * This class defines a default static board for the game. It implements the specifications provided byt the Board
  * superclass by giving values and functionality to the variables and methods specified. It also implements a set of
@@ -207,6 +209,11 @@ public class StaticBoard extends Board {
         rule = new ConwayRule();
         WIDTH = board.length;
         HEIGHT = board[0].length;
+    }
+
+    public StaticBoard(){
+        rule = new ConwayRule();
+        HEIGHT = WIDTH = 4;
     }
 
     public String toStringBoard(){

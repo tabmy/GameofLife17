@@ -4,11 +4,18 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class FileHandler {
+
+    private static ArrayList<String> meta = new ArrayList<>();
+
+    public static ArrayList<String> getMeta(){
+        return meta;
+    }
 
     private static byte[][] readFile(Reader reader) throws IOException, PatternFormatException {
 
@@ -55,8 +62,53 @@ public class FileHandler {
         return readFile(new FileReader(file));
     }
 
+    private static void handleMeta(){
+        char patternFormat = meta.get(0).charAt(0);
+
+        String[] metaArr = new String[2];
+
+        switch (patternFormat){
+            case '!' : {
+                Pattern name = Pattern.compile("(![nN].+)");
+                Pattern author = Pattern.compile("(![aA].+)");
+                for (String s : meta){
+                    Matcher nameMatcher = name.matcher(s);
+                    Matcher authorMatcher = author.matcher(s);
+                    if (nameMatcher.find()){
+                       metaArr[0] = s.replaceAll("(![nN][a-z]+\\W+)", "");
+                    } else if (authorMatcher.find()) {
+                        metaArr[1] = s.replaceAll("(![aA][a-z]+\\W+)", "");
+                    }
+                }
+                break;
+            }
+            case '#' : {
+                Pattern name = Pattern.compile("(#[nN])");
+                Pattern author = Pattern.compile("(#[oO])");
+                for (String s : meta){
+                    Matcher nameMatcher = name.matcher(s);
+                    Matcher authorMatcher = author.matcher(s);
+                    if (nameMatcher.find()){
+                        metaArr[0] = s.replaceAll("(#[nN]\\W)", "");
+                    }
+                    else if (authorMatcher.find()){
+                        metaArr[1] = s.replaceAll("(#[oO]\\W)", "");
+                    }
+                }
+                break;
+            }
+
+            default: meta.clear();
+            break;
+        }
+        meta.clear();
+        meta.add(metaArr[0]);
+        meta.add(metaArr[1]);
+    }
+
     private static byte[][] readRle(String[] str) throws PatternFormatException {
 
+        meta.clear();
         int height = 0;
         int width = 0;
         int comments = 0;
@@ -64,7 +116,10 @@ public class FileHandler {
         // Finding the height and width of the pattern using regex
         StringBuilder strBuild = new StringBuilder();
         for (int i = comments; i < str.length; i++) {
-            if (str[i].charAt(0) == '#') comments++;
+            if (str[i].charAt(0) == '#') {
+                comments++;
+                meta.add(str[i]);
+            }
             else if (str[i].charAt(0) == 'x') {
                 Pattern pattern = Pattern.compile("(x.+ \\d+)");
                 Matcher xyMatcher = pattern.matcher(str[i]);
@@ -109,6 +164,7 @@ public class FileHandler {
                     index += number;
                     stringBuilder = new StringBuilder();
                 } else if (match.equals("!")) {
+                    handleMeta();
                     return board;
                 } else {
                     stringBuilder.append(match);
@@ -123,6 +179,7 @@ public class FileHandler {
 
     private static byte[][] readCells(String[] str) throws PatternFormatException {
 
+        meta.clear();
         int comments = 0;
         int height = 0;
         int width = 0;
@@ -133,6 +190,7 @@ public class FileHandler {
                 width = width < s.length() - 1 ? s.length() - 1 : width;
             } else {
                 comments++;
+                meta.add(s);
             }
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
@@ -146,6 +204,7 @@ public class FileHandler {
                 }
             }
         }
+        handleMeta();
         return board;
     }
 }

@@ -97,8 +97,9 @@
 
             <VBox spacing="5">
                 <Label text="Shape:"/>
-                <Label fx:id="shapeLabel" text="No start shape selected."/>
-                <Label fx:id="genLabel"/>
+                <Label fx:id="shapeLabel"/>
+                <Label text="Author"/>
+                <Label fx:id="authorLabel" />
             </VBox>
 
         </VBox>
