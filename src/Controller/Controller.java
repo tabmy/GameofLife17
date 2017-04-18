@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.ResourceBundle;
+import java.awt.event.*;
 
 /**
  * {@code Controller} is a class that handles the functionality of all the components in the graphical user interface
@@ -86,6 +88,9 @@ public class Controller implements Initializable {
     @FXML
     public Label shapeLabel;
 
+    @FXML
+    public Label genLabel;
+
     /**
      * Color picker for selecting the canvas background color.
      */
@@ -145,6 +150,17 @@ public class Controller implements Initializable {
         draw();
     }
 
+    private void genIndicator() {
+        genLabel.setText(String.format("%s:%n%d", "Generation", gameBoard.getGenCount()));
+    }
+
+    @FXML
+    public void manualNextGen() {
+        gameBoard.nextGeneration();
+        draw();
+        genIndicator();
+    }
+
     /**
      * Provides initial values for the elements that allow user interaction. The method calls methods
      * {@code setTimelineRate()} and {@code changeCellSize()}, which set the speed of the animation and the size of the
@@ -177,6 +193,7 @@ public class Controller implements Initializable {
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
             gameBoard.nextGeneration();
+            genIndicator();
             draw();
         });
 
@@ -198,7 +215,7 @@ public class Controller implements Initializable {
      */
     @FXML
     public void handleAnimation() {
-        // stop animation of running
+        // stop animation if running
         if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
             animationTimer.stop();
@@ -303,6 +320,7 @@ public class Controller implements Initializable {
      * and {@code drawCells()}, which set the color of the canvas and the cells, respectively.
      */
     private void draw() {
+        genIndicator();
         drawBackground();
         drawCells();
         drawGrid();
@@ -369,6 +387,11 @@ public class Controller implements Initializable {
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
 
         shapeLabel.setText("No start shape selected.");
+
+        TIMELINE.stop();
+        animBtn.setText("Start");
+
+        genIndicator();
         draw();
     }
 
@@ -387,36 +410,50 @@ public class Controller implements Initializable {
      */
     @FXML
     public void glider() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("Glider");
     }
 
     @FXML
     public void smallExploder() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("Small Exploder");
     }
 
     @FXML
     public void exploder() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("Exploder");
     }
 
     @FXML
     public void tenCellRow() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("10 Cell Row");
     }
 
     @FXML
     public void lghtwghtSpaceship() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("Lightweight Spaceship");
     }
 
     @FXML
     public void tumbler() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         shapeLabel.setText("Tumbler");
     }
 
     @FXML
     public void gliderGun() {
+        gameBoard.setGenCount(0);
+        genIndicator();
         gameBoard.setBoard(Shapes.gosperGliderGun());
         shapeLabel.setText("Gosper Glider Gun");
     }
@@ -449,6 +486,7 @@ public class Controller implements Initializable {
                 }
 
                 gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
+                gameBoard.setGenCount(0);
             }
         } catch (IOException ex) {
             alert.setHeaderText("Something went wrong!");
@@ -478,8 +516,10 @@ public class Controller implements Initializable {
         try {
             System.out.println("sending url");
             loadBoard = FileHandler.readFromURL(input);
+
             if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
                 throw new PatternFormatException("Pattern size too large for board!");
+
             for (int i = 0; i < loadBoard.length; i++) {
                 for (int j = 0; j < loadBoard[0].length; j++) {
                     gameBoard.setCellState(i, j, loadBoard[i][j]);
@@ -498,16 +538,35 @@ public class Controller implements Initializable {
             alert.setContentText("Please try again with a correct URL!");
             alert.showAndWait();
         }
+        gameBoard.setGenCount(0);
         draw();
     }
 
-    /*
-    public void moveGameBoard() {
-        throw new UnsupportedOperationException();
+    @FXML
+    public void moveGameBoard(java.awt.event.KeyEvent event) {
+        int keyCode = event.getKeyCode();
+
+        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                if (indexCheck(i, j)) {
+                    switch (keyCode) {
+                        case 38:
+                            // handle up
+                            break;
+                        case 39:
+                            // handle right
+                            break;
+                        case 40:
+                            // handle down
+                            break;
+                        case 37:
+                            // handle left
+                            break;
+                    }
+                }
+            }
+        }
     }
-    */
-
-
 
     /**
      * Quits the application safely.
