@@ -2,7 +2,6 @@ package Controller;
 
 import Model.FileHandler;
 import Model.PatternFormatException;
-import Model.Shapes;
 import Model.StaticBoard;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
