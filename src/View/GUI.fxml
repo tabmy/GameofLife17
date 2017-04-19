@@ -78,7 +78,7 @@
 
                     <Label fx:id="sizeInd" text="Cell size" />
                     <Slider fx:id="cellSizeSlider"  onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize"
-                            min="5" max="50" maxWidth="130"/>
+                            min="2" max="50" maxWidth="130"/>
 
                 </VBox>
 

@@ -137,8 +137,8 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gameBoard = new StaticBoard(
-                (int)(playArea.getHeight()/cellSizeSlider.getMin()),(int)(playArea.getWidth()
-                /cellSizeSlider.getMin())
+                (int) (playArea.getHeight() / cellSizeSlider.getMin()), (int) (playArea.getWidth()
+                / cellSizeSlider.getMin())
         );
         gc = playArea.getGraphicsContext2D();
 
@@ -147,6 +147,9 @@ public class Controller implements Initializable {
         guiSetup();
         draw();
         clearMetaLabels();
+
+        //Todo remove
+        System.out.printf("Height: %d\nWidth: %d", gameBoard.getHEIGHT(), gameBoard.getWIDTH());
     }
 
     /**
@@ -197,8 +200,9 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void nextGen(){
+    private void nextGen() {
         gameBoard.nextGeneration();
+        draw();
     }
 
     /**
@@ -207,7 +211,7 @@ public class Controller implements Initializable {
      */
     @FXML
     public void handleAnimation() {
-        // stop animation of running
+        // stop animation if running
         if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
             animationTimer.stop();
@@ -334,7 +338,7 @@ public class Controller implements Initializable {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j) == 1) {
-                    gc.fillRect((i * cS) + 0.25, (j * cS) + .25, cS -.5, cS -.5);
+                    gc.fillRect((i * cS) + 0.25, (j * cS) + .25, cS - .5, cS - .5);
                 }
             }
         }
@@ -352,17 +356,17 @@ public class Controller implements Initializable {
         gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
-    private void drawGrid(){
+    private void drawGrid() {
         gc.setStroke(cellColorPicker.getValue());
         gc.setLineWidth(0.1);
         int width = gameBoard.getWIDTH();
         int height = gameBoard.getHEIGHT();
         double cS = cellSizeSlider.getValue();
         for (int i = 0; i < width; i++) {
-            gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height*cS +0.25);
+            gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
         }
         for (int i = 0; i < height; i++) {
-            gc.strokeLine(0.25, i * cS + 0.25, width * cS +0.25, i * cS +0.25);
+            gc.strokeLine(0.25, i * cS + 0.25, width * cS + 0.25, i * cS + 0.25);
         }
     }
 
@@ -377,7 +381,7 @@ public class Controller implements Initializable {
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
 
-        shapeLabel.setText("No start shape selected.");
+        clearMetaLabels();
         draw();
     }
 
@@ -396,7 +400,7 @@ public class Controller implements Initializable {
      */
     @FXML
     public void glider() {
-        shapeLabel.setText("Glider");
+        loadPattern("resources/glider.rle");
     }
 
     @FXML
@@ -416,18 +420,17 @@ public class Controller implements Initializable {
 
     @FXML
     public void lghtwghtSpaceship() {
-        shapeLabel.setText("Lightweight Spaceship");
+        loadPattern("resources/lwss.rle");
     }
 
     @FXML
     public void tumbler() {
-        shapeLabel.setText("Tumbler");
+        loadPattern("resources/tumbler.rle");
     }
 
     @FXML
     public void gliderGun() {
-        gameBoard.setBoard(Shapes.gosperGliderGun());
-        shapeLabel.setText("Gosper Glider Gun");
+        loadPattern("rerources/gosperglidergun.rle");
     }
 
     // IO-methods
@@ -451,15 +454,7 @@ public class Controller implements Initializable {
                 if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
                     throw new PatternFormatException("Pattern size too large for board!");
 
-                for (int i = 0; i < loadBoard.length; i++) {
-                    for (int j = 0; j < loadBoard[0].length; j++) {
-                        gameBoard.setCellState(i, j, loadBoard[i][j]);
-                    }
-                }
-
-                gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
-
-                readMeta();
+                setPattern();
             }
         } catch (IOException ex) {
             alert.setHeaderText("Something went wrong!");
@@ -486,31 +481,29 @@ public class Controller implements Initializable {
         String input = textInputDialog.getResult();
         textInputDialog.getEditor().setText("");
 
-        if  (!(input == null))
-        try {
-            loadBoard = FileHandler.readFromURL(input);
-            if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
-                throw new PatternFormatException("Pattern size too large for board!");
-            for (int i = 0; i < loadBoard.length; i++) {
-                for (int j = 0; j < loadBoard[0].length; j++) {
-                    gameBoard.setCellState(i, j, loadBoard[i][j]);
-                }
+        if (!(input == null))
+            try {
+                TIMELINE.stop();
+                animationTimer.stop();
+                animBtn.setText("Start");
+
+                loadBoard = FileHandler.readFromURL(input);
+                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                    throw new PatternFormatException("Pattern size too large for board!");
+
+                setPattern();
+
+            } catch (PatternFormatException pfe) {
+                alert.setHeaderText("Pattern error!");
+                alert.setContentText(pfe.getMessage());
+                alert.showAndWait();
+
+            } catch (IOException ioe) {
+                alert.setHeaderText("Something went wrong");
+                alert.setContentText("Please try again with a correct URL!");
+                alert.showAndWait();
+
             }
-
-            gameBoard.setCellSize(cellSizeSlider.getValue());
-            readMeta();
-
-        } catch (PatternFormatException pfe) {
-            alert.setHeaderText("Pattern error!");
-            alert.setContentText(pfe.getMessage());
-            alert.showAndWait();
-
-        } catch (IOException ioe) {
-            alert.setHeaderText("Something went wrong");
-            alert.setContentText("Please try again with a correct URL!");
-            alert.showAndWait();
-
-        }
         draw();
     }
 
@@ -520,17 +513,40 @@ public class Controller implements Initializable {
     }
     */
 
-    private void readMeta(){
+    private void setPattern() {
+        for (int i = 0; i < loadBoard.length; i++) {
+            for (int j = 0; j < loadBoard[0].length; j++) {
+                gameBoard.setCellState(i, j, loadBoard[i][j]);
+            }
+        }
+        gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
+        readMeta();
+        draw();
+    }
+
+    private void readMeta() {
         ArrayList<String> meta = FileHandler.getMeta();
-        shapeLabel.setText(meta.get(0) != null ? meta.get(0) : "No info..." );
+        shapeLabel.setText(meta.get(0) != null ? meta.get(0) : "No info...");
         authorLabel.setText(meta.get(1) != null ? meta.get(1) : "No info...");
     }
 
-    private void clearMetaLabels(){
+    private void clearMetaLabels() {
         String s = "No info...";
 
         shapeLabel.setText(s);
         authorLabel.setText(s);
+    }
+
+    private void loadPattern(String resource){
+        try {
+            loadBoard = FileHandler.readFromDisk(new File(resource));
+            setPattern();
+        } catch (IOException e) {
+            System.out.println("Something went wrong...");
+            System.out.println(e.getMessage());
+        } catch (PatternFormatException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -542,17 +558,16 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    private void randomize(KeyEvent e){
+    private void randomize(KeyEvent e) {
         // Easter egg
-       if (e.getCode().toString().toLowerCase().equals("r")){
-           backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-           cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-           draw();
-       }
-       else if (e.getCode().toString().toLowerCase().equals("d")){
-           backColorPicker.setValue(Color.WHITE);
-           cellColorPicker.setValue(Color.BLACK);
-           draw();
-       }
+        if (e.getCode().toString().toLowerCase().equals("r")) {
+            backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+            cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+            draw();
+        } else if (e.getCode().toString().toLowerCase().equals("d")) {
+            backColorPicker.setValue(Color.WHITE);
+            cellColorPicker.setValue(Color.BLACK);
+            draw();
+        }
     }
 }
