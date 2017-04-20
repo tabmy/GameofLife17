@@ -1,7 +1,5 @@
 package Model;
 
-import java.util.WeakHashMap;
-
 /**
  * This class defines a default static board for the game. It implements the specifications provided byt the Board
  * superclass by giving values and functionality to the variables and methods specified. It also implements a set of
@@ -22,12 +20,12 @@ public class StaticBoard extends Board {
      * */
     private byte[][] neighBoard;
 
-    /**
+    /** //todo Edit
      * Conway's rules for the game.
      *
      * @see Model.ConwayRule
      * */
-    private ConwayRule rule;
+    private Rule rule;
 
     /**
      * Width of the game board.
@@ -102,8 +100,8 @@ public class StaticBoard extends Board {
      *          Integer value determined by the state of the specified cell
      * */
     @Override
-    public int getCellState(int x, int y) {
-        return gameBoard[x][y];
+    public boolean getCellState(int x, int y) {
+        return gameBoard[x][y] == 1;
     }
 
     /**
@@ -117,8 +115,8 @@ public class StaticBoard extends Board {
      *          Value that gets assigned to the cell (0 for dead, 1 for alive)
      * */
     @Override
-    public void setCellState(int x, int y, byte b) {
-        gameBoard[x][y] = b;
+    public void setCellState(int x, int y, boolean b) {
+        gameBoard[x][y] = (byte) (b ? 1 : 0);
     }
 
     /**
