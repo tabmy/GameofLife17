@@ -1,8 +1,6 @@
 package Controller;
 
-import Model.FileHandler;
-import Model.PatternFormatException;
-import Model.StaticBoard;
+import Model.*;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -113,9 +111,9 @@ public class Controller implements Initializable {
     /**
      * The board used to draw the cells.
      *
-     * @see Model.StaticBoard
+     * @see Model.Board
      */
-    private StaticBoard gameBoard;
+    private Board gameBoard;
 
     /**
      * The timer that handles the game's animation.
@@ -253,13 +251,13 @@ public class Controller implements Initializable {
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
             // get the state of the clicked cell
-            int cS = gameBoard.getCellState(x, y);
+            boolean cS = gameBoard.getCellState(x, y);
 
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag) {
-                gameBoard.setCellState(x, y, (byte) 1);
+                gameBoard.setCellState(x, y, true);
             } else {
-                gameBoard.setCellState(x, y, (byte) Math.abs(cS - 1));
+                gameBoard.setCellState(x, y, !cS);
             }
         }
 
@@ -336,7 +334,7 @@ public class Controller implements Initializable {
         for (int i = 0; i < gameBoard.getWIDTH(); i++) {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
-                if (gameBoard.getCellState(i, j) == 1) {
+                if (gameBoard.getCellState(i, j)) {
                     gc.fillRect((i * cS) + 0.25, (j * cS) + .25, cS - .5, cS - .5);
                 }
             }
@@ -376,6 +374,7 @@ public class Controller implements Initializable {
     public void clearBoard() {
         // assign a blank board to gameBoard
         gameBoard.clear();
+        handleAnimation();
 
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
@@ -515,7 +514,7 @@ public class Controller implements Initializable {
     private void setPattern() {
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
-                gameBoard.setCellState(i, j, loadBoard[i][j]);
+                gameBoard.setCellState(i, j, loadBoard[i][j] == 1);
             }
         }
         gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
@@ -568,5 +567,12 @@ public class Controller implements Initializable {
             cellColorPicker.setValue(Color.BLACK);
             draw();
         }
+    }
+
+    @FXML
+    public void newTest(){
+        DynamicBoard dynamicBoard = new DynamicBoard();
+        gameBoard = dynamicBoard;
+        //System.out.println(dynamicBoard.toStringBoard());
     }
 }
