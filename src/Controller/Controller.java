@@ -124,6 +124,8 @@ public class Controller implements Initializable {
 
     private TextInputDialog textInputDialog = new TextInputDialog("");
 
+    private boolean fileOpened = false;
+
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
      * take place. It also initializes the main canvas and calls other key methods.
@@ -213,6 +215,7 @@ public class Controller implements Initializable {
             TIMELINE.stop();
             animationTimer.stop();
             animBtn.setText("Start");
+            fileOpened = false;
         }
         // start animation if stopped
         else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
@@ -253,7 +256,6 @@ public class Controller implements Initializable {
             // get the state of the clicked cell
             boolean cS = gameBoard.getCellState(x, y);
 
-            // TODO: Alter if-test to draw cells in correct positions
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag) {
                 gameBoard.setCellState(x, y, true);
@@ -315,8 +317,12 @@ public class Controller implements Initializable {
      */
     private void draw() {
         drawBackground();
-        drawCells();
         drawGrid();
+
+        if (fileOpened)
+            drawCellsMoved();
+        else
+            drawCellsNormal();
     }
 
     /**
@@ -324,7 +330,7 @@ public class Controller implements Initializable {
      * specified for the cells, then iterates through the game board to check which of the cells are alive or dead. It
      * then colors the ones that are alive.
      */
-    private void drawCells() {
+    private void drawCellsMoved() {
         // get the value of the cell color picker
         gc.setFill(cellColorPicker.getValue());
 
@@ -339,6 +345,24 @@ public class Controller implements Initializable {
                     gc.fillRect((i * cS) + playArea.getWidth() / 2 - gameBoard.getWIDTH() / 2,
                             (j * cS) + playArea.getHeight() / 2 - gameBoard.getHEIGHT() / 2,
                             cS - .5, cS - .5);
+                }
+            }
+        }
+    }
+
+    private void drawCellsNormal() {
+        // get the value of the cell color picker
+        gc.setFill(cellColorPicker.getValue());
+
+        // get the size of the cells
+        double cS = gameBoard.getCellSize();
+
+        // iterate through the height and width of the board
+        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                // check if a given cell is alive and color it
+                if (gameBoard.getCellState(i, j)) {
+                    gc.fillRect((i * cS) + .25, (j * cS) + .25, cS - .5, cS - .5);
                 }
             }
         }
@@ -439,6 +463,7 @@ public class Controller implements Initializable {
     @FXML
     private void loadFileDisk() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        fileOpened = true;
 
         try {
             FileChooser fileChooser = new FileChooser();
@@ -468,7 +493,7 @@ public class Controller implements Initializable {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-        draw();
+        drawCellsMoved();
     }
 
     @FXML
@@ -481,6 +506,8 @@ public class Controller implements Initializable {
 
         String input = textInputDialog.getResult();
         textInputDialog.getEditor().setText("");
+
+        fileOpened = true;
 
         if (!(input == null))
             try {
@@ -505,7 +532,7 @@ public class Controller implements Initializable {
                 alert.showAndWait();
 
             }
-        draw();
+        drawCellsMoved();
     }
 
     private void setPattern() {
@@ -517,7 +544,6 @@ public class Controller implements Initializable {
 
         gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
         readMeta();
-        draw();
     }
 
     private void readMeta() {
