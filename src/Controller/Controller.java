@@ -253,6 +253,7 @@ public class Controller implements Initializable {
             // get the state of the clicked cell
             boolean cS = gameBoard.getCellState(x, y);
 
+            // TODO: Alter if-test to draw cells in correct positions
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag) {
                 gameBoard.setCellState(x, y, true);
@@ -335,7 +336,9 @@ public class Controller implements Initializable {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + 0.25, (j * cS) + .25, cS - .5, cS - .5);
+                    gc.fillRect((i * cS) + playArea.getWidth() / 2 - gameBoard.getWIDTH() / 2,
+                            (j * cS) + playArea.getHeight() / 2 - gameBoard.getHEIGHT() / 2,
+                            cS - .5, cS - .5);
                 }
             }
         }
@@ -505,18 +508,13 @@ public class Controller implements Initializable {
         draw();
     }
 
-    /*
-    public void moveGameBoard() {
-        throw new UnsupportedOperationException();
-    }
-    */
-
     private void setPattern() {
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
                 gameBoard.setCellState(i, j, loadBoard[i][j] == 1);
             }
         }
+
         gameBoard.setCellSize(Math.floor(cellSizeSlider.getValue()));
         readMeta();
         draw();
