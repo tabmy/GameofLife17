@@ -342,8 +342,8 @@ public class Controller implements Initializable {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + playArea.getWidth() / 2 - gameBoard.getWIDTH() / 2,
-                            (j * cS) + playArea.getHeight() / 2 - gameBoard.getHEIGHT() / 2,
+                    gc.fillRect((i * cS) + playArea.getWidth() / 2 - gameBoard.getWIDTH() / 2 - .75,
+                            (j * cS) + playArea.getHeight() / 2 - gameBoard.getHEIGHT() / 2 - 2.75,
                             cS - .5, cS - .5);
                 }
             }
