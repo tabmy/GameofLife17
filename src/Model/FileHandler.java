@@ -140,7 +140,7 @@ public class FileHandler {
 
         String rle = strBuild.toString();
         String[] rlePattern = rle.split("[$]");
-        byte[][] board = new byte[width + 100][height + 100];
+        byte[][] board = new byte[width][height];
 
         // Reading pattern from RLE-string, setting values to correct location in board[][] according to RLE
         // pattern file.
@@ -194,7 +194,7 @@ public class FileHandler {
         }
         if (height == 0 || width == 0) throw new PatternFormatException("Cannot find height or width of pattern!");
 
-        byte[][] board = new byte[width + 100][height + 100];
+        byte[][] board = new byte[width][height];
 
         for (int i = comments; i < str.length; i++) {
             for (int j = 0; j < str[i].length(); j++) {

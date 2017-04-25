@@ -146,9 +146,6 @@ public class Controller implements Initializable {
         guiSetup();
         draw();
         clearMetaLabels();
-
-        //Todo remove
-        System.out.printf("Height: %d\nWidth: %d", gameBoard.getHEIGHT(), gameBoard.getWIDTH());
     }
 
     /**
@@ -183,6 +180,7 @@ public class Controller implements Initializable {
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
             gameBoard.nextGeneration();
+
             draw();
         });
 
@@ -215,7 +213,6 @@ public class Controller implements Initializable {
             TIMELINE.stop();
             animationTimer.stop();
             animBtn.setText("Start");
-            fileOpened = false;
         }
         // start animation if stopped
         else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
@@ -248,7 +245,9 @@ public class Controller implements Initializable {
      * @see javafx.scene.input.MouseEvent
      */
     private void changeCellState(MouseEvent e, boolean mouseDrag) {
-        // determine x- and y-coordinates of the mouse event on screen
+        fileOpened = false;
+
+        // determine x - and y-coordinates of the mouse event on screen
         int x = (int) Math.ceil((e.getX() / gameBoard.getCellSize())) - 1;
         int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) - 1;
 
@@ -318,11 +317,7 @@ public class Controller implements Initializable {
     private void draw() {
         drawBackground();
         drawGrid();
-
-        if (fileOpened)
-            drawCellsMoved();
-        else
-            drawCellsNormal();
+        drawCells();
     }
 
     /**
@@ -330,27 +325,7 @@ public class Controller implements Initializable {
      * specified for the cells, then iterates through the game board to check which of the cells are alive or dead. It
      * then colors the ones that are alive.
      */
-    private void drawCellsMoved() {
-        // get the value of the cell color picker
-        gc.setFill(cellColorPicker.getValue());
-
-        // get the size of the cells
-        double cS = gameBoard.getCellSize();
-
-        // iterate through the height and width of the board
-        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                // check if a given cell is alive and color it
-                if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + playArea.getWidth() / 2 - gameBoard.getWIDTH() / 2 - .75,
-                            (j * cS) + playArea.getHeight() / 2 - gameBoard.getHEIGHT() / 2 - 2.75,
-                            cS - .5, cS - .5);
-                }
-            }
-        }
-    }
-
-    private void drawCellsNormal() {
+    private void drawCells() {
         // get the value of the cell color picker
         gc.setFill(cellColorPicker.getValue());
 
@@ -366,6 +341,73 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+    @FXML
+    public void moveBoard() {
+        double cS = gameBoard.getCellSize();
+
+        // iterate through the height and width of the board
+        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                // check if a given cell is alive and color it
+                if (gameBoard.getCellState(i, j)) {
+                    gc.fillRect((i * cS) + .25 - cS, (j * cS) + .25, cS - .5, cS - .5);
+                }
+            }
+        }
+
+        /*EventHandler<KeyEvent> keyEventEventHandler = new EventHandler<KeyEvent>() {
+            // get the size of the cells
+            double cS = gameBoard.getCellSize();
+
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case UP:
+                        // iterate through the height and width of the board
+                        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                                // check if a given cell is alive and color it
+                                if (gameBoard.getCellState(i, j)) {
+                                    gc.fillRect((i * cS) + .25, (j * cS) + .25 - 1, cS - .5, cS - .5);
+                                }
+                            }
+                        }
+                    case RIGHT:
+                        // iterate through the height and width of the board
+                        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                                // check if a given cell is alive and color it
+                                if (gameBoard.getCellState(i, j)) {
+                                    gc.fillRect((i * cS) + .25 + 1, (j * cS) + .25, cS - .5, cS - .5);
+                                }
+                            }
+                        }
+                    case DOWN:
+                        // iterate through the height and width of the board
+                        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                                // check if a given cell is alive and color it
+                                if (gameBoard.getCellState(i, j)) {
+                                    gc.fillRect((i * cS) + .25, (j * cS) + .25 + 1, cS - .5, cS - .5);
+                                }
+                            }
+                        }
+                    case LEFT:
+                        // iterate through the height and width of the board
+                        for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                                // check if a given cell is alive and color it
+                                if (gameBoard.getCellState(i, j)) {
+                                    gc.fillRect((i * cS) + .25 - 1, (j * cS) + .25, cS - .5, cS - .5);
+                                }
+                            }
+                        }
+                    event.consume();
+                }
+            }
+        };*/
     }
 
     /**
@@ -401,7 +443,6 @@ public class Controller implements Initializable {
     public void clearBoard() {
         // assign a blank board to gameBoard
         gameBoard.clear();
-        handleAnimation();
 
         // clear the canvas
         gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
@@ -464,6 +505,7 @@ public class Controller implements Initializable {
     private void loadFileDisk() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         fileOpened = true;
+        clearBoard();
 
         try {
             FileChooser fileChooser = new FileChooser();
@@ -493,11 +535,14 @@ public class Controller implements Initializable {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-        drawCellsMoved();
+
+        draw();
     }
 
     @FXML
     private void loadFileNet() {
+        clearBoard();
+
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
@@ -532,13 +577,16 @@ public class Controller implements Initializable {
                 alert.showAndWait();
 
             }
-        drawCellsMoved();
+        draw();
     }
 
     private void setPattern() {
+        int xOffset = (gameBoard.getWIDTH()-loadBoard.length) / 2;
+        int yOffset = (gameBoard.getHEIGHT()-loadBoard[0].length) / 2;
+
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
-                gameBoard.setCellState(i, j, loadBoard[i][j] == 1);
+                gameBoard.setCellState(i + xOffset, j + yOffset, loadBoard[i][j] == 1);
             }
         }
 
