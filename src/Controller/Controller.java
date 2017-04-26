@@ -294,6 +294,8 @@ public class Controller implements Initializable {
      */
     private boolean indexCheck(int x, int y) {
 
+        if (x < 0 || y < 0) return false;
+
         if (gameBoard instanceof DynamicBoard) return true;
         // checks whether the cell is within the width and height of the board
         return !(x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT());
@@ -426,8 +428,8 @@ public class Controller implements Initializable {
     private void drawGrid() {
         gc.setStroke(cellColorPicker.getValue());
         gc.setLineWidth(0.1);
-        int width = gameBoard.getWIDTH();
-        int height = gameBoard.getHEIGHT();
+        int width = (int)playArea.getWidth();
+        int height = (int)playArea.getHeight();
         double cS = cellSizeSlider.getValue();
         for (int i = 0; i < width; i++) {
             gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
