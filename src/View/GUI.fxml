@@ -14,7 +14,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.shape.Box?>
-<GridPane onKeyPressed="#randomize" alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10"
+<GridPane onKeyPressed="#randomize" onMouseClicked="#moveBoard"
+          alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10"
           xmlns:fx="http://javafx.com/fxml/1"
           xmlns="http://javafx.com/javafx/8.0.60" fx:controller="Controller.Controller">
 

@@ -347,15 +347,19 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void moveBoard() {
+    public void moveBoard(MouseEvent event) {
         double cS = gameBoard.getCellSize();
+        int mouseX = (int) event.getX();
+        int mouseY = (int) event.getY();
+        int xOffset = (int) (gameBoard.getWIDTH() / cS);
+        int yOffset = (int) (gameBoard.getHEIGHT() / cS);
 
         // iterate through the height and width of the board
         for (int i = 0; i < gameBoard.getWIDTH(); i++) {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + .25 - cS, (j * cS) + .25, cS - .5, cS - .5);
+                    gc.fillRect((i * cS) + mouseX, (j * cS) + mouseY, cS - .5, cS - .5);
                 }
             }
         }
