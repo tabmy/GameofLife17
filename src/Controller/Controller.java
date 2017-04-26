@@ -253,13 +253,12 @@ public class Controller implements Initializable {
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
             // get the state of the clicked cell
-            boolean cS = gameBoard.getCellState(x, y);
 
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag) {
                 gameBoard.setCellState(x, y, true);
             } else {
-                gameBoard.setCellState(x, y, !cS);
+                gameBoard.setCellState(x, y, !(gameBoard.getCellState(x, y)));
             }
         }
 
@@ -294,6 +293,8 @@ public class Controller implements Initializable {
      * false otherwise
      */
     private boolean indexCheck(int x, int y) {
+
+        if (gameBoard instanceof DynamicBoard) return true;
         // checks whether the cell is within the width and height of the board
         return !(x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT());
     }
@@ -643,8 +644,9 @@ public class Controller implements Initializable {
 
     @FXML
     public void newTest(){
-        DynamicBoard dynamicBoard = new DynamicBoard();
-        gameBoard = dynamicBoard;
+        gameBoard = new DynamicBoard();
+        gameBoard.setCellSize(cellSizeSlider.getValue());
+        draw();
         //System.out.println(dynamicBoard.toStringBoard());
     }
 }
