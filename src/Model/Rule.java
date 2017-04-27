@@ -10,10 +10,6 @@ public abstract class Rule {
 
     public abstract void nextGeneration(byte[][] gameBoard, byte[][] neighBoard);
 
-    public abstract Integer cellToBorn(Integer cell);
-
-    public abstract Integer cellSurvive(Integer cell);
-
     public abstract boolean nextGenCell(Integer cell);
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class DynamicBoard extends Board{
 
-    private ArrayList<ArrayList<Integer>>  gameBoard = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> gameBoard = new ArrayList<>();
     private Rule rule;
     private int height;
     private int width;
@@ -61,10 +61,23 @@ public class DynamicBoard extends Board{
         countNeighbours();
         for (int i = 0; i < width ; i++) {
             for (int j = 0; j < height ; j++) {
-
                 setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
             }
         }
+
+        for (int i = 0; i < gameBoard.size(); i++) {
+            if (gameBoard.get(i).get(0) == 1){
+                expandNegative(0 , -100);
+                break;
+            }
+        }
+        for (int j = 0; j < gameBoard.get(0).size(); j++) {
+            if (gameBoard.get(0).get(j) == 1){
+                expandNegative(-100, 0);
+                break;
+            }
+        }
+
     }
 
     @Override
@@ -138,11 +151,34 @@ public class DynamicBoard extends Board{
             int expandHeight = (y + 100) < MAXSIZE ? (y + 100) : MAXSIZE;
             for (int i = 0; i < width ; i++) {
                 int j = gameBoard.get(i).size();
-              /* while (gameBoard.get(i).size() < expandHeight) {// */for (; j <= expandHeight; j++) {
+                for (; j <= expandHeight; j++) {
                     gameBoard.get(i).add(0);
                 }
             }
             height = expandHeight;
+        }
+    }
+
+    public void expandNegative(int x, int y){
+        if (width - x > MAXSIZE || height - y > MAXSIZE) return;
+        if (x < 0){
+            int expandWidth = -x;
+            for (int i = 0; i < expandWidth ; i++) {
+                gameBoard.add(0, new ArrayList<>());
+                for (int j = 0; j < height ; j++) {
+                    gameBoard.get(0).add(0);
+                }
+            }
+            width += expandWidth;
+        }
+        if (y < 0){
+            int expandHeight = -y;
+            for (int i = 0; i < width ; i++) {
+                for (int j = 0; j < expandHeight ; j++) {
+                    gameBoard.get(i).add(0,0);
+                }
+            }
+            height += expandHeight;
         }
     }
 

@@ -40,16 +40,6 @@ public class ConwayRule extends Rule {
     }
 
     @Override
-    public Integer cellToBorn(Integer cell){
-        return (cell == 30) ? 1 : 0;
-    }
-
-    @Override
-    public Integer cellSurvive(Integer cell){
-        return (cell == 21 || cell == 31) ? 1 : 0;
-    }
-
-    @Override
     public boolean nextGenCell(Integer cell){
 
         if (cell % 2 == 1){
