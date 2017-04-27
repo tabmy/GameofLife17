@@ -9,4 +9,7 @@ package Model;
 public abstract class Rule {
 
     public abstract void nextGeneration(byte[][] gameBoard, byte[][] neighBoard);
+
+    public abstract boolean nextGenCell(Integer cell);
+
 }

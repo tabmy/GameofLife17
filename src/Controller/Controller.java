@@ -294,12 +294,13 @@ public class Controller implements Initializable {
      */
     private boolean indexCheck(int x, int y) {
 
-        if (x < 0 || y < 0) return false;
-
-        if (gameBoard instanceof DynamicBoard) return true;
         // checks whether the cell is within the width and height of the board
-        return !(x < 0 || y < 0 || x >= gameBoard.getWIDTH() || y >= gameBoard.getHEIGHT());
+
+        return !(x < 0 || y < 0) &&!((gameBoard instanceof StaticBoard) && (x < 0 || y < 0 || x >= gameBoard.getWIDTH
+                () || y >= gameBoard
+                .getHEIGHT()));
     }
+
 
     /**
      * Changes the size of the cells. The user is allowed to change the size of the cells by altering the value of the
@@ -432,8 +433,8 @@ public class Controller implements Initializable {
     private void drawGrid() {
         gc.setStroke(cellColorPicker.getValue());
         gc.setLineWidth(0.1);
-        int width = (int)playArea.getWidth();
-        int height = (int)playArea.getHeight();
+        int width = gameBoard.getWIDTH();// (int)playArea.getWidth();
+        int height = gameBoard.getHEIGHT();// (int)playArea.getHeight();
         double cS = cellSizeSlider.getValue();
         for (int i = 0; i < width; i++) {
             gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
@@ -503,16 +504,19 @@ public class Controller implements Initializable {
 
     @FXML
     public void gliderGun() {
-        loadPattern("rerources/gosperglidergun.rle");
+        loadPattern("resources/gosperglidergun.rle");
     }
 
     // IO-methods
 
     @FXML
     private void loadFileDisk() {
+        TIMELINE.stop();
+        animationTimer.stop();
+        animBtn.setText("Start");
         Alert alert = new Alert(Alert.AlertType.ERROR);
         fileOpened = true;
-        clearBoard();
+        // clearBoard();
 
         try {
             FileChooser fileChooser = new FileChooser();
@@ -520,15 +524,22 @@ public class Controller implements Initializable {
                     new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
             File selectedFile = fileChooser.showOpenDialog(null);
 
-            TIMELINE.stop();
-            animationTimer.stop();
-            animBtn.setText("Start");
 
             if (selectedFile != null) {
                 loadBoard = FileHandler.readFromDisk(selectedFile);
-                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                if (gameBoard instanceof StaticBoard && (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0]
+                        .length >
+                        gameBoard.getHEIGHT
+                                ()))
                     throw new PatternFormatException("Pattern size too large for board!");
-
+                else if (gameBoard instanceof DynamicBoard) {
+                    if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                            (DynamicBoard) gameBoard).getMAXSIZE()) throw new PatternFormatException("Pattern size " +
+                            "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                    ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                            .length -
+                            gameBoard.getWIDTH()));
+                }
                 setPattern();
             }
         } catch (IOException ex) {
@@ -548,7 +559,7 @@ public class Controller implements Initializable {
 
     @FXML
     private void loadFileNet() {
-        clearBoard();
+        // clearBoard();
 
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
@@ -588,8 +599,8 @@ public class Controller implements Initializable {
     }
 
     private void setPattern() {
-        int xOffset = (gameBoard.getWIDTH()-loadBoard.length) / 2;
-        int yOffset = (gameBoard.getHEIGHT()-loadBoard[0].length) / 2;
+        int xOffset = (gameBoard.getWIDTH() - loadBoard.length) / 2;
+        int yOffset = (gameBoard.getHEIGHT() - loadBoard[0].length) / 2;
 
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
@@ -614,7 +625,7 @@ public class Controller implements Initializable {
         authorLabel.setText(s);
     }
 
-    private void loadPattern(String resource){
+    private void loadPattern(String resource) {
         try {
             loadBoard = FileHandler.readFromDisk(new File(resource));
             setPattern();
@@ -649,7 +660,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void newTest(){
+    public void newTest() {
         gameBoard = new DynamicBoard();
         gameBoard.setCellSize(cellSizeSlider.getValue());
         draw();

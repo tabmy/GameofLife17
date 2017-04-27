@@ -68,8 +68,8 @@ public class FileHandler {
 
         switch (patternFormat){
             case '!' : {
-                Pattern name = Pattern.compile("(![nN].+)");
-                Pattern author = Pattern.compile("(![aA].+)");
+                Pattern name = Pattern.compile("(![nN](ame).+)");
+                Pattern author = Pattern.compile("(![aA](uthor).+)");
                 for (String s : meta){
                     Matcher nameMatcher = name.matcher(s);
                     Matcher authorMatcher = author.matcher(s);

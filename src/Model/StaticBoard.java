@@ -207,7 +207,6 @@ public class StaticBoard extends Board {
                 gameBoard[i][j] = 0;
             }
         }
-        gameBoard = new byte[WIDTH][HEIGHT];
         genCount = 0;
     }
 
