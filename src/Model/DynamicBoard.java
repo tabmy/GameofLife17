@@ -1,11 +1,10 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DynamicBoard extends Board{
 
-    private ArrayList<ArrayList<AtomicInteger>>  gameBoard = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>>  gameBoard = new ArrayList<>();
     private Rule rule;
     private int height;
     private int width;
@@ -15,12 +14,11 @@ public class DynamicBoard extends Board{
         for (int i = 0; i < 100; i++) {
             gameBoard.add(i, new ArrayList<>());
             for (int j = 0; j < 100 ; j++) {
-                gameBoard.get(i).add(new AtomicInteger(0));
+                gameBoard.get(i).add(0);
             }
         }
 
         rule = new ConwayRule();
-
         height = gameBoard.size();
         width = gameBoard.get(0).size();
 
@@ -33,19 +31,19 @@ public class DynamicBoard extends Board{
         if (x > width || y > height){
           return false;
         }
-        return gameBoard.get(x).get(y).intValue() == 1;
+        return gameBoard.get(x).get(y) == 1;
     }
 
     @Override
     public void setCellState(int x, int y, boolean b) {
 
         if (x >= MAXSIZE || y >= MAXSIZE) return;
-        else if (x > (width - 10) || y > (height - 10)){
+        else if ((x > (width - 10) && b) || (y > (height - 10) && b)){
             expand(x, y);
         }
 
-       gameBoard.get(x).set(y, b ? new AtomicInteger(1 ): new
-               AtomicInteger(0));
+       gameBoard.get(x).set(y, b ? new Integer(1 ): new
+               Integer(0));
     }
 
     @Override
@@ -60,33 +58,78 @@ public class DynamicBoard extends Board{
 
     @Override
     public void nextGeneration() {
+        countNeighbours();
+        for (int i = 0; i < width ; i++) {
+            for (int j = 0; j < height ; j++) {
 
+                setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
+            }
+        }
     }
 
     @Override
     public void countNeighbours() {
-
+        // iterate through the board dimensions
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                // increasing the count of each neighbour around a living cell.
+                // the numbers indicated by each cell after this method is run through the nextGeneration.
+                if (gameBoard.get(i).get(j) % 10 == 1) {
+                    if (i > 0) {
+                        gameBoard.get(i-1).set(j, gameBoard.get(i-1).get(j) + 10);
+                    }
+                    if (j > 0) {
+                       gameBoard.get(i).set(j - 1, gameBoard.get(i).get(j - 1) + 10);
+                    }
+                    if (i > 0 && j > 0) {
+                       gameBoard.get(i-1).set(j - 1, gameBoard.get(i - 1).get(j - 1) + 10);
+                    }
+                    if (i < width - 1) {
+                       gameBoard.get(i + 1).set(j, gameBoard.get(i + 1).get(j) + 10);
+                    }
+                    if (j < height - 1) {
+                        gameBoard.get(i).set(j + 1, gameBoard.get(i).get(j + 1) + 10);
+                    }
+                    if (i < width - 1 && j < height - 1) {
+                        gameBoard.get(i + 1).set(j + 1, gameBoard.get(i + 1).get(j + 1) + 10);
+                    }
+                    if (i > 0 && j < height - 1) {
+                       gameBoard.get(i - 1).set(j + 1, gameBoard.get(i - 1).get(j + 1) + 10);
+                    }
+                    if (i < width - 1 && j > 0) {
+                       gameBoard.get(i + 1).set(j - 1, gameBoard.get(i + 1).get(j - 1) + 10);
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public void clear() {
-
+        gameBoard = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            gameBoard.add(i, new ArrayList<>());
+            for (int j = 0; j < 100 ; j++) {
+                gameBoard.get(i).add(0);
+            }
+        }
+        height = gameBoard.size();
+        width = gameBoard.get(0).size();
     }
 
     @Override
     public String toString(){
-
         return null;
     }
 
-    private void expand(int x, int y){
+    public void expand(int x, int y){
         if (x + 10 > width){
             int expandWidth = (x + 100) < MAXSIZE ? (x + 100) : MAXSIZE;
             int i = gameBoard.size();
             for (; i < expandWidth ; i++) {
                 gameBoard.add(new ArrayList<>());
                 for (int j = gameBoard.get(i).size(); j <= height; j++) {
-                    gameBoard.get(i).add(new AtomicInteger(0));
+                    gameBoard.get(i).add(0);
                 }
             }
             width = expandWidth;
@@ -96,7 +139,7 @@ public class DynamicBoard extends Board{
             for (int i = 0; i < width ; i++) {
                 int j = gameBoard.get(i).size();
               /* while (gameBoard.get(i).size() < expandHeight) {// */for (; j <= expandHeight; j++) {
-                    gameBoard.get(i).add(new AtomicInteger(0));
+                    gameBoard.get(i).add(0);
                 }
             }
             height = expandHeight;
@@ -114,5 +157,9 @@ public class DynamicBoard extends Board{
             stringBuffer.append("\n");
         }
         return stringBuffer.toString();
+    }
+
+    public int getMAXSIZE(){
+        return MAXSIZE;
     }
 }

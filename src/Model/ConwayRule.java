@@ -38,27 +38,32 @@ public class ConwayRule extends Rule {
             }
         }
     }
+
+    @Override
+    public Integer cellToBorn(Integer cell){
+        return (cell == 30) ? 1 : 0;
+    }
+
+    @Override
+    public Integer cellSurvive(Integer cell){
+        return (cell == 21 || cell == 31) ? 1 : 0;
+    }
+
+    @Override
+    public boolean nextGenCell(Integer cell){
+
+        if (cell % 2 == 1){
+            cell--;
+            if (cell == 20 || cell == 30){
+                return true;
+            }
+        }else if (cell == 30){
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
 
-/*          Older version
- public byte[][] nextGeneration(byte[][] gameBoard, byte[][] neighBoard) {
-        byte[][] nextGen = new byte[gameBoard.length][gameBoard[0].length];
-        for (int i = 0; i < gameBoard.length - 1; i++) {
-            for (int j = 0; j < gameBoard[0].length - 1; j++) {
-
-                if (gameBoard[i][j] == 1) {
-                    if (neighBoard[i][j] == 2 || neighBoard[i][j] == 3){
-                        nextGen[i][j] = 1;
-                    }
-                }
-                else if (gameBoard[i][j] == 0) {
-                    if (neighBoard[i][j] == 3)
-                        nextGen[i][j] = 1;
-                }
-            }
-        }
-
-        return nextGen;
-    }
- */

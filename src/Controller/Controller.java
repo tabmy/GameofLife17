@@ -428,8 +428,8 @@ public class Controller implements Initializable {
     private void drawGrid() {
         gc.setStroke(cellColorPicker.getValue());
         gc.setLineWidth(0.1);
-        int width = (int)playArea.getWidth();
-        int height = (int)playArea.getHeight();
+        int width = gameBoard.getWIDTH();// (int)playArea.getWidth();
+        int height = gameBoard.getHEIGHT();// (int)playArea.getHeight();
         double cS = cellSizeSlider.getValue();
         for (int i = 0; i < width; i++) {
             gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
@@ -522,9 +522,19 @@ public class Controller implements Initializable {
 
             if (selectedFile != null) {
                 loadBoard = FileHandler.readFromDisk(selectedFile);
-                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                if ( gameBoard instanceof StaticBoard &&(loadBoard.length > gameBoard.getWIDTH() || loadBoard[0]
+                        .length >
+                        gameBoard.getHEIGHT
+                        ()))
                     throw new PatternFormatException("Pattern size too large for board!");
-
+                else if (gameBoard instanceof DynamicBoard){
+                    if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                            (DynamicBoard) gameBoard).getMAXSIZE()) throw new PatternFormatException("Pattern size " +
+                            "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                    ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                            .length -
+                            gameBoard.getWIDTH()));
+                }
                 setPattern();
             }
         } catch (IOException ex) {
