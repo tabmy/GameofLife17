@@ -130,15 +130,16 @@ public class Controller implements Initializable {
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
      * take place. It also initializes the main canvas and calls other key methods.
      *
-     * @see Model.StaticBoard
+     * @see Model.Board
      * @see javafx.scene.canvas.Canvas
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gameBoard = new StaticBoard(
+        gameBoard = /*new StaticBoard(
                 (int) (playArea.getHeight() / cellSizeSlider.getMin()), (int) (playArea.getWidth()
                 / cellSizeSlider.getMin())
-        );
+        ); */
+                new DynamicBoard();
         gc = playArea.getGraphicsContext2D();
 
         // call appropriate setup methods
@@ -296,9 +297,10 @@ public class Controller implements Initializable {
 
         // checks whether the cell is within the width and height of the board
 
-        return !(x < 0 || y < 0) &&!((gameBoard instanceof StaticBoard) && (x < 0 || y < 0 || x >= gameBoard.getWIDTH
+        /*return !(x < 0 || y < 0) &&!((gameBoard instanceof StaticBoard) && (x < 0 || y < 0 || x >= gameBoard.getWIDTH
                 () || y >= gameBoard
-                .getHEIGHT()));
+                .getHEIGHT()));*/
+        return !(x < 0 || y < 0);
     }
 
 
@@ -523,15 +525,21 @@ public class Controller implements Initializable {
 
             if (selectedFile != null) {
                 loadBoard = FileHandler.readFromDisk(selectedFile);
-                if (gameBoard instanceof StaticBoard && (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0]
+                /*if (gameBoard instanceof StaticBoard && (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0]
                         .length >
                         gameBoard.getHEIGHT
                                 ()))
+                {
                     throw new PatternFormatException("Pattern size too large for board!");
-                else if (gameBoard instanceof DynamicBoard) {
+                }
+                else*/
+                if (gameBoard instanceof DynamicBoard) {
                     if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
-                            (DynamicBoard) gameBoard).getMAXSIZE()) throw new PatternFormatException("Pattern size " +
-                            "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                            (DynamicBoard) gameBoard).getMAXSIZE()) {
+                        throw new PatternFormatException("Pattern size " +
+                                "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE()+ " x" +
+                                " " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                    }
                     ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
                             .length -
                             gameBoard.getWIDTH()));
