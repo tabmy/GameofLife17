@@ -7,6 +7,7 @@ package Model;
  *
  * @see Model.Board
  * */
+@Deprecated
 public class StaticBoard extends Board {
 
     /**
