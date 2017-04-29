@@ -12,7 +12,7 @@ public class FileHandler {
 
     private static ArrayList<String> meta = new ArrayList<>();
 
-    public static ArrayList<String> getMeta(){
+    public static ArrayList<String> getMeta() {
         return meta;
     }
 
@@ -20,6 +20,7 @@ public class FileHandler {
 
         ArrayList<Integer> list = new ArrayList<>();
         int nextNum = 0;
+
         while (nextNum > -1) {
             list.add(nextNum);
             nextNum = reader.read();
@@ -33,18 +34,16 @@ public class FileHandler {
 
         String wholeFile = new String(file);
         char ext = wholeFile.charAt(0);
+
         switch (ext) {
             case '#': {
-                String[] file1 = wholeFile.split("\\n");
-                return readRle(file1);
+                return readRle(wholeFile.split("\\n"));
             }
-            case 'x' : {
-                String[] file1 = wholeFile.split("\\n");
-                return readRle(file1);
+            case 'x': {
+                return readRle(wholeFile.split("\\n"));
             }
             case '!': {
-                String[] file1 = wholeFile.split("\\n");
-                return readCells(file1);
+                return readCells(wholeFile.split("\\n"));
             }
             default:
                 throw new PatternFormatException("Unsupported pattern format!");
@@ -52,8 +51,10 @@ public class FileHandler {
     }
 
     public static byte[][] readFromURL(String url) throws IOException, PatternFormatException {
+
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
+
         return readFile(new BufferedReader(new InputStreamReader(conn.getInputStream())));
     }
 
@@ -61,45 +62,54 @@ public class FileHandler {
         return readFile(new FileReader(file));
     }
 
-    private static void handleMeta(){
-        char patternFormat = meta.get(0).charAt(0);
+    private static void handleMeta() {
 
+        char patternFormat = meta.get(0).charAt(0);
         String[] metaArr = new String[2];
 
-        switch (patternFormat){
-            case '!' : {
+        switch (patternFormat) {
+            case '!': {
+
                 Pattern name = Pattern.compile("(![nN](ame).+)");
                 Pattern author = Pattern.compile("(![aA](uthor).+)");
-                for (String s : meta){
+
+                for (String s : meta) {
+
                     Matcher nameMatcher = name.matcher(s);
                     Matcher authorMatcher = author.matcher(s);
-                    if (nameMatcher.find()){
-                       metaArr[0] = s.replaceAll("(![nN][a-z]+\\W+)", "");
+
+                    if (nameMatcher.find()) {
+                        metaArr[0] = s.replaceAll("(![nN][a-z]+\\W+)", "");
                     } else if (authorMatcher.find()) {
                         metaArr[1] = s.replaceAll("(![aA][a-z]+\\W+)", "");
                     }
                 }
                 break;
             }
-            case '#' : {
+            case '#': {
+
                 Pattern name = Pattern.compile("(#[nN])");
                 Pattern author = Pattern.compile("(#[oO])");
-                for (String s : meta){
+
+                for (String s : meta) {
+
                     Matcher nameMatcher = name.matcher(s);
                     Matcher authorMatcher = author.matcher(s);
-                    if (nameMatcher.find()){
+
+                    if (nameMatcher.find()) {
                         metaArr[0] = s.replaceAll("(#[nN]\\W)", "");
-                    }
-                    else if (authorMatcher.find()){
+                    } else if (authorMatcher.find()) {
                         metaArr[1] = s.replaceAll("(#[oO]\\W)", "");
                     }
                 }
                 break;
             }
-
-            default: meta.clear();
-            break;
+            default: {
+                meta.clear();
+                break;
+            }
         }
+
         meta.clear();
         meta.add(metaArr[0]);
         meta.add(metaArr[1]);
@@ -118,14 +128,16 @@ public class FileHandler {
             if (str[i].charAt(0) == '#') {
                 comments++;
                 meta.add(str[i]);
-            }
-            else if (str[i].charAt(0) == 'x') {
+            } else if (str[i].charAt(0) == 'x') {
+
                 Pattern pattern = Pattern.compile("(x.+ \\d+)");
                 Matcher xyMatcher = pattern.matcher(str[i]);
+
                 if (xyMatcher.find()) {
-                    String xyString;
-                    xyString = xyMatcher.group();
+
+                    String xyString = xyMatcher.group();
                     String[] xyStringArr = xyString.split(",");
+
                     xyStringArr[0] = xyStringArr[0].replaceAll("[^\\d]", "");
                     xyStringArr[1] = xyStringArr[1].replaceAll("[^\\d]", "");
                     width = Integer.parseInt(xyStringArr[0]);
@@ -146,14 +158,20 @@ public class FileHandler {
         // pattern file.
         Pattern pattern = Pattern.compile("[\\dbo!]");
         for (int i = 0; i < rlePattern.length; i++) {
+
             Matcher matcher = pattern.matcher(rlePattern[i]);
             boolean found = matcher.find();
             StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
+
             while (found) {
+
                 String match = matcher.group();
+
                 if (match.equals("o") || match.equals("b")) {
+
                     int number = 1;
+
                     if (!stringBuilder.toString().equals("")) {
                         number = Integer.parseInt(stringBuilder.toString());
                     }
