@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DynamicBoard extends Board {
 
@@ -8,12 +9,16 @@ public class DynamicBoard extends Board {
     private Rule rule;
     private int height;
     private int width;
-    private final int MAXSIZE = 3000;
+    private int initSize = 10;
+    private final int MAXSIZE = 2000;
+    // Assuming Hyper-threading is available
+    private final int THREADNUM = Runtime.getRuntime().availableProcessors() * 2;
+    private ArrayList<Thread> threads = new ArrayList<>(THREADNUM);
 
     public DynamicBoard() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < initSize; i++) {
             gameBoard.add(i, new ArrayList<>());
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < initSize; j++) {
                 gameBoard.get(i).add(0);
             }
         }
@@ -34,7 +39,7 @@ public class DynamicBoard extends Board {
         else if ((x > (width - 2) && b) || (y > (height - 2) && b)) {
             expand(x, y);
         }
-        gameBoard.get(x).set(y, b ? new Integer(1) : new Integer(0));
+        gameBoard.get(x).set(y, b ? 1 : 0);
     }
 
     @Override
@@ -49,7 +54,8 @@ public class DynamicBoard extends Board {
 
     @Override
     public void nextGeneration() {
-        countNeighbours();
+        //countNeighbours();
+        printPerformance();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
@@ -74,15 +80,12 @@ public class DynamicBoard extends Board {
     @Override
     public void countNeighbours() {
 
-        boolean noNeighbours = true;
-
         // iterate through the board dimensions
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 // increasing the count of each neighbour around a living cell.
                 // the numbers indicated by each cell after this method is run through the nextGeneration.
                 if (gameBoard.get(i).get(j) % 10 == 1) {
-                    noNeighbours = false;
                     if (i > 0) {
                         gameBoard.get(i - 1).set(j, gameBoard.get(i - 1).get(j) + 10);
                     }
@@ -110,7 +113,97 @@ public class DynamicBoard extends Board {
                 }
             }
         }
-        if (noNeighbours) clear();
+    }
+
+    private void countNeighboursConcurrent(int threadNum){
+        int threadWidth = gameBoard.size()/THREADNUM;
+        int start = threadNum * threadWidth;
+        int end = (threadNum + 1) * threadWidth;
+
+        new Thread(() ->  {
+            countNeighConcurrentPartial(start, end);
+        }).start();
+
+
+    }
+
+    private void countNeighConcurrentPartial(int start, int end){
+        for (int i = start; i < end; i++) {
+            for (int j = 0; j < height; j++) {
+                if (gameBoard.get(i).get(j) % 10 == 1){
+                    if (i > 0) {
+                        gameBoard.get(i - 1).set(j, gameBoard.get(i - 1).get(j) + 10);
+                    }
+                    if (j > 0) {
+                        gameBoard.get(i).set(j - 1, gameBoard.get(i).get(j - 1) + 10);
+                    }
+                    if (i > 0 && j > 0) {
+                        gameBoard.get(i - 1).set(j - 1, gameBoard.get(i - 1).get(j - 1) + 10);
+                    }
+                    if (i < width - 1) {
+                        gameBoard.get(i + 1).set(j, gameBoard.get(i + 1).get(j) + 10);
+                    }
+                    if (j < height - 1) {
+                        gameBoard.get(i).set(j + 1, gameBoard.get(i).get(j + 1) + 10);
+                    }
+                    if (i < width - 1 && j < height - 1) {
+                        gameBoard.get(i + 1).set(j + 1, gameBoard.get(i + 1).get(j + 1) + 10);
+                    }
+                    if (i > 0 && j < height - 1) {
+                        gameBoard.get(i - 1).set(j + 1, gameBoard.get(i - 1).get(j + 1) + 10);
+                    }
+                    if (i < width - 1 && j > 0) {
+                        gameBoard.get(i + 1).set(j - 1, gameBoard.get(i + 1).get(j - 1) + 10);
+                    }
+                }
+            }
+        }
+    }
+
+    public void nextGenerationConcurrent(){
+        for (int i = 0; i < THREADNUM ; i += 2) {
+            countNeighboursConcurrent(i);
+        }
+        for (int i = 1; i < THREADNUM; i += 2) {
+            countNeighboursConcurrent(i);
+        }
+        for (int i = 0; i < THREADNUM ; i+= 2) {
+            nextGenerationConcurrent(i);
+        }
+        for (int i = 1; i < THREADNUM ; i++) {
+            nextGenerationConcurrent(i);
+        }
+        new Thread(() -> {
+            for (ArrayList<Integer> arr : gameBoard) {
+                if (arr.get(0) == 1) {
+                    expandNegative(0, -1);
+                    break;
+                }
+            }
+
+            for (int j = 0; j < gameBoard.get(0).size(); j++) {
+                if (gameBoard.get(0).get(j) == 1) {
+                    expandNegative(-1, 0);
+                    break;
+                }
+            }
+        }).start();
+    }
+
+    private void nextGenerationConcurrent(int threadNum){
+        int threadWidth = (gameBoard.size()/THREADNUM);
+        int start = threadNum * threadWidth;
+        int end = (threadNum + 1) * threadWidth;
+
+        new Thread(()-> nextGenerationConcurrentPartial(start, end)).start();
+    }
+
+    private void nextGenerationConcurrentPartial(int start, int end){
+        for (int i = start; i < end; i++) {
+            for (int j = 0; j < width ; j++) {
+                setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
+            }
+        }
     }
 
     @Override
@@ -187,11 +280,22 @@ public class DynamicBoard extends Board {
         }
     }
 
+    private void addThreadTask(Runnable task){
+        threads.add(new Thread(task));
+    }
+
+    private void startThreads(){
+        for (Thread task : threads){
+            task.start();
+        }
+    }
+
     public int getMAXSIZE() {
         return MAXSIZE;
     }
 
-    // --- For testing purposes --- //
+
+    //      ---     For testing purposes    ---     //
     public DynamicBoard(int x, int y) {
 
         gameBoard = new ArrayList<>(x);
@@ -204,6 +308,12 @@ public class DynamicBoard extends Board {
         }
         width = gameBoard.size();
         height = gameBoard.get(0).size();
+    }
+
+    public void printPerformance(){
+        long start = System.currentTimeMillis();
+        countNeighbours();
+        System.out.println("countNeighbours took " + (System.currentTimeMillis() - start) + "ms");
     }
 
     public void setCellNoExpand(int x, int y, boolean b) {
@@ -222,5 +332,18 @@ public class DynamicBoard extends Board {
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public void countNeigh(){
+        countNeighboursConcurrent(1);
+        countNeighboursConcurrent(2);
+        countNeighboursConcurrent(3);
+    }
+
+    public void nextGenerationConcurrentPrintPerformance(){
+        long start = System.currentTimeMillis();
+        nextGenerationConcurrent();
+
+        System.out.printf("NextGenConcurrent took %d ms\n", (System.currentTimeMillis() - start));
     }
 }

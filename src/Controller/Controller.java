@@ -175,7 +175,8 @@ public class Controller implements Initializable {
 
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
-            gameBoard.nextGeneration();
+           // gameBoard.nextGeneration();
+            ((DynamicBoard) gameBoard).nextGenerationConcurrentPrintPerformance();
             draw();
         });
 
@@ -186,6 +187,7 @@ public class Controller implements Initializable {
 
     @FXML
     private void nextGen() {
+       // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
         gameBoard.nextGeneration();
         draw();
     }
@@ -552,8 +554,19 @@ public class Controller implements Initializable {
                 animBtn.setText("Start");
 
                 loadBoard = FileHandler.readFromURL(input);
-                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT()) {
+                /*if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT()) {
                     throw new PatternFormatException("Pattern size too large for board!");
+                }*/
+                if (gameBoard instanceof DynamicBoard) {
+                    if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                            (DynamicBoard) gameBoard).getMAXSIZE()) {
+                        throw new PatternFormatException("Pattern size " +
+                                "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE() + " x" +
+                                " " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                    }
+                    ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                            .length -
+                            gameBoard.getWIDTH()));
                 }
                 setPattern();
 

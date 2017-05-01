@@ -25,5 +25,21 @@ public class dynamicBoardTest {
 
     }
 
+    @Test
+    public void concurrencyTest(){
+        DynamicBoard board = new DynamicBoard(3, 3);
+        board.setCellNoExpand(1,0, true);
+        board.setCellNoExpand(1, 1, true);
+        board.setCellNoExpand(1,2, true);
+
+        System.out.println(board.toStringBoard());
+        board.countNeigh();
+        System.out.println(board.toStringBoard());
+        //assertEquals("000111000", board.toString());
+        board.nextGenerationConcurrent();
+       // System.out.println(board.toStringBoard());
+        //assertEquals("010010010", board.toString());
+    }
+
 
 }
