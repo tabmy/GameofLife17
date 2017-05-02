@@ -2,7 +2,6 @@ package Controller;
 
 import Model.*;
 import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -119,11 +118,6 @@ public class Controller implements Initializable {
      */
     private Board gameBoard;
 
-    /**
-     * The timer that handles the game's animation.
-     */
-    private AnimationTimer animationTimer;
-
     private byte[][] loadBoard;
 
     private TextInputDialog textInputDialog = new TextInputDialog("");
@@ -178,28 +172,25 @@ public class Controller implements Initializable {
      * @see javafx.animation.Timeline
      */
     private void initAnimation() {
+
         Duration duration = new Duration(1000);
 
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
-            gameBoard.nextGeneration();
+
+            ((DynamicBoard) gameBoard).nextGenerationConcurrent();
+            //gameBoard.nextGeneration();
             draw();
         });
 
         // make the timeline run indefinitely by default
         TIMELINE.setCycleCount(Timeline.INDEFINITE);
         TIMELINE.getKeyFrames().add(keyFrame);
-
-        animationTimer = new AnimationTimer() {
-
-            @Override
-            public void handle(long now) {
-            }
-        };
     }
 
     @FXML
     private void nextGen() {
+       // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
         gameBoard.nextGeneration();
         draw();
     }
@@ -213,14 +204,12 @@ public class Controller implements Initializable {
         // stop animation if running
         if (TIMELINE.getStatus() == Animation.Status.RUNNING) {
             TIMELINE.stop();
-            animationTimer.stop();
             animBtn.setText("Start");
         }
         // start animation if stopped
         else if (TIMELINE.getStatus() == Animation.Status.STOPPED) {
             setTimelineRate();
             TIMELINE.play();
-            animationTimer.start();
             animBtn.setText("Stop");
         }
     }
@@ -232,8 +221,10 @@ public class Controller implements Initializable {
      */
     @FXML
     public void setTimelineRate() {
-        TIMELINE.setRate(speedSlider.getValue());
-        speedInd.setText(String.format("%s: %.2f", "Speed", speedSlider.getValue()));
+        TIMELINE.setRate(speedSlider.valueProperty().intValue());
+        speedInd.setText(String.format("%s: %d\n%s", "Speed", speedSlider.valueProperty().intValue(), "Generations " +
+                "per " +
+                "second"));
     }
 
     /**
@@ -252,7 +243,6 @@ public class Controller implements Initializable {
         int y = (int) Math.ceil((e.getY() / gameBoard.getCellSize())) - 1;
 
         if (e.getButton() == MouseButton.PRIMARY && indexCheck(x, y)) {
-            // get the state of the clicked cell
 
             // if the mouse was dragged, draw cells along the mouse click
             if (mouseDrag) {
@@ -509,11 +499,14 @@ public class Controller implements Initializable {
     }
 
     private void drawGrid() {
-        gc.setStroke(cellColorPicker.getValue());
-        gc.setLineWidth(0.1);
+
         int width = gameBoard.getWIDTH();// (int)playArea.getWidth();
         int height = gameBoard.getHEIGHT();// (int)playArea.getHeight();
         double cS = cellSizeSlider.getValue();
+
+        gc.setStroke(cellColorPicker.getValue());
+        gc.setLineWidth(0.1);
+
         for (int i = 0; i < width; i++) {
             gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
         }
@@ -530,9 +523,7 @@ public class Controller implements Initializable {
         // assign a blank board to gameBoard
         gameBoard.clear();
 
-        // clear the canvas
-        gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
-
+        // clear the meta information and canvas
         clearMetaLabels();
         draw();
     }
@@ -547,27 +538,12 @@ public class Controller implements Initializable {
     }
 
     /**
-     * The following 7 methods implement the available starting patterns for the game. For each pattern/shape, the
+     * The following 4 methods implement the available starting patterns for the game. For each pattern/shape, the
      * indicator label tells the user which pattern is selected at a given time.
      */
     @FXML
     public void glider() {
         loadPattern("resources/glider.rle");
-    }
-
-    @FXML
-    public void smallExploder() {
-        shapeLabel.setText("Small Exploder");
-    }
-
-    @FXML
-    public void exploder() {
-        shapeLabel.setText("Exploder");
-    }
-
-    @FXML
-    public void tenCellRow() {
-        shapeLabel.setText("10 Cell Row");
     }
 
     @FXML
@@ -590,10 +566,8 @@ public class Controller implements Initializable {
     @FXML
     private void loadFileDisk() {
         TIMELINE.stop();
-        animationTimer.stop();
         animBtn.setText("Start");
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        // clearBoard();
 
         try {
             FileChooser fileChooser = new FileChooser();
@@ -616,7 +590,7 @@ public class Controller implements Initializable {
                     if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
                             (DynamicBoard) gameBoard).getMAXSIZE()) {
                         throw new PatternFormatException("Pattern size " +
-                                "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE()+ " x" +
+                                "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE() + " x" +
                                 " " + ((DynamicBoard) gameBoard).getMAXSIZE());
                     }
                     ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
@@ -642,8 +616,6 @@ public class Controller implements Initializable {
 
     @FXML
     private void loadFileNet() {
-        // clearBoard();
-
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
@@ -656,13 +628,23 @@ public class Controller implements Initializable {
         if (!(input == null))
             try {
                 TIMELINE.stop();
-                animationTimer.stop();
                 animBtn.setText("Start");
 
                 loadBoard = FileHandler.readFromURL(input);
-                if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT())
+                /*if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT()) {
                     throw new PatternFormatException("Pattern size too large for board!");
-
+                }*/
+                if (gameBoard instanceof DynamicBoard) {
+                    if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                            (DynamicBoard) gameBoard).getMAXSIZE()) {
+                        throw new PatternFormatException("Pattern size " +
+                                "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE() + " x" +
+                                " " + ((DynamicBoard) gameBoard).getMAXSIZE());
+                    }
+                    ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                            .length -
+                            gameBoard.getWIDTH()));
+                }
                 setPattern();
 
             } catch (PatternFormatException pfe) {
@@ -680,8 +662,17 @@ public class Controller implements Initializable {
     }
 
     private void setPattern() {
+
+        if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                (DynamicBoard) gameBoard).getMAXSIZE()) {
+        }
+        ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                .length -
+                gameBoard.getWIDTH()));
+
         int xOffset = (gameBoard.getWIDTH() - loadBoard.length) / 2;
         int yOffset = (gameBoard.getHEIGHT() - loadBoard[0].length) / 2;
+
 
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
@@ -701,7 +692,6 @@ public class Controller implements Initializable {
 
     private void clearMetaLabels() {
         String s = "No info...";
-
         shapeLabel.setText(s);
         authorLabel.setText(s);
     }

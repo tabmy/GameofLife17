@@ -156,7 +156,7 @@ public class FileHandler {
 
         // Reading pattern from RLE-string, setting values to correct location in board[][] according to RLE
         // pattern file.
-        Pattern pattern = Pattern.compile("[\\dbo!]");
+        Pattern pattern = Pattern.compile("(\\d+)|[bo!]");
         for (int i = 0; i < rlePattern.length; i++) {
 
             Matcher matcher = pattern.matcher(rlePattern[i]);
