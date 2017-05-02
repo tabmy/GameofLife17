@@ -5,21 +5,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DynamicBoard extends Board {
 
-    private ArrayList<ArrayList<Integer>> gameBoard = new ArrayList<>();
+    private ArrayList<ArrayList<AtomicInteger>> gameBoard = new ArrayList<>();
     private Rule rule;
     private int height;
     private int width;
     private int initSize = 10;
     private final int MAXSIZE = 2000;
-    // Assuming Hyper-threading is available
-    private final int THREADNUM = Runtime.getRuntime().availableProcessors() * 2;
-    private ArrayList<Thread> threads = new ArrayList<>(THREADNUM);
+    private ConcurrentSim simulator = new ConcurrentSim();
+    private final int THREADNUM = Runtime.getRuntime().availableProcessors();
 
     public DynamicBoard() {
         for (int i = 0; i < initSize; i++) {
             gameBoard.add(i, new ArrayList<>());
             for (int j = 0; j < initSize; j++) {
-                gameBoard.get(i).add(0);
+                gameBoard.get(i).add(new AtomicInteger(0));
             }
         }
 
@@ -30,7 +29,7 @@ public class DynamicBoard extends Board {
 
     @Override
     public boolean getCellState(int x, int y) {
-        return !(x >= MAXSIZE || y >= MAXSIZE) && !(x >= width || y >= height) && gameBoard.get(x).get(y) == 1;
+        return !(x >= MAXSIZE || y >= MAXSIZE) && !(x >= width || y >= height) && gameBoard.get(x).get(y).intValue() == 1;
     }
 
     @Override
@@ -39,7 +38,7 @@ public class DynamicBoard extends Board {
         else if ((x > (width - 2) && b) || (y > (height - 2) && b)) {
             expand(x, y);
         }
-        gameBoard.get(x).set(y, b ? 1 : 0);
+        gameBoard.get(x).set(y, b ? new AtomicInteger(1) : new AtomicInteger(0));
     }
 
     @Override
@@ -54,8 +53,9 @@ public class DynamicBoard extends Board {
 
     @Override
     public void nextGeneration() {
+
+        /* PRE AtomicInteger
         //countNeighbours();
-        printPerformance();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
@@ -75,11 +75,14 @@ public class DynamicBoard extends Board {
                 break;
             }
         }
+        */
     }
+
+
 
     @Override
     public void countNeighbours() {
-
+    /* PRE AtomicInteger
         // iterate through the board dimensions
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -112,107 +115,133 @@ public class DynamicBoard extends Board {
                     }
                 }
             }
-        }
+        } */
     }
 
-    private void countNeighboursConcurrent(int threadNum){
-        int threadWidth = gameBoard.size()/THREADNUM;
+
+    private void countNeighboursConcurrent(int threadNum) {
+        int threadWidth = gameBoard.size() / THREADNUM;
         int start = threadNum * threadWidth;
         int end = (threadNum + 1) * threadWidth;
 
-        new Thread(() ->  {
-            countNeighConcurrentPartial(start, end);
-        }).start();
+         simulator.addThreadTask(() -> countNeighConcurrentPartial(start, end));
 
 
     }
 
-    private void countNeighConcurrentPartial(int start, int end){
+    private void countNeighConcurrentPartial(int start, int end) {
+        if (end > width){
+            end = width;
+        }
         for (int i = start; i < end; i++) {
             for (int j = 0; j < height; j++) {
-                if (gameBoard.get(i).get(j) % 10 == 1){
+                if (gameBoard.get(i).get(j).intValue() % 10 == 1) {
                     if (i > 0) {
-                        gameBoard.get(i - 1).set(j, gameBoard.get(i - 1).get(j) + 10);
+                        gameBoard.get(i - 1).set(j,
+                                new AtomicInteger(gameBoard.get(i-1).get(j).intValue() + 10));
                     }
                     if (j > 0) {
-                        gameBoard.get(i).set(j - 1, gameBoard.get(i).get(j - 1) + 10);
+                        gameBoard.get(i).set(j - 1,
+                                new AtomicInteger(gameBoard.get(i).get(j - 1).intValue() + 10));
                     }
                     if (i > 0 && j > 0) {
-                        gameBoard.get(i - 1).set(j - 1, gameBoard.get(i - 1).get(j - 1) + 10);
+                        gameBoard.get(i - 1).set(j - 1,
+                                new AtomicInteger(gameBoard.get(i - 1).get(j - 1).intValue() + 10));
                     }
                     if (i < width - 1) {
-                        gameBoard.get(i + 1).set(j, gameBoard.get(i + 1).get(j) + 10);
+                        gameBoard.get(i + 1).set(j,
+                                new AtomicInteger(gameBoard.get(i + 1).get(j).intValue() + 10));
                     }
                     if (j < height - 1) {
-                        gameBoard.get(i).set(j + 1, gameBoard.get(i).get(j + 1) + 10);
+                        gameBoard.get(i).set(j + 1,
+                                new AtomicInteger(gameBoard.get(i).get(j + 1).intValue() + 10));
                     }
                     if (i < width - 1 && j < height - 1) {
-                        gameBoard.get(i + 1).set(j + 1, gameBoard.get(i + 1).get(j + 1) + 10);
+                        gameBoard.get(i + 1).set(j + 1,
+                                new AtomicInteger(gameBoard.get(i + 1).get(j + 1).intValue() + 10));
                     }
                     if (i > 0 && j < height - 1) {
-                        gameBoard.get(i - 1).set(j + 1, gameBoard.get(i - 1).get(j + 1) + 10);
+                        gameBoard.get(i - 1).set(j + 1,
+                               new AtomicInteger(gameBoard.get(i - 1).get(j + 1).intValue() + 10));
                     }
                     if (i < width - 1 && j > 0) {
-                        gameBoard.get(i + 1).set(j - 1, gameBoard.get(i + 1).get(j - 1) + 10);
+                        gameBoard.get(i + 1).set(j - 1,
+                                new AtomicInteger(gameBoard.get(i + 1).get(j - 1).intValue() + 10));
                     }
                 }
             }
         }
     }
 
-    public void nextGenerationConcurrent(){
-        for (int i = 0; i < THREADNUM ; i += 2) {
+    public void nextGenerationConcurrent() {
+
+        int boardParts = gameBoard.size()/ THREADNUM;
+
+        for (int i = 0; i < THREADNUM; i+=2) {
             countNeighboursConcurrent(i);
         }
+        simulator.doWork();
         for (int i = 1; i < THREADNUM; i += 2) {
             countNeighboursConcurrent(i);
         }
-        for (int i = 0; i < THREADNUM ; i+= 2) {
+        simulator.doWork();
+        countNeighboursConcurrent(THREADNUM);
+        simulator.doWork();
+
+
+        for (int i = 0; i < THREADNUM; i += 2) {
             nextGenerationConcurrent(i);
         }
-        for (int i = 1; i < THREADNUM ; i++) {
+        simulator.doWork();
+        for (int i = 1; i < THREADNUM; i+=2) {
             nextGenerationConcurrent(i);
         }
-        new Thread(() -> {
-            for (ArrayList<Integer> arr : gameBoard) {
-                if (arr.get(0) == 1) {
+        nextGenerationConcurrent(THREADNUM);
+
+        simulator.doWork();
+        simulator.addThreadTask(() -> {
+            for (ArrayList<AtomicInteger> arr : gameBoard) {
+                if (arr.get(0).intValue() == 1) {
                     expandNegative(0, -1);
                     break;
                 }
             }
 
             for (int j = 0; j < gameBoard.get(0).size(); j++) {
-                if (gameBoard.get(0).get(j) == 1) {
+                if (gameBoard.get(0).get(j).intValue() == 1) {
                     expandNegative(-1, 0);
                     break;
                 }
             }
-        }).start();
+        });
+        simulator.doWork();
     }
 
-    private void nextGenerationConcurrent(int threadNum){
-        int threadWidth = (gameBoard.size()/THREADNUM);
+
+    private void nextGenerationConcurrent(int threadNum) {
+        int threadWidth = (gameBoard.size() / THREADNUM);
         int start = threadNum * threadWidth;
-        int end = (threadNum + 1) * threadWidth;
+        int end = ((threadNum + 1) * threadWidth) < width ? (threadNum + 1) * threadWidth : width;
 
-        new Thread(()-> nextGenerationConcurrentPartial(start, end)).start();
+        simulator.addThreadTask(() -> nextGenerationConcurrentPartial(start, end));
     }
 
-    private void nextGenerationConcurrentPartial(int start, int end){
-        for (int i = start; i < end; i++) {
-            for (int j = 0; j < width ; j++) {
-                setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j)));
+    private void nextGenerationConcurrentPartial(int start, int end) {
+            for (int i = start; i < end; i++) {
+                for (int j = 0; j < height; j++) {
+                    setCellState(i, j, rule.nextGenCell(gameBoard.get(i).get(j).intValue()));
+                }
             }
-        }
     }
+
 
     @Override
     public void clear() {
         gameBoard = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < initSize; i++) {
             gameBoard.add(i, new ArrayList<>());
-            for (int j = 0; j < 100; j++) {
-                gameBoard.get(i).add(0);
+            for (int j = 0; j < initSize; j++) {
+                gameBoard.get(i).add(new AtomicInteger(0));
             }
         }
         height = gameBoard.size();
@@ -240,7 +269,7 @@ public class DynamicBoard extends Board {
             for (; i < expandWidth; i++) {
                 gameBoard.add(new ArrayList<>());
                 for (int j = gameBoard.get(i).size(); j <= height; j++) {
-                    gameBoard.get(i).add(0);
+                    gameBoard.get(i).add(new AtomicInteger(0));
                 }
             }
             width = expandWidth;
@@ -250,7 +279,7 @@ public class DynamicBoard extends Board {
             for (int i = 0; i < width; i++) {
                 int j = gameBoard.get(i).size();
                 for (; j <= expandHeight; j++) {
-                    gameBoard.get(i).add(0);
+                    gameBoard.get(i).add(new AtomicInteger(0));
                 }
             }
             height = expandHeight;
@@ -264,7 +293,7 @@ public class DynamicBoard extends Board {
             for (int i = 0; i < expandWidth; i++) {
                 gameBoard.add(0, new ArrayList<>());
                 for (int j = 0; j < height; j++) {
-                    gameBoard.get(0).add(0);
+                    gameBoard.get(0).add(new AtomicInteger(0));
                 }
             }
             width += expandWidth;
@@ -273,20 +302,10 @@ public class DynamicBoard extends Board {
             int expandHeight = -y;
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < expandHeight; j++) {
-                    gameBoard.get(i).add(0, 0);
+                    gameBoard.get(i).add(0, new AtomicInteger(0));
                 }
             }
             height += expandHeight;
-        }
-    }
-
-    private void addThreadTask(Runnable task){
-        threads.add(new Thread(task));
-    }
-
-    private void startThreads(){
-        for (Thread task : threads){
-            task.start();
         }
     }
 
@@ -303,14 +322,14 @@ public class DynamicBoard extends Board {
         for (int i = 0; i < x; i++) {
             gameBoard.add(new ArrayList<>(y));
             for (int j = 0; j < y; j++) {
-                gameBoard.get(i).add(j, 0);
+                gameBoard.get(i).add(j, new AtomicInteger(0));
             }
         }
         width = gameBoard.size();
         height = gameBoard.get(0).size();
     }
 
-    public void printPerformance(){
+    public void printPerformance() {
         long start = System.currentTimeMillis();
         countNeighbours();
         System.out.println("countNeighbours took " + (System.currentTimeMillis() - start) + "ms");
@@ -318,7 +337,7 @@ public class DynamicBoard extends Board {
 
     public void setCellNoExpand(int x, int y, boolean b) {
         if (x < 0 || x > width || y < 0 || y > height) return;
-        gameBoard.get(x).set(y, b ? 1 : 0);
+        gameBoard.get(x).set(y, b ? new AtomicInteger(1) : new AtomicInteger(0));
     }
 
     public String toStringBoard() {
@@ -334,13 +353,7 @@ public class DynamicBoard extends Board {
         return stringBuilder.toString();
     }
 
-    public void countNeigh(){
-        countNeighboursConcurrent(1);
-        countNeighboursConcurrent(2);
-        countNeighboursConcurrent(3);
-    }
-
-    public void nextGenerationConcurrentPrintPerformance(){
+    public void nextGenerationConcurrentPrintPerformance() {
         long start = System.currentTimeMillis();
         nextGenerationConcurrent();
 

@@ -65,7 +65,7 @@
                 <VBox fx:id="setSpeed" spacing="5">
 
                     <Label fx:id="speedInd"/>
-                    <Slider fx:id="speedSlider" max="100" onMouseDragged="#setTimelineRate" maxWidth="130"
+                    <Slider fx:id="speedSlider" max="60" onMouseDragged="#setTimelineRate" maxWidth="130"
                             onMouseClicked="#setTimelineRate"/>
 
                 </VBox>

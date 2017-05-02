@@ -173,7 +173,9 @@ public class Controller implements Initializable {
 
         // call nextGeneration after each keyframe
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
-            gameBoard.nextGeneration();
+
+            ((DynamicBoard) gameBoard).nextGenerationConcurrent();
+            //gameBoard.nextGeneration();
             draw();
         });
 
@@ -586,9 +588,7 @@ public class Controller implements Initializable {
         // assign a blank board to gameBoard
         gameBoard.clear();
 
-        // clear the canvas
-        gc.clearRect(0, 0, playArea.getWidth(), playArea.getHeight());
-
+        // clear the meta information and canvas
         clearMetaLabels();
         draw();
     }
@@ -603,7 +603,7 @@ public class Controller implements Initializable {
     }
 
     /**
-     * The following 7 methods implement the available starting patterns for the game. For each pattern/shape, the
+     * The following 4 methods implement the available starting patterns for the game. For each pattern/shape, the
      * indicator label tells the user which pattern is selected at a given time.
      */
     @FXML
@@ -633,7 +633,6 @@ public class Controller implements Initializable {
         TIMELINE.stop();
         animBtn.setText("Start");
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        // clearBoard();
 
         try {
             FileChooser fileChooser = new FileChooser();
@@ -728,8 +727,17 @@ public class Controller implements Initializable {
     }
 
     private void setPattern() {
+
+        if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
+                (DynamicBoard) gameBoard).getMAXSIZE()) {
+        }
+        ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
+                .length -
+                gameBoard.getWIDTH()));
+
         int xOffset = (gameBoard.getWIDTH() - loadBoard.length) / 2;
         int yOffset = (gameBoard.getHEIGHT() - loadBoard[0].length) / 2;
+
 
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {

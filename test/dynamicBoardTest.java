@@ -1,8 +1,7 @@
 import Model.DynamicBoard;
-import org.junit.Test;
-// import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 // import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -35,7 +34,7 @@ public class dynamicBoardTest {
         board.setCellNoExpand(1,2, true);
 
         System.out.println(board.toStringBoard());
-        board.countNeigh();
+        //board.countNeigh();
         System.out.println(board.toStringBoard());
         //assertEquals("000111000", board.toString());
         board.nextGenerationConcurrent();
