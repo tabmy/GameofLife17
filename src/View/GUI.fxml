@@ -28,7 +28,6 @@
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
                 <Menu text="View" />
-                <Menu text="Help" />
                 <Menu text="Shape">
                     <MenuItem text="Clear" onAction="#clearBoard"/>
                     <MenuItem text="Glider" onAction="#glider"/>
@@ -36,7 +35,10 @@
                     <MenuItem text="Tumbler" onAction="#tumbler"/>
                     <MenuItem text="Gosper Glider Gun" onAction="#gliderGun"/>
                 </Menu>
-            </MenuBar>
+                <Menu text="Help">
+                    <MenuItem text="Show help" onAction="#showHelp"/>
+                </Menu>
+        </MenuBar>
     </HBox>
 
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
@@ -74,7 +76,7 @@
 
                     <Label fx:id="sizeInd" text="Cell size" />
                     <Slider fx:id="cellSizeSlider"  onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize"
-                            min="2" max="50" maxWidth="130"/>
+                            min="1" max="50" maxWidth="130"/>
 
                 </VBox>
 

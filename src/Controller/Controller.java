@@ -6,7 +6,10 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -15,6 +18,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -706,11 +710,31 @@ public class Controller implements Initializable {
         try {
             loadBoard = FileHandler.readFromDisk(new File(resource));
             setPattern();
+            draw();
         } catch (IOException e) {
             System.out.println("Something went wrong...");
             System.out.println(e.getMessage());
         } catch (PatternFormatException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    @FXML
+    public void showHelp() {
+        try {
+            Stage stage = new Stage();
+            // stage.show();
+            stage.initOwner(playArea.getScene().getWindow());
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/HelpView.fxml"));
+            Parent root = loader.load();
+            HelpController helpController = loader.getController();
+            helpController.setUpStage(stage);
+
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException ioe) {
+            // do shit
         }
     }
 
@@ -721,20 +745,6 @@ public class Controller implements Initializable {
     public void exitApplication() {
         System.exit(0);
     }
-
-//    @FXML
-//    private void randomize(KeyEvent e) {
-//        // Easter egg
-//        if (e.getCode().toString().toLowerCase().equals("r")) {
-//            backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            draw();
-//        } else if (e.getCode().toString().toLowerCase().equals("d")) {
-//            backColorPicker.setValue(Color.WHITE);
-//            cellColorPicker.setValue(Color.BLACK);
-//            draw();
-//        }
-//    }
 
     @FXML
     public void newTest() {
