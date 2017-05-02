@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  * @since 20.01.2017
  */
 
-public class Controller implements Initializable {
+public class GameController implements Initializable {
 
     /**
      * Start/stop button for the animation.
@@ -727,6 +727,20 @@ public class Controller implements Initializable {
             // do shit
         }
     }
+
+//    @FXML
+//    public void lifeWiki() {
+//        try {
+//            URL url = new URL("http://www.conwaylife.com/wiki/Conway's_Game_of_Life");
+//            url.openConnection();
+//        }
+//        catch (MalformedURLException ex1) {
+//
+//        }
+//        catch (IOException ex2) {
+//
+//        }
+//    }
 
     /**
      * Quits the application safely.
