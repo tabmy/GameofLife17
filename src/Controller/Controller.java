@@ -340,65 +340,54 @@ public class Controller implements Initializable {
 
         switch (event.getCode().toString().toLowerCase()) {
             case "w":
-                // iterate through the height and width of the board
-                        /*for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                                // check if a given cell is alive and color it
-                                if (gameBoard.getCellState(i, j)) {
-                                    gc.fillRect((i * cS) + .25, (j * cS) + .25 - 1, cS - .5, cS - .5);
-                                }
-                            }
-                        }*/
-//                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-//                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-//                        if (gameBoard.getCellState(i, j)) {
-//                            gameBoard.setCellState(i, j - 1, true);
-//                            gameBoard.setCellState(i, j, false);
-//                        }
-//                    }
-//                }
-//                draw();
-
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        if (gameBoard.getCellState(i, j))
-                            temp[i][j - 1] = true;
+                try {
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (gameBoard.getCellState(i, j))
+                                temp[i][j - 1] = true;
+                        }
                     }
-                }
 
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        gameBoard.setCellState(i, j, false);
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            gameBoard.setCellState(i, j, false);
+                        }
                     }
-                }
 
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        if (temp[i][j])
-                            gameBoard.setCellState(i, j, true);
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (temp[i][j])
+                                gameBoard.setCellState(i, j, true);
+                        }
                     }
-                }
 
-                draw();
-                break;
+                    draw();
+                    break;
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (gameBoard.getCellState(i, j))
+                                //gameBoard.setCellState(i, j, false);
+                                temp[i][j] = true;
+                        }
+                    }
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (temp[i][j])
+                                gameBoard.setCellState(i, j, true);
+                        }
+                    }
+                    // drawCells();
+                    break;
+               }
+
             case "d":
-                // iterate through the height and width of the board
-                        /*for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                                // check if a given cell is alive and color it
-                                if (gameBoard.getCellState(i, j)) {
-                                    gc.fillRect((i * cS) + .25 + 1, (j * cS) + .25, cS - .5, cS - .5);
-                                }
-                            }
-                        }*/
-
-
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (gameBoard.getCellState(i, j))
                             temp[i + 1][j] = true;
-                        }
                     }
+                }
 
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
@@ -410,11 +399,12 @@ public class Controller implements Initializable {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (temp[i][j])
                             gameBoard.setCellState(i, j, true);
-                        }
                     }
+                }
 
                 draw();
                 break;
+
             case "s":
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
@@ -438,59 +428,46 @@ public class Controller implements Initializable {
 
                 draw();
                 break;
-
-                // iterate through the height and width of the board
-                        /*for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                                // check if a given cell is alive and color it
-                                if (gameBoard.getCellState(i, j)) {
-                                    gc.fillRect((i * cS) + .25, (j * cS) + .25 + 1, cS - .5, cS - .5);
-                                }
-                            }
-                        }*/
-//                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-//                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-//                        if (gameBoard.getCellState(i, j)) {
-//                            gameBoard.setCellState(i, j + 1, true);
-//                            gameBoard.setCellState(i, j, false);
-//                        }
-//                    }
-//                }
-//                draw();
             case "a":
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        if (gameBoard.getCellState(i, j))
-                            temp[i - 1][j] = true;
+                try {
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (gameBoard.getCellState(i, j))
+                                temp[i - 1][j] = true;
+                        }
                     }
-                }
 
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        gameBoard.setCellState(i, j, false);
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            gameBoard.setCellState(i, j, false);
+                        }
                     }
-                }
 
-                for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                    for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                        if (temp[i][j])
-                            gameBoard.setCellState(i, j, true);
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (temp[i][j])
+                                gameBoard.setCellState(i, j, true);
+                        }
                     }
-                }
 
-                draw();
-                break;
-                // iterate through the height and width of the board
-                        /*for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-                            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                                // check if a given cell is alive and color it
-                                if (gameBoard.getCellState(i, j)) {
-                                    gc.fillRect((i * cS) + .25 - 1, (j * cS) + .25, cS - .5, cS - .5);
-                                }
-                            }
-                        }*/
-//                draw();
-//                event.consume();
+                    draw();
+                    break;
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (gameBoard.getCellState(i, j))
+                                //gameBoard.setCellState(i, j, false);
+                                temp[i][j] = true;
+                        }
+                    }
+                    for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                        for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                            if (temp[i][j])
+                                gameBoard.setCellState(i, j, true);
+                        }
+                    }
+                    break;
+                }
             case "r":
                 backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
                 cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
@@ -503,52 +480,6 @@ public class Controller implements Initializable {
                 draw();
                 break;
         }
-
-        // Easter egg
-//        if (event.getCode().toString().toLowerCase().equals("r")) {
-//            backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            draw();
-//        } else if (event.getCode().toString().toLowerCase().equals("b")) {
-//            backColorPicker.setValue(Color.WHITE);
-//            cellColorPicker.setValue(Color.BLACK);
-//            draw();
-//        }
-
-//        if (movingCells) {
-//            double cS = gameBoard.getCellSize();
-//            int mouseX = (int) event.getX();
-//            int mouseY = (int) event.getY();
-
-//            for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-//                for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-//                    if (gameBoard.getCellState(i, j)) {
-//                        gc.fillRect(mouseX, mouseY, cS, cS);
-//                        draw();
-//                    }
-//                }
-//            }
-//        }
-
-        // iterate through the height and width of the board
-        /*for (int i = 0; i < gameBoard.getWIDTH(); i++) {
-            for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
-                // check if a given cell is alive and color it
-                if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + .25 - cS, (j * cS) + .25, cS - .5, cS - .5);
-                }
-            }
-        }*/
-
-//        EventHandler<KeyEvent> keyEventEventHandler = new EventHandler<KeyEvent>() {
-//            // get the size of the cells
-//            double cS = gameBoard.getCellSize();
-//
-//            @Override
-//            public void handle(KeyEvent zika) {
-//
-//            }
-//        };
     }
 
     /**
