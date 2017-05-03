@@ -5,7 +5,10 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -14,6 +17,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -36,7 +40,7 @@ import java.util.ResourceBundle;
  * @since 20.01.2017
  */
 
-public class Controller implements Initializable {
+public class GameController implements Initializable {
 
     /**
      * Start/stop button for the animation.
@@ -705,6 +709,39 @@ public class Controller implements Initializable {
         }
     }
 
+    @FXML
+    public void showHelp() {
+        try {
+            Stage stage = new Stage();
+            // stage.show();
+            stage.initOwner(playArea.getScene().getWindow());
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/HelpView.fxml"));
+            Parent root = loader.load();
+            HelpController helpController = loader.getController();
+            helpController.setUpStage(stage);
+
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException ioe) {
+            // do shit
+        }
+    }
+
+//    @FXML
+//    public void lifeWiki() {
+//        try {
+//            URL url = new URL("http://www.conwaylife.com/wiki/Conway's_Game_of_Life");
+//            url.openConnection();
+//        }
+//        catch (MalformedURLException ex1) {
+//
+//        }
+//        catch (IOException ex2) {
+//
+//        }
+//    }
+
     /**
      * Quits the application safely.
      */
@@ -712,20 +749,6 @@ public class Controller implements Initializable {
     public void exitApplication() {
         System.exit(0);
     }
-
-//    @FXML
-//    private void randomize(KeyEvent e) {
-//        // Easter egg
-//        if (e.getCode().toString().toLowerCase().equals("r")) {
-//            backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-//            draw();
-//        } else if (e.getCode().toString().toLowerCase().equals("d")) {
-//            backColorPicker.setValue(Color.WHITE);
-//            cellColorPicker.setValue(Color.BLACK);
-//            draw();
-//        }
-//    }
 
     @FXML
     public void newTest() {
