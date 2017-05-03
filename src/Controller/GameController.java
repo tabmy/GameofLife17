@@ -86,6 +86,7 @@ public class GameController implements Initializable {
      */
     @FXML
     public Label shapeLabel;
+
     @FXML
     private Label authorLabel;
 
@@ -121,6 +122,13 @@ public class GameController implements Initializable {
     private byte[][] loadBoard;
 
     private TextInputDialog textInputDialog = new TextInputDialog("");
+
+    private int xOffset, yOffset;
+
+    @FXML
+    private Button moveBtn;
+
+    private boolean movingCells = false;
 
     /**
      * Method {@code Initialize()} sets up the application for running. It creates a new board, where the game will
@@ -188,6 +196,9 @@ public class GameController implements Initializable {
         TIMELINE.getKeyFrames().add(keyFrame);
     }
 
+    /**
+     * Draws the next generation of the pattern.
+     */
     @FXML
     private void nextGen() {
        // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
@@ -258,7 +269,7 @@ public class GameController implements Initializable {
 
     /**
      * Methods {@code cellDrag()} and {@code cellClick()} are implemented in the {@code Canvas} of the FXML file. They
-     * give the correct mousedrag parameters to method {@code changeCellState}, depending on if the user clicked or
+     * give the correct mouse drag parameters to method {@code changeCellState}, depending on if the user clicked or
      * dragged on the screen.
      *
      * @param e Mouse events captured when user clicks on screen
@@ -332,19 +343,68 @@ public class GameController implements Initializable {
             for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                 // check if a given cell is alive and color it
                 if (gameBoard.getCellState(i, j)) {
-                    gc.fillRect((i * cS) + .25, (j * cS) + .25, cS - .5, cS - .5);
+                    gc.fillRect((i * cS) + .25 + xOffset, (j * cS) + .25 + yOffset, cS - .5, cS - .5);
                 }
             }
         }
     }
 
     @FXML
+    public void toggleMovingCells() {
+        // return !movingCells;
+        if (movingCells)
+            movingCells = false;
+        else
+            movingCells = true;
+    }
+
+    @FXML
+    public void moveWithMouse(MouseEvent event) {
+        if (movingCells) {
+            int curX = 0;
+            int curY = 0;
+
+            for (int i = 0; i < gameBoard.getWIDTH(); i++) {
+                for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
+                    if (gameBoard.getCellState(i, j)) {
+                        curX = i + 1;
+                        curY = j + 1;
+                        break;
+                    }
+                }
+            }
+
+            int mouseX = (int) event.getX();
+            int mouseY = (int) event.getY();
+
+            xOffset = mouseX - curX;
+            yOffset = mouseY - curY;
+
+            if (mouseX < curX)
+                xOffset = - xOffset;
+
+            if (mouseY < curY)
+                yOffset = - yOffset;
+        }
+    }
+
+    /**
+     * Handles all the key bindings associated with game control.
+     * For moving the cells, a temporary {@code byte} array is used to store the current active cells, then draw them
+     * one place further in the direction of the corresponding key pressed.
+     *
+     * @param event
+     *      {@code KeyEvent} whose code is used to determine which key was pressed.
+     */
+    @FXML
     public void handleKeyEvents(KeyEvent event) {
+        // temporary array must take one more value at each dimension than the gameBoard
         boolean[][] temp = new boolean[gameBoard.getWIDTH() + 1][gameBoard.getHEIGHT() + 1];
 
         switch (event.getCode().toString().toLowerCase()) {
             case "w":
                 try {
+                    // move cells one spot up and copy to temp
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (gameBoard.getCellState(i, j))
@@ -352,12 +412,14 @@ public class GameController implements Initializable {
                         }
                     }
 
+                    // clear cells from old spot
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             gameBoard.setCellState(i, j, false);
                         }
                     }
 
+                    // copy values from temp array to gameBoard
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (temp[i][j])
@@ -365,27 +427,29 @@ public class GameController implements Initializable {
                         }
                     }
 
+                    // draw normally
                     draw();
                     break;
                 } catch (ArrayIndexOutOfBoundsException ex) {
+                    // if exception is caught, place active cells in same positions in temp
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (gameBoard.getCellState(i, j))
-                                //gameBoard.setCellState(i, j, false);
                                 temp[i][j] = true;
                         }
                     }
+                    // copy the cells in the same places back to gameBoard
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (temp[i][j])
                                 gameBoard.setCellState(i, j, true);
                         }
                     }
-                    // drawCells();
                     break;
                }
 
             case "d":
+                // move cells one spot right and copy to temp
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (gameBoard.getCellState(i, j))
@@ -393,12 +457,14 @@ public class GameController implements Initializable {
                     }
                 }
 
+                // clear cells from old spot
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         gameBoard.setCellState(i, j, false);
                     }
                 }
 
+                // copy cells back to gameBoard
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (temp[i][j])
@@ -406,10 +472,12 @@ public class GameController implements Initializable {
                     }
                 }
 
+                // draw normally
                 draw();
                 break;
 
             case "s":
+                // move cells one spot down and copy to temp
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (gameBoard.getCellState(i, j))
@@ -417,12 +485,14 @@ public class GameController implements Initializable {
                     }
                 }
 
+                // clear cells from old spot
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         gameBoard.setCellState(i, j, false);
                     }
                 }
 
+                // copy cells back to gameBoard
                 for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                     for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                         if (temp[i][j])
@@ -430,10 +500,12 @@ public class GameController implements Initializable {
                     }
                 }
 
+                // draw normally
                 draw();
                 break;
             case "a":
                 try {
+                    // move cells one spot left and copy to temp
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (gameBoard.getCellState(i, j))
@@ -441,12 +513,14 @@ public class GameController implements Initializable {
                         }
                     }
 
+                    // clear cells from old spot
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             gameBoard.setCellState(i, j, false);
                         }
                     }
 
+                    // copy cells back to gameBoard
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (temp[i][j])
@@ -454,13 +528,14 @@ public class GameController implements Initializable {
                         }
                     }
 
+                    // draw cells on updated positions
                     draw();
                     break;
                 } catch (ArrayIndexOutOfBoundsException ex) {
+                    // exception handled in same way as for 'w'-case
                     for (int i = 0; i < gameBoard.getWIDTH(); i++) {
                         for (int j = 0; j < gameBoard.getHEIGHT(); j++) {
                             if (gameBoard.getCellState(i, j))
-                                //gameBoard.setCellState(i, j, false);
                                 temp[i][j] = true;
                         }
                     }
@@ -473,16 +548,19 @@ public class GameController implements Initializable {
                     break;
                 }
             case "r":
-                backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-                cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
-                draw();
-                break;
-
-            case "b":
-                backColorPicker.setValue(Color.WHITE);
-                cellColorPicker.setValue(Color.BLACK);
-                draw();
-                break;
+                // Shh! Don't spoil this!
+                if (event.isShiftDown()) {
+                    backColorPicker.setValue(Color.WHITE);
+                    cellColorPicker.setValue(Color.BLACK);
+                    draw();
+                    break;
+                }
+                else {
+                    backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+                    cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
+                    draw();
+                    break;
+                }
         }
     }
 
@@ -498,15 +576,21 @@ public class GameController implements Initializable {
         gc.fillRect(0, 0, playArea.getWidth(), playArea.getHeight());
     }
 
+    /**
+     * Draws the grid that covers the {@code gameBoard}. The space between the lines of the grid is specified by the
+     * current cell size.
+     */
     private void drawGrid() {
-
-        int width = gameBoard.getWIDTH();// (int)playArea.getWidth();
-        int height = gameBoard.getHEIGHT();// (int)playArea.getHeight();
+        // get dimensions of gameBoard and cell size
+        int width = gameBoard.getWIDTH();
+        int height = gameBoard.getHEIGHT();
         double cS = cellSizeSlider.getValue();
 
+        // set the grid color equal to the cell color and adjust line width
         gc.setStroke(cellColorPicker.getValue());
         gc.setLineWidth(0.1);
 
+        // draw grid lines along the width and height of gameBoard
         for (int i = 0; i < width; i++) {
             gc.strokeLine(i * cS, 0.25, i * cS + 0.25, height * cS + 0.25);
         }
@@ -563,42 +647,51 @@ public class GameController implements Initializable {
 
     // IO-methods
 
+    /**
+     * Method {@code loadFileDisk} is used to load pattern files from the user's computer. It uses a
+     * {@code FileChooser} to provide access to internally stored files. The supported file types are .cells and .rle.
+     * If a file cannot be opened, either a {@code PatternFormatException} or {@code IOException} is thrown.
+     *
+     * @see FileHandler#readFromDisk(File)
+     * @see PatternFormatException
+     * */
     @FXML
     private void loadFileDisk() {
+        // prepare stage for opening file
         TIMELINE.stop();
         animBtn.setText("Start");
+        // instantiate Alert object in case of error
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
         try {
+            // instantiate FileChooser and specify extensions
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Cell patterns", "*.cells", "*.rle"));
+            // get the file that was chosen
             File selectedFile = fileChooser.showOpenDialog(null);
 
 
             if (selectedFile != null) {
+                // call FileHandler method readFromDisk and assign returned value to loadBoard
                 loadBoard = FileHandler.readFromDisk(selectedFile);
-                /*if (gameBoard instanceof StaticBoard && (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0]
-                        .length >
-                        gameBoard.getHEIGHT
-                                ()))
-                {
-                    throw new PatternFormatException("Pattern size too large for board!");
-                }
-                else*/
+
                 if (gameBoard instanceof DynamicBoard) {
+                    // throw PatternFormatException if loadBoard is too large
                     if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
                             (DynamicBoard) gameBoard).getMAXSIZE()) {
                         throw new PatternFormatException("Pattern size " +
                                 "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE() + " x" +
                                 " " + ((DynamicBoard) gameBoard).getMAXSIZE());
                     }
+                    // expand gameBoard to fit loadBoard
                     ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
-                            .length -
-                            gameBoard.getWIDTH()));
+                            .length - gameBoard.getWIDTH()));
                 }
+                // implement loaded pattern
                 setPattern();
             }
+          // make use of alert window in case of exception
         } catch (IOException ex) {
             alert.setHeaderText("Something went wrong!");
             alert.setContentText(ex.getMessage());
@@ -611,68 +704,79 @@ public class GameController implements Initializable {
             alert.showAndWait();
         }
 
+        // draw normally
         draw();
     }
 
+    /**
+     * Method {@code #loadFileNet()} is used to open a connection to a website containing a pattern file and implement
+     * the pattern in the game. The user is prompted for a URL, which is used as the {@code String} value passed to
+     * {@code FileHandler}. The supported file types are .cells and .rle. If errors occur, the method throws
+     * a {@code PatternFormatException} or an {@code IOException}.
+     *
+     * @see FileHandler#readFromURL(String)
+     * @see PatternFormatException
+     */
     @FXML
     private void loadFileNet() {
+        // prepare text input dialog
         textInputDialog.setTitle("Load file from URL");
         textInputDialog.setHeaderText("Enter URL to GoL file");
         textInputDialog.showAndWait();
 
+        // instantiate alert window in case of errors
         Alert alert = new Alert(Alert.AlertType.ERROR);
 
+        // get input String and clear text input dialog
         String input = textInputDialog.getResult();
         textInputDialog.getEditor().setText("");
 
         if (!(input == null))
             try {
+                // stop animation
                 TIMELINE.stop();
                 animBtn.setText("Start");
 
+                // parse input String and assign returned value to loadBoard
                 loadBoard = FileHandler.readFromURL(input);
-                /*if (loadBoard.length > gameBoard.getWIDTH() || loadBoard[0].length > gameBoard.getHEIGHT()) {
-                    throw new PatternFormatException("Pattern size too large for board!");
-                }*/
+
                 if (gameBoard instanceof DynamicBoard) {
+                    // throw PatternFormatException if loadBoard dimensions are greater than gameBoard dimensions
                     if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
                             (DynamicBoard) gameBoard).getMAXSIZE()) {
                         throw new PatternFormatException("Pattern size " +
                                 "too large for dynamic board size of " + ((DynamicBoard) gameBoard).getMAXSIZE() + " x" +
                                 " " + ((DynamicBoard) gameBoard).getMAXSIZE());
                     }
+                    // expand gameBoard to appropriate dimensions
                     ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
-                            .length -
-                            gameBoard.getWIDTH()));
+                            .length - gameBoard.getWIDTH()));
                 }
+                // implement loaded pattern
                 setPattern();
 
             } catch (PatternFormatException pfe) {
+                // inform user in case of pattern error
                 alert.setHeaderText("Pattern error!");
                 alert.setContentText(pfe.getMessage());
                 alert.showAndWait();
 
             } catch (IOException ioe) {
+                // ask for new URL in case of malformed input
                 alert.setHeaderText("Something went wrong");
                 alert.setContentText("Please try again with a correct URL!");
                 alert.showAndWait();
-
             }
+        // draw loaded pattern
         draw();
     }
 
+    /**
+     * This method is used in {@code loadFileDisk()} and {@code loadFileNet()} to implement the loaded patterns in the
+     * {@code gameBoard}. */
     private void setPattern() {
-
-        if (loadBoard.length > ((DynamicBoard) gameBoard).getMAXSIZE() || loadBoard[0].length > (
-                (DynamicBoard) gameBoard).getMAXSIZE()) {
-        }
-        ((DynamicBoard) gameBoard).expand(2 * (loadBoard.length - gameBoard.getWIDTH()), 2 * (loadBoard[0]
-                .length -
-                gameBoard.getWIDTH()));
-
         int xOffset = (gameBoard.getWIDTH() - loadBoard.length) / 2;
         int yOffset = (gameBoard.getHEIGHT() - loadBoard[0].length) / 2;
-
 
         for (int i = 0; i < loadBoard.length; i++) {
             for (int j = 0; j < loadBoard[0].length; j++) {
@@ -684,23 +788,55 @@ public class GameController implements Initializable {
         readMeta();
     }
 
+    /**
+     * {@code readMeta()} is used for displaying metadata about files that get loaded into the game. Method
+     * {@code getMeta()} in the {@code FileHandler} class extracts the metadata from a file. The data is then
+     * printed to its dedicated labels in the game.
+     *
+     * @see FileHandler#getMeta()
+     * @see FileHandler#handleMeta()
+     * */
     private void readMeta() {
+        // get metadata from file
         ArrayList<String> meta = FileHandler.getMeta();
+
+        // print shape and author info if it exists
         shapeLabel.setText(meta.get(0) != null ? meta.get(0) : "No info...");
         authorLabel.setText(meta.get(1) != null ? meta.get(1) : "No info...");
     }
 
+    /**
+     * Clears the metadata labels and sets their text to default.
+     * Used in {@code clearBoard()} method.
+     * */
     private void clearMetaLabels() {
         String s = "No info...";
         shapeLabel.setText(s);
         authorLabel.setText(s);
     }
 
+    /**
+     * This method is used for loading the provided default patterns under the 'Shape' menu. The files are loaded in
+     * the same way as any disk file, only these files are found by default in the 'resources' package.
+     * A {@code PatternFormatException} or an {@code IOException} can be thrown, but tests have shown that the chances
+     * of this occurring are minimal.
+     *
+     * @param resource
+     *      File path and name of the desired pattern
+     *
+     * @see #loadFileDisk()
+     * @see FileHandler#readFromDisk(File)
+     * @see PatternFormatException
+     * */
     private void loadPattern(String resource) {
         try {
+            // parse file and assign returned value to loadBoard
             loadBoard = FileHandler.readFromDisk(new File(resource));
+
+            // implement pattern and draw
             setPattern();
             draw();
+          // print exception messages to console
         } catch (IOException e) {
             System.out.println("Something went wrong...");
             System.out.println(e.getMessage());
@@ -709,22 +845,33 @@ public class GameController implements Initializable {
         }
     }
 
+    /**
+     * Shows the help view in a separate stage when triggered. The {@code HelpView.fxml} and {@code HelpController}
+     * files are loaded. Method {@code setUpStage} in the controller prepares the help view.
+     *
+     * @see HelpController
+     * @see HelpController#setUpStage(Stage)
+     * */
     @FXML
     public void showHelp() {
         try {
+            // initiate new Stage
             Stage stage = new Stage();
-            // stage.show();
             stage.initOwner(playArea.getScene().getWindow());
 
+            // instantiate and load help view controller
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/HelpView.fxml"));
             Parent root = loader.load();
             HelpController helpController = loader.getController();
             helpController.setUpStage(stage);
 
+            // show help
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException ioe) {
-            // do shit
+            // print exception messages to console
+            System.out.println("Something went wrong...");
+            System.out.println(ioe.getMessage());
         }
     }
 
@@ -750,11 +897,11 @@ public class GameController implements Initializable {
         System.exit(0);
     }
 
-    @FXML
-    public void newTest() {
-        gameBoard = new DynamicBoard();
-        gameBoard.setCellSize(cellSizeSlider.getValue());
-        draw();
-        //System.out.println(dynamicBoard.toStringBoard());
-    }
+//    @FXML
+//    public void newTest() {
+//        gameBoard = new DynamicBoard();
+//        gameBoard.setCellSize(cellSizeSlider.getValue());
+//        draw();
+//        //System.out.println(dynamicBoard.toStringBoard());
+//    }
 }

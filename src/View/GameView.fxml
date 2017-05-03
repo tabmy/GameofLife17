@@ -85,12 +85,15 @@
 
             <Box height="20"/>
 
-            <HBox>
+            <VBox>
                 <HBox spacing="15">
                     <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
                     <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear cells"/>
                 </HBox>
-            </HBox>
+                <!--<HBox>
+                    <Button fx:id="moveBtn" text="Move cells" onAction="#toggleMovingCells"/>
+                </HBox>-->
+            </VBox>
 
             <Box height="20"/>
 
