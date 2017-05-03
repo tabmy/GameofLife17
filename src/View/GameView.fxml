@@ -20,7 +20,7 @@
     <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
         <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
                 <Menu text="File">
-                    <MenuItem text="New..." onAction="#newTest" />
+                    <MenuItem text="New..." /> <!--onAction="#newTest"-->
                     <MenuItem text="Open..." onAction="#loadFileDisk" />
                     <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
                     <MenuItem text="Next" onAction="#nextGen"/>
@@ -37,7 +37,7 @@
                 </Menu>
                 <Menu text="Help">
                     <MenuItem text="Show help" onAction="#showHelp"/>
-                    <!--<MenuItem text="Life wiki" onAction="#lifeWiki"/>-->
+                    <MenuItem text="Life wiki" onAction="#lifeWiki"/>
                 </Menu>
         </MenuBar>
     </HBox>

@@ -6,7 +6,9 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
- * Created by Bane on 02.05.2017.
+ * Controller class for the help view. Implements help view design features and handles button functionality.
+ *
+ * @author Branislav Petrović
  */
 public class HelpController {
     @FXML
@@ -24,11 +26,16 @@ public class HelpController {
     @FXML
     public Button closeBtn;
 
+    /**
+     * Defines styling and layout for the help view {@code Stage}.
+     *
+     * @param stage
+     *      Stage to apply effects on.
+     * */
     public void setUpStage(Stage stage) {
         stage.setResizable(false);
 
         title.setStyle("-fx-font: 24 Calibri;");
-        // title.setUnderline(true);
 
         subtitle1.setStyle("-fx-font: 20 Calibri;");
 
@@ -37,6 +44,9 @@ public class HelpController {
         subtitle3.setStyle("-fx-font: 20 Calibri;");
     }
 
+    /**
+     * Closes help view.
+     * */
     @FXML
     public void close() {
         Stage stageToClose = (Stage) closeBtn.getScene().getWindow();

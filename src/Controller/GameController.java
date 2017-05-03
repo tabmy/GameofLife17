@@ -875,19 +875,24 @@ public class GameController implements Initializable {
         }
     }
 
-//    @FXML
-//    public void lifeWiki() {
-//        try {
-//            URL url = new URL("http://www.conwaylife.com/wiki/Conway's_Game_of_Life");
-//            url.openConnection();
-//        }
-//        catch (MalformedURLException ex1) {
-//
-//        }
-//        catch (IOException ex2) {
-//
-//        }
-//    }
+    /**
+     * Opens the Life Wiki homepage in the default browser.
+     * */
+    @FXML
+    public void lifeWiki() {
+        try {
+            URI uri = new URI("http://www.conwaylife.com/wiki/Main_Page");
+            java.awt.Desktop.getDesktop().browse(uri);
+        }
+        // print IOException message to console
+        catch (IOException ex1) {
+            System.out.println("Something went wrong...");
+            System.out.println(ex1.getMessage());
+        }
+        catch (URISyntaxException ex2) {
+            // this exception cannot occur because the uri is not specified by the user
+        }
+    }
 
     /**
      * Quits the application safely.
