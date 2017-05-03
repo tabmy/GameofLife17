@@ -1,26 +1,21 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-/**
- * Created by Tommy on 02.05.2017.
- */
+
 public class ConcurrentSim {
 
-    private ArrayList<Thread> threads = new ArrayList<>();
+    private ArrayList<Thread> threadList = new ArrayList<>();
 
     public void addThreadTask(Runnable task) {
-        threads.add(new Thread(task));
+        threadList.add(new Thread(task));
     }
 
     public void doWork() {
-
-        for (Thread t : threads) {
+        for (Thread t : threadList) {
             t.start();
         }
-        for (Thread t : threads) {
+        for (Thread t : threadList) {
            try {
                t.join();
            }
@@ -28,8 +23,6 @@ public class ConcurrentSim {
                System.out.println(intEx.getMessage());
            }
         }
-        threads.clear();
+        threadList.clear();
     }
-
-
 }

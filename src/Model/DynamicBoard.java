@@ -9,7 +9,7 @@ public class DynamicBoard extends Board {
     private Rule rule;
     private int height;
     private int width;
-    private int initSize = 10;
+    private int initSize = 100;
     private final int MAXSIZE = 2000;
     private ConcurrentSim simulator = new ConcurrentSim();
     private final int THREADNUM = Runtime.getRuntime().availableProcessors();
@@ -174,8 +174,6 @@ public class DynamicBoard extends Board {
     }
 
     public void nextGenerationConcurrent() {
-
-        int boardParts = gameBoard.size()/ THREADNUM;
 
         for (int i = 0; i < THREADNUM; i+=2) {
             countNeighboursConcurrent(i);
