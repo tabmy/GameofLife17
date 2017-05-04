@@ -621,7 +621,7 @@ public class GameController implements Initializable {
      *
      * @see FileHandler#readFromDisk(File)
      * @see PatternFormatException
-     * */
+     */
     @FXML
     private void loadFileDisk() {
         // prepare stage for opening file
@@ -762,7 +762,7 @@ public class GameController implements Initializable {
      *
      * @see FileHandler#getMeta()
      * @see FileHandler#handleMeta()
-     * */
+     */
     private void readMeta() {
         // get metadata from file
         ArrayList<String> meta = FileHandler.getMeta();
@@ -775,7 +775,7 @@ public class GameController implements Initializable {
     /**
      * Clears the metadata labels and sets their text to default.
      * Used in {@code clearBoard()} method.
-     * */
+     */
     private void clearMetaLabels() {
         String s = "No info...";
         shapeLabel.setText(s);
@@ -818,7 +818,7 @@ public class GameController implements Initializable {
      *
      * @see HelpController
      * @see HelpController#setUpStage(Stage)
-     * */
+     */
     @FXML
     public void showHelp() {
         try {
@@ -844,7 +844,7 @@ public class GameController implements Initializable {
 
     /**
      * Opens the Life Wiki homepage in the default browser.
-     * */
+     */
     @FXML
     public void lifeWiki() {
         try {

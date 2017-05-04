@@ -10,7 +10,7 @@ public class PatternFormatException extends Exception {
 
     /**
      * Constructs a <code>PatternFormatException</code> with the specified detail message.
-     * @param message
+     * @param message - The detail message.
      */
     public PatternFormatException(String message){
         super(message);

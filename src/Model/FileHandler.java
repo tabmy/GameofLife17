@@ -26,7 +26,7 @@ public class FileHandler {
     /**
      * Reads the file using the Reader. Then calls upon the corresponding read method depending on file type. Returns
      * the 2-d byte-array returned by the aforementioned method call.
-     * @param reader
+     * @param reader - The <code>Reader</code> used to read the file.
      * @return byte[][]
      * @throws IOException
      * @throws PatternFormatException
@@ -77,7 +77,7 @@ public class FileHandler {
     /**
      * Opens a connection to the specified URL given as parameter in. Calls upon the readFile method to read the
      * document in the given URL, returning the 2-d byte array given from readFile.
-     * @param url
+     * @param url - The <code>URL</code> stored as a <code>String<code/>
      * @return byte[][]
      * @throws IOException
      * @throws PatternFormatException
@@ -93,7 +93,7 @@ public class FileHandler {
 
     /**
      * Sends the file given as parameter to the readFile method, returning the 2-d byte array from readFile.
-     * @param file
+     * @param file - The <code>File</code> to be read and handled by the readFile methods.
      * @return byte[][]
      * @throws IOException
      * @throws PatternFormatException
@@ -166,7 +166,7 @@ public class FileHandler {
      * Reads the str String array containing the RLE-file, creates a 2-d byte array and puts the corresponding dead
      * and alive cells on the appropriate place in the byte array.
      * Returns the array with the parsed pattern.
-     * @param str
+     * @param str - The <code>String</code> 2-d array containing the files lines.
      * @return byte[][]
      * @throws PatternFormatException
      */
@@ -266,7 +266,7 @@ public class FileHandler {
      * Reads the String array containing the cells file, creates a 2-d byte array and puts the corresponding dead
      * and alive cells on the appropriate place in the byte array.
      * Returns the array with the parsed pattern.
-     * @param str
+     * @param str - The <code>String</code> 2-d array containing the files lines.
      * @return  byte[][]
      * @throws PatternFormatException
      */
