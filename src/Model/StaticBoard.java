@@ -21,10 +21,10 @@ public class StaticBoard extends Board {
      * */
     private byte[][] neighBoard;
 
-    /** //todo Edit
-     * Conway's rules for the game.
+    /**
+     * The rules for the game.
      *
-     * @see Model.ConwayRule
+     * @see Model.Rule
      * */
     private Rule rule;
 

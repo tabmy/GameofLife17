@@ -43,7 +43,7 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
 
     /**
-     * Start/stop button for the animation.
+     * Start/stop utton for the animation.
      */
     @FXML
     public Button animBtn;
@@ -201,7 +201,7 @@ public class GameController implements Initializable {
      */
     @FXML
     private void nextGen() {
-       // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
+        // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
         gameBoard.nextGeneration();
         draw();
     }
@@ -381,10 +381,10 @@ public class GameController implements Initializable {
             yOffset = mouseY - curY;
 
             if (mouseX < curX)
-                xOffset = - xOffset;
+                xOffset = -xOffset;
 
             if (mouseY < curY)
-                yOffset = - yOffset;
+                yOffset = -yOffset;
         }
     }
 
@@ -393,8 +393,7 @@ public class GameController implements Initializable {
      * For moving the cells, a temporary {@code byte} array is used to store the current active cells, then draw them
      * one place further in the direction of the corresponding key pressed.
      *
-     * @param event
-     *      {@code KeyEvent} whose code is used to determine which key was pressed.
+     * @param event {@code KeyEvent} whose code is used to determine which key was pressed.
      */
     @FXML
     public void handleKeyEvents(KeyEvent event) {
@@ -446,7 +445,7 @@ public class GameController implements Initializable {
                         }
                     }
                     break;
-               }
+                }
 
             case "d":
                 // move cells one spot right and copy to temp
@@ -554,8 +553,7 @@ public class GameController implements Initializable {
                     cellColorPicker.setValue(Color.BLACK);
                     draw();
                     break;
-                }
-                else {
+                } else {
                     backColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
                     cellColorPicker.setValue(new Color(Math.random(), Math.random(), Math.random(), 1));
                     draw();
@@ -606,6 +604,8 @@ public class GameController implements Initializable {
     public void clearBoard() {
         // assign a blank board to gameBoard
         gameBoard.clear();
+        TIMELINE.stop();
+        animBtn.setText("Start");
 
         // clear the meta information and canvas
         clearMetaLabels();
@@ -654,7 +654,7 @@ public class GameController implements Initializable {
      *
      * @see FileHandler#readFromDisk(File)
      * @see PatternFormatException
-     * */
+     */
     @FXML
     private void loadFileDisk() {
         // prepare stage for opening file
@@ -691,7 +691,7 @@ public class GameController implements Initializable {
                 // implement loaded pattern
                 setPattern();
             }
-          // make use of alert window in case of exception
+            // make use of alert window in case of exception
         } catch (IOException ex) {
             alert.setHeaderText("Something went wrong!");
             alert.setContentText(ex.getMessage());
@@ -773,7 +773,8 @@ public class GameController implements Initializable {
 
     /**
      * This method is used in {@code loadFileDisk()} and {@code loadFileNet()} to implement the loaded patterns in the
-     * {@code gameBoard}. */
+     * {@code gameBoard}.
+     */
     private void setPattern() {
         int xOffset = (gameBoard.getWIDTH() - loadBoard.length) / 2;
         int yOffset = (gameBoard.getHEIGHT() - loadBoard[0].length) / 2;
@@ -795,7 +796,7 @@ public class GameController implements Initializable {
      *
      * @see FileHandler#getMeta()
      * @see FileHandler#handleMeta()
-     * */
+     */
     private void readMeta() {
         // get metadata from file
         ArrayList<String> meta = FileHandler.getMeta();
@@ -808,7 +809,7 @@ public class GameController implements Initializable {
     /**
      * Clears the metadata labels and sets their text to default.
      * Used in {@code clearBoard()} method.
-     * */
+     */
     private void clearMetaLabels() {
         String s = "No info...";
         shapeLabel.setText(s);
@@ -821,13 +822,11 @@ public class GameController implements Initializable {
      * A {@code PatternFormatException} or an {@code IOException} can be thrown, but tests have shown that the chances
      * of this occurring are minimal.
      *
-     * @param resource
-     *      File path and name of the desired pattern
-     *
+     * @param resource File path and name of the desired pattern
      * @see #loadFileDisk()
      * @see FileHandler#readFromDisk(File)
      * @see PatternFormatException
-     * */
+     */
     private void loadPattern(String resource) {
         try {
             // parse file and assign returned value to loadBoard
@@ -836,7 +835,7 @@ public class GameController implements Initializable {
             // implement pattern and draw
             setPattern();
             draw();
-          // print exception messages to console
+            // print exception messages to console
         } catch (IOException e) {
             System.out.println("Something went wrong...");
             System.out.println(e.getMessage());
@@ -851,7 +850,7 @@ public class GameController implements Initializable {
      *
      * @see HelpController
      * @see HelpController#setUpStage(Stage)
-     * */
+     */
     @FXML
     public void showHelp() {
         try {
@@ -877,7 +876,7 @@ public class GameController implements Initializable {
 
     /**
      * Opens the Life Wiki homepage in the default browser.
-     * */
+     */
     @FXML
     public void lifeWiki() {
         try {
@@ -888,8 +887,7 @@ public class GameController implements Initializable {
         catch (IOException ex1) {
             System.out.println("Something went wrong...");
             System.out.println(ex1.getMessage());
-        }
-        catch (URISyntaxException ex2) {
+        } catch (URISyntaxException ex2) {
             // this exception cannot occur because the uri is not specified by the user
         }
     }
