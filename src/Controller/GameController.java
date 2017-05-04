@@ -162,7 +162,7 @@ public class GameController implements Initializable {
      */
     @FXML
     private void nextGen() {
-       ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
+       ((DynamicBoard)gameBoard).nextGenerationConcurrent();
         gameBoard.nextGeneration();
         printGen();
         draw();
