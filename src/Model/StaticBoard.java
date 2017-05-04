@@ -20,8 +20,6 @@ public class StaticBoard extends Board {
 
     private final int HEIGHT;
 
-    private int genCount = 0;
-
     /**
      * Constructor of {@code StaticBoard}. The width and height of the board are specified by the method's
      * parameters, which become the dimensions of a new {@code gameBoard}. Conway's rules are implemented.
@@ -71,8 +69,6 @@ public class StaticBoard extends Board {
     public void nextGeneration() {
         countNeighbours();
         rule.nextGeneration(gameBoard, neighBoard);
-
-        genCount++;
     }
 
     /**
@@ -88,14 +84,6 @@ public class StaticBoard extends Board {
     @Override
     public boolean getCellState(int x, int y) {
         return gameBoard[x][y] == 1;
-    }
-
-    public int getGenCount() {
-        return genCount;
-    }
-
-    public void setGenCount(int genCount) {
-        this.genCount = genCount;
     }
 
     /**
@@ -189,7 +177,6 @@ public class StaticBoard extends Board {
                 gameBoard[i][j] = 0;
             }
         }
-        genCount = 0;
     }
 
 

@@ -68,6 +68,9 @@ public class GameController implements Initializable {
     private Label authorLabel;
 
     @FXML
+    private Label genLabel;
+
+    @FXML
     public ColorPicker backColorPicker;
 
     @FXML
@@ -82,6 +85,8 @@ public class GameController implements Initializable {
     private byte[][] loadBoard;
 
     private TextInputDialog textInputDialog = new TextInputDialog("");
+
+    private int genCount;
 
     /*private int xOffset, yOffset;
 
@@ -118,6 +123,7 @@ public class GameController implements Initializable {
         cellSizeSlider.setValue(5);
         changeCellSize();
         cellColorPicker.setValue(Color.BLACK);
+        printGen();
     }
 
     /**
@@ -137,6 +143,8 @@ public class GameController implements Initializable {
         KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent) -> {
 
             ((DynamicBoard) gameBoard).nextGenerationConcurrent();
+            genCount++;
+            printGen();
             draw();
         });
 
@@ -145,13 +153,18 @@ public class GameController implements Initializable {
         TIMELINE.getKeyFrames().add(keyFrame);
     }
 
+    private void printGen() {
+        genLabel.setText(String.format("%s: %d", "Generation", genCount));
+    }
+
     /**
      * Draws the next generation of the pattern.
      */
     @FXML
     private void nextGen() {
-       // ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
+       ((DynamicBoard)gameBoard).nextGenerationConcurrentPrintPerformance();
         gameBoard.nextGeneration();
+        printGen();
         draw();
     }
 
@@ -561,6 +574,9 @@ public class GameController implements Initializable {
         // clear the meta information and canvas
         clearMetaLabels();
         draw();
+
+        genCount = 0;
+        printGen();
     }
 
     /**

@@ -27,7 +27,6 @@
                     <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
                     <MenuItem text="Close" onAction="#exitApplication"/>
                 </Menu>
-                <Menu text="View" />
                 <Menu text="Shape">
                     <MenuItem text="Clear" onAction="#clearBoard"/>
                     <MenuItem text="Glider" onAction="#glider"/>
@@ -93,6 +92,12 @@
                 <!--<HBox>
                     <Button fx:id="moveBtn" text="Move cells" onAction="#toggleMovingCells"/>
                 </HBox>-->
+
+                <Box height="20"/>
+
+                <HBox>
+                    <Label fx:id="genLabel"/>
+                </HBox>
             </VBox>
 
             <Box height="20"/>
