@@ -32,7 +32,7 @@ public class HelpController {
      * @param stage
      *      Stage to apply effects on.
      * */
-    public void setUpStage(Stage stage) {
+    void setUpStage(Stage stage) {
         stage.setResizable(false);
 
         title.setStyle("-fx-font: 24 Calibri;");

@@ -39,9 +39,15 @@ public class ConwayRule extends Rule {
         }
     }
 
+    /**
+     * Determines the fate of a particular cell according to Conway's rules.
+     *
+     * @param cell
+     *      The cell in question. Type {@code Integer} due to concurrency implementation.
+     */
     @Override
     public boolean nextGenCell(Integer cell){
-
+        // check if cell is alive and act accordingly
         if (cell % 2 == 1){
             cell--;
             if (cell == 20 || cell == 30){

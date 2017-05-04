@@ -20,15 +20,13 @@
                     <Box height="20" />
                     <Label fx:id="subtitle2" prefHeight="20" text="Key Bindings" />
                     <Text text="You can use the keyboard to control some aspects of the game: &#10; 'w': move pattern one cell up. &#10; 'a': move pattern one cell left. &#10; 's': move pattern one cell down. &#10; 'd': move pattern one cell right. &#10;" />
-                    <Box height="20" />
+                    <Box height="10" />
                     <Label fx:id="subtitle3" prefHeight="20" text="Sidebar" />
-                    <Text text="Use the instruments on the right to tune the game: &#10; The cell color picker sets the color of the cells. &#10; The background color picker sets the color of the canvas. &#10; The speed slider sets the speed of the animation. &#10; The cell size slider sets the zoom from the top left corner of the canvas. &#10; Start button: start/stop the animation. &#10; Clear button: clear all the current cells. &#10; The two lowermost labels show metadata of your pattern if you loaded it from a file or URL" />
+                    <Text text="Use the instruments on the right to tune the game: &#10; The cell color picker sets the color of the cells. &#10; The background color picker sets the color of the canvas. &#10; The speed slider sets the speed of the animation. &#10; The cell size slider sets the zoom from the top left corner of the canvas. &#10; Start button: start/stop the animation. &#10; Clear button: clear all the current cells. &#10; The two lowermost labels show metadata of your pattern if you loaded it from a file or URL." />
                     <Box height="20" />
                     <Button fx:id="closeBtn" text="Close" onAction="#close"/>
                 </VBox>
         </HBox>
     </VBox>
-
-    <!--<TextField text="hello"/>-->
 
 </AnchorPane>

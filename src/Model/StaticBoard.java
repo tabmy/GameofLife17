@@ -1,7 +1,7 @@
 package Model;
 
 /**
- * This class defines a default static board for the game. It implements the specifications provided byt the Board
+ * This class defines a default static board for the game. It implements the specifications provided by the Board
  * superclass by giving values and functionality to the variables and methods specified. It also implements a set of
  * rules that is going to be used during the game.
  *
@@ -10,36 +10,17 @@ package Model;
 @Deprecated
 public class StaticBoard extends Board {
 
-    /**
-     * The board with the cells of the current generation.
-     * */
     private byte[][] gameBoard;
 
-    /**
-     * The board with the neighbouring cells of a given cell in the current generation. Used to determine what the next
-     * generation will be according to the specified rules set.
-     * */
     private byte[][] neighBoard;
 
-    /**
-     * The rules for the game.
-     *
-     * @see Model.Rule
-     * */
     private Rule rule;
 
-    /**
-     * Width of the game board.
-     * */
     private final int WIDTH;
 
-    /**
-     * Height of the game board.
-     * */
     private final int HEIGHT;
 
     private int genCount = 0;
-
 
     /**
      * Constructor of {@code StaticBoard}. The width and height of the board are specified by the method's
@@ -214,52 +195,51 @@ public class StaticBoard extends Board {
 
     // ---- ---- For testing purposes: ---- ---- //
 
-    //Todo Remove test-constructor
-    public StaticBoard(byte[][] board){
-        this.gameBoard = board;
-        rule = new ConwayRule();
-        WIDTH = board.length;
-        HEIGHT = board[0].length;
-    }
-
-    public StaticBoard(){
-        rule = new ConwayRule();
-        HEIGHT = WIDTH = 4;
-    }
-
-    public String toStringBoard(){
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // iterate through board and append to StringBuilder
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH ; j++) {
-                stringBuilder.append(gameBoard[j][i] == 1 ? 1 : " ");
-            }
-            stringBuilder.append("\n");
-        }
-        return stringBuilder.toString();
-    }
-
-    public void setBoard(byte[][] board){
-        this.gameBoard = board;
-    }
-
-    public byte[][] getGameBoard(){
-        return gameBoard;
-    }
-    public byte[][] getNeighBoard(){
-        return neighBoard;
-    }
-
-    public String neighBoardString(){
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                stringBuilder.append(neighBoard[i][j]);
-            }
-        }
-        return stringBuilder.toString();
-    }
+//    public StaticBoard(byte[][] board){
+//        this.gameBoard = board;
+//        rule = new ConwayRule();
+//        WIDTH = board.length;
+//        HEIGHT = board[0].length;
+//    }
+//
+//    public StaticBoard(){
+//        rule = new ConwayRule();
+//        HEIGHT = WIDTH = 4;
+//    }
+//
+//    public String toStringBoard(){
+//        StringBuilder stringBuilder = new StringBuilder();
+//
+//        // iterate through board and append to StringBuilder
+//        for (int i = 0; i < HEIGHT; i++) {
+//            for (int j = 0; j < WIDTH ; j++) {
+//                stringBuilder.append(gameBoard[j][i] == 1 ? 1 : " ");
+//            }
+//            stringBuilder.append("\n");
+//        }
+//        return stringBuilder.toString();
+//    }
+//
+//    public void setBoard(byte[][] board){
+//        this.gameBoard = board;
+//    }
+//
+//    public byte[][] getGameBoard(){
+//        return gameBoard;
+//    }
+//    public byte[][] getNeighBoard(){
+//        return neighBoard;
+//    }
+//
+//    public String neighBoardString(){
+//        StringBuilder stringBuilder = new StringBuilder();
+//
+//        for (int i = 0; i < HEIGHT; i++) {
+//            for (int j = 0; j < WIDTH; j++) {
+//                stringBuilder.append(neighBoard[i][j]);
+//            }
+//        }
+//        return stringBuilder.toString();
+//    }
 
 }
