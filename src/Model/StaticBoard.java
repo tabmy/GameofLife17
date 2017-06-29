@@ -1,65 +1,27 @@
 package Model;
 
 /**
- * Created by Toma on 07.02.2017.
- */
-
-/**
- * This class defines a default static board for the game. It implements the specifications provided byt the Board
+ * This class defines a default static board for the game. It implements the specifications provided by the Board
  * superclass by giving values and functionality to the variables and methods specified. It also implements a set of
  * rules that is going to be used during the game.
  *
  * @see Model.Board
  * */
+@Deprecated
 public class StaticBoard extends Board {
 
-    /**
-     * The board with the cells of the current generation.
-     * */
     private byte[][] gameBoard;
 
-    /**
-     * The board with the neighbouring cells of a given cell in the current generation. Used to determine what the next
-     * generation will be according to the specified rules set.
-     * */
     private byte[][] neighBoard;
 
-    /**
-     * Conway's rules for the game.
-     *
-     * @see Model.ConwayRule
-     * */
-    private ConwayRule rule;
+    private Rule rule;
 
-    /**
-     * Width of the game board.
-     * */
     private final int WIDTH;
 
-    /**
-     * Height of the game board.
-     * */
     private final int HEIGHT;
 
-    private byte[][] testBoard = {
-            {1, 0, 0, 1},
-            {0, 1, 1, 0},
-            {0, 1, 1, 0},
-            {1, 0, 0, 1}
-    };
-
     /**
-     * First constructor of {@code StaticBoard}. The width and height of the board are fixed; the {@code gameBoard} is
-     * set to be the {@code testBoard}. Conway's rules are implemented.
-     * */
-    public StaticBoard() {
-        WIDTH = HEIGHT = 4;
-        gameBoard = testBoard;
-        rule = new ConwayRule();
-    }
-
-    /**
-     * Second constructor of {@code StaticBoard}. The width and height of the board are specified by the method's
+     * Constructor of {@code StaticBoard}. The width and height of the board are specified by the method's
      * parameters, which become the dimensions of a new {@code gameBoard}. Conway's rules are implemented.
      *
      * @param w
@@ -67,9 +29,9 @@ public class StaticBoard extends Board {
      * @param h
      *          Height of the new {@code gameBoard}
      * */
-    public StaticBoard(int w, int h){
-        WIDTH = w;
+    public StaticBoard(int h, int w){
         HEIGHT = h;
+        WIDTH = w;
 
         gameBoard = new byte[w][h];
         rule = new ConwayRule();
@@ -106,7 +68,7 @@ public class StaticBoard extends Board {
     @Override
     public void nextGeneration() {
         countNeighbours();
-        rule.nextGeneration(gameBoard,neighBoard);
+        rule.nextGeneration(gameBoard, neighBoard);
     }
 
     /**
@@ -120,8 +82,8 @@ public class StaticBoard extends Board {
      *          Integer value determined by the state of the specified cell
      * */
     @Override
-    public int getCellState(int x, int y) {
-        return gameBoard[x][y];
+    public boolean getCellState(int x, int y) {
+        return gameBoard[x][y] == 1;
     }
 
     /**
@@ -135,8 +97,8 @@ public class StaticBoard extends Board {
      *          Value that gets assigned to the cell (0 for dead, 1 for alive)
      * */
     @Override
-    public void setCellState(int x, int y, byte b) {
-        gameBoard[x][y] = b;
+    public void setCellState(int x, int y, boolean b) {
+        gameBoard[x][y] = (byte) (b ? 1 : 0);
     }
 
     /**
@@ -196,43 +158,75 @@ public class StaticBoard extends Board {
         StringBuilder stringBuilder = new StringBuilder();
 
         // iterate through board and append to StringBuilder
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                stringBuilder.append(gameBoard[i][j]).toString();
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH ; j++) {
+                stringBuilder.append(gameBoard[j][i]);
             }
         }
         return stringBuilder.toString();
     }
+
 
     /**
      * Clears the {@code gameBoard} by assigning a new blank array with the same dimensions to it.
      * */
     public void clear(){
-        gameBoard = new byte[WIDTH][HEIGHT];
-    }
 
-    // For testing purposes:
-
-    public void setBoard(byte[][] board){
-        this.gameBoard = board;
-    }
-
-    public byte[][] getGameBoard(){
-        return gameBoard;
-    }
-    public byte[][] getNeighBoard(){
-        return neighBoard;
-    }
-
-    public String neighBoardString(){
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                stringBuilder.append(neighBoard[i][j]).toString();
+        for (int i = 0; i < WIDTH ; i ++) {
+            for (int j = 0; j < HEIGHT ; j++) {
+                gameBoard[i][j] = 0;
             }
         }
-        return stringBuilder.toString();
     }
+
+
+    // ---- ---- For testing purposes: ---- ---- //
+
+//    public StaticBoard(byte[][] board){
+//        this.gameBoard = board;
+//        rule = new ConwayRule();
+//        WIDTH = board.length;
+//        HEIGHT = board[0].length;
+//    }
+//
+//    public StaticBoard(){
+//        rule = new ConwayRule();
+//        HEIGHT = WIDTH = 4;
+//    }
+//
+//    public String toStringBoard(){
+//        StringBuilder stringBuilder = new StringBuilder();
+//
+//        // iterate through board and append to StringBuilder
+//        for (int i = 0; i < HEIGHT; i++) {
+//            for (int j = 0; j < WIDTH ; j++) {
+//                stringBuilder.append(gameBoard[j][i] == 1 ? 1 : " ");
+//            }
+//            stringBuilder.append("\n");
+//        }
+//        return stringBuilder.toString();
+//    }
+//
+//    public void setBoard(byte[][] board){
+//        this.gameBoard = board;
+//    }
+//
+//    public byte[][] getGameBoard(){
+//        return gameBoard;
+//    }
+//    public byte[][] getNeighBoard(){
+//        return neighBoard;
+//    }
+//
+//    public String neighBoardString(){
+//        StringBuilder stringBuilder = new StringBuilder();
+//
+//        for (int i = 0; i < HEIGHT; i++) {
+//            for (int j = 0; j < WIDTH; j++) {
+//                stringBuilder.append(neighBoard[i][j]);
+//            }
+//        }
+//        return stringBuilder.toString();
+//    }
 
 }

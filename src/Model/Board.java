@@ -1,8 +1,5 @@
 package Model;
 
-/**
- * Created by Tommy on 07.02.2017.
- */
 
 /**
  * Provides general variables and methods that are to be implemented in all kinds of boards to be used in Game Of Life.
@@ -14,7 +11,7 @@ public abstract class Board {
     /**
      * The size of the cells is initially set to 0.
      * */
-    private double cellSize = 0;
+    private double cellSize = 1;
 
     /**
      * The set of rules used for the game.
@@ -49,7 +46,7 @@ public abstract class Board {
      * @param y
      *          y-position of the tested cell     *
      * */
-    public abstract int getCellState(int x, int y);
+    public abstract boolean getCellState(int x, int y);
 
     /**
      * Sets the state of a cell to the value specified.
@@ -59,9 +56,9 @@ public abstract class Board {
      * @param y
      *          y-position of the cell
      * @param b
-     *          state that the cell will be set to (0 or 1)
+     *          state that the cell will be set to; false or true (0 or 1)
      * */
-    public abstract void setCellState(int x, int y, byte b);
+    public abstract void setCellState(int x, int y, boolean b);
 
     /**
      * Return height of subclass boards.

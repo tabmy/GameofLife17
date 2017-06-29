@@ -1,8 +1,5 @@
 package Model;
 
-/**
- * Created by Tommy on 07.02.2017.
- */
 
 /**
  * This class defines Conway's rules for Game Of Life. It is one of several rules that can be implemented in the
@@ -41,27 +38,28 @@ public class ConwayRule extends Rule {
             }
         }
     }
+
+    /**
+     * Determines the fate of a particular cell according to Conway's rules.
+     *
+     * @param cell
+     *      The cell in question. Type {@code Integer} due to concurrency implementation.
+     */
+    @Override
+    public boolean nextGenCell(Integer cell){
+        // check if cell is alive and act accordingly
+        if (cell % 2 == 1){
+            cell--;
+            if (cell == 20 || cell == 30){
+                return true;
+            }
+        }else if (cell == 30){
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
 
-/*          Older version
- public byte[][] nextGeneration(byte[][] gameBoard, byte[][] neighBoard) {
-        byte[][] nextGen = new byte[gameBoard.length][gameBoard[0].length];
-        for (int i = 0; i < gameBoard.length - 1; i++) {
-            for (int j = 0; j < gameBoard[0].length - 1; j++) {
-
-                if (gameBoard[i][j] == 1) {
-                    if (neighBoard[i][j] == 2 || neighBoard[i][j] == 3){
-                        nextGen[i][j] = 1;
-                    }
-                }
-                else if (gameBoard[i][j] == 0) {
-                    if (neighBoard[i][j] == 3)
-                        nextGen[i][j] = 1;
-                }
-            }
-        }
-
-        return nextGen;
-    }
- */

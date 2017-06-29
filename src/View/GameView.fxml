@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.shape.Box?>
+    <GridPane onKeyPressed="#handleKeyEvents" alignment="center" hgap="10" maxHeight="700" maxWidth="800" vgap="10"
+              xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.60"
+              fx:controller="Controller.GameController">
+
+    <HBox GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="0">
+        <MenuBar fx:id="menuBar" useSystemMenuBar="true" prefWidth="1000">
+                <Menu text="File">
+                    <MenuItem text="New..." onAction="#newTest"/>
+                    <MenuItem text="Open..." onAction="#loadFileDisk" />
+                    <MenuItem text="Load from URL..." onAction="#loadFileNet"/>
+                    <MenuItem text="Next" onAction="#nextGen"/>
+                    <MenuItem text="Start/Stop animation" onAction="#handleAnimation"/>
+                    <MenuItem text="Close" onAction="#exitApplication"/>
+                </Menu>
+                <Menu text="Shape">
+                    <MenuItem text="Clear" onAction="#clearBoard"/>
+                    <MenuItem text="Glider" onAction="#glider"/>
+                    <MenuItem text="Lightweight Spaceship" onAction="#lghtwghtSpaceship"/>
+                    <MenuItem text="Tumbler" onAction="#tumbler"/>
+                    <MenuItem text="Gosper Glider Gun" onAction="#gliderGun"/>
+                </Menu>
+                <Menu text="Help">
+                    <MenuItem text="Show help" onAction="#showHelp"/>
+                    <MenuItem text="Life wiki" onAction="#lifeWiki"/>
+                </Menu>
+        </MenuBar>
+    </HBox>
+
+    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
+        <Canvas fx:id="playArea" height="615" width="850" onMouseClicked="#cellClick" onMouseDragged="#cellDrag"/>
+
+        <VBox fx:id="instruments" spacing="10" prefHeight="613">
+
+            <VBox fx:id="colorPickers" spacing="10">
+
+                <VBox fx:id="setCellColor" spacing="5">
+                    <Label text="Cell color:"/>
+                    <ColorPicker fx:id="cellColorPicker" onAction="#colorChange"/>
+                </VBox>
+
+                <VBox fx:id="settBackColor" spacing="5">
+                    <Label text="Background color:"/>
+                    <ColorPicker fx:id="backColorPicker" onAction="#colorChange"/>
+                </VBox>
+
+            </VBox>
+
+            <Box height="20"/>
+
+            <VBox fx:id="sliders" spacing="10">
+
+                <VBox fx:id="setSpeed" spacing="5">
+
+                    <Label fx:id="speedInd"/>
+                    <Slider fx:id="speedSlider" max="60" onMouseDragged="#setTimelineRate" maxWidth="130"
+                            onMouseClicked="#setTimelineRate"/>
+
+                </VBox>
+
+                <VBox spacing="5">
+
+                    <Label fx:id="sizeInd" text="Cell size" />
+                    <Slider fx:id="cellSizeSlider"  onMouseDragged="#changeCellSize" onMouseClicked="#changeCellSize"
+                            min="1" max="50" maxWidth="130"/>
+
+                </VBox>
+
+            </VBox>
+
+            <Box height="20"/>
+
+            <VBox>
+                <HBox spacing="15">
+                    <Button fx:id="animBtn" onAction="#handleAnimation" mnemonicParsing="false" text="Start"/>
+                    <Button fx:id="clearButton" onAction="#clearBoard" mnemonicParsing="false" text="Clear cells"/>
+                </HBox>
+                <!--<HBox>
+                    <Button fx:id="moveBtn" text="Move cells" onAction="#toggleMovingCells"/>
+                </HBox>-->
+
+                <Box height="20"/>
+
+                <HBox>
+                    <Label fx:id="genLabel"/>
+                </HBox>
+            </VBox>
+
+            <Box height="20"/>
+
+            <VBox spacing="5">
+                <Label text="Shape:"/>
+                <Label fx:id="shapeLabel"/>
+                <Label text="Author"/>
+                <Label fx:id="authorLabel" />
+            </VBox>
+
+        </VBox>
+    </HBox>
+
+</GridPane>
