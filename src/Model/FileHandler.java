@@ -77,7 +77,7 @@ public class FileHandler {
     /**
      * Opens a connection to the specified URL given as parameter in. Calls upon the readFile method to read the
      * document in the given URL, returning the 2-d byte array given from readFile.
-     * @param url - The <code>URL</code> stored as a <code>String<code/>
+     * @param url - The <code>URL</code> stored as a <code>String</code>
      * @return byte[][]
      * @throws IOException
      * @throws PatternFormatException
